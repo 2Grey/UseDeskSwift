@@ -273,51 +273,48 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     }
     
     override func actionSendMessage(_ text: String?) {
-        usedesk?.sendMessage(text)
-        if sendAssets.count > 0 {
-            for i in 0..<sendAssets.count {
-                if sendAssets[i] as? PHAsset != nil {
-                    let asset = sendAssets[i] as! PHAsset
-                    if asset.mediaType == .video {
-                        let options = PHVideoRequestOptions()
-                        options.version = .original
-                        PHCachingImageManager.default().requestAVAsset(forVideo: asset, options: options){ [weak self] avasset, _, _ in
-                            guard let wSelf = self else {return}
-                            if let avassetURL = avasset as? AVURLAsset {
-                                if let video = try? Data(contentsOf: avassetURL.url) {
-                                    let content = "data:video/mp4;base64,\(video.base64EncodedString())"
-                                    var fileName = String(format: "%ld", content.hash)
-                                    fileName += ".mp4"
-                                    wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
-                                }
-                                
-                            }
-                        }
-                    } else {
-                        let options = PHImageRequestOptions()
-                        options.isSynchronous = true
-                        PHCachingImageManager.default().requestImage(for: asset, targetSize: CGSize(width: CGFloat(asset.pixelWidth), height: CGFloat(asset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, info in
-                            guard let wSelf = self else {return}
-                            if result != nil {
-                                let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result!))"
-                                var fileName = String(format: "%ld", content.hash)
-                                fileName += ".png"
-                                //self.dicLoadingBuffer.updateValue("1", forKey: fileName)
-                                //dicLoadingBuffer[fileName] = "1"
-                                wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
-                            }
-                        })
-                    }
-                } else if sendAssets[i] as? UIImage != nil {
-                    let pickerImage = sendAssets[i] as! UIImage
-                    let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: pickerImage))"
-                    var fileName = String(format: "%ld", content.hash)
-                    fileName += ".png"
-                    usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
-                }
-            }
-            sendAssets = []
+        if let text = text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), text.isEmpty == false {
+            usedesk?.sendMessage(text)
         }
+
+        for asset in sendAssets {
+            if let phAsset = asset as? PHAsset {
+                if phAsset.mediaType == .video {
+                    let options = PHVideoRequestOptions()
+                    options.version = .original
+                    PHCachingImageManager.default().requestAVAsset(forVideo: phAsset, options: options){ [weak self] avasset, _, _ in
+                        guard let wSelf = self else {return}
+                        if let avassetURL = avasset as? AVURLAsset {
+                            if let video = try? Data(contentsOf: avassetURL.url) {
+                                let content = "data:video/mp4;base64,\(video.base64EncodedString())"
+                                let fileName = String(format: "%ld", content.hash) + ".mp4"
+                                wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
+                            }
+
+                        }
+                    }
+                } else {
+                    let options = PHImageRequestOptions()
+                    options.isSynchronous = true
+                    PHCachingImageManager.default().requestImage(for: phAsset, targetSize: CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, info in
+                        guard let wSelf = self else {return}
+                        if let result = result {
+                            let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
+                            let fileName = String(format: "%ld", content.hash) + ".png"
+                            //self.dicLoadingBuffer.updateValue("1", forKey: fileName)
+                            //dicLoadingBuffer[fileName] = "1"
+                            wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                        }
+                    })
+                }
+            } else if let uiImage = asset as? UIImage {
+                let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: uiImage))"
+                let fileName = String(format: "%ld", content.hash) + ".png"
+                usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+            }
+        }
+
+        sendAssets = []
         closeAttachCollection()
     }
     
