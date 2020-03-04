@@ -17,11 +17,12 @@ Pod::Spec.new do |s|
 	s.swift_version = '4.0'
 	s.static_framework = true
 
-	s.ios.source_files = 'UseDesk/Classes/*.{m,h,swift}'
+	s.ios.source_files = 'Sources/Classes/**/*.{m,h,swift}'
 
 	s.resources = [
-		'UseDesk/Assets/*.{png,xcassets,imageset,jpeg,jpg}',
-		'UseDesk/Classes/*.{storyboard,xib,bundle}'
+		'Sources/Assets/*.{png,xcassets,imageset,jpeg,jpg}',
+		'Sources/Classes/*.{storyboard,xib,bundle}',
+		'./**/*.{md}'
 	]
 
 	s.frameworks = 'UIKit', 'MapKit' ,'AVFoundation'

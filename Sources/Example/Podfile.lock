@@ -1,0 +1,66 @@
+PODS:
+  - Alamofire (4.9.1)
+  - FLAnimatedImage (1.0.12)
+  - MBProgressHUD (1.2.0)
+  - NYTPhotoViewer (1.2.0):
+    - NYTPhotoViewer/AnimatedGifSupport (= 1.2.0)
+    - NYTPhotoViewer/Core (= 1.2.0)
+  - NYTPhotoViewer/AnimatedGifSupport (1.2.0):
+    - FLAnimatedImage (~> 1.0.12)
+    - NYTPhotoViewer/Core
+  - NYTPhotoViewer/Core (1.2.0)
+  - ProgressHUD (2.70)
+  - QBImagePickerController (3.4.0)
+  - SDWebImage (4.4.8):
+    - SDWebImage/Core (= 4.4.8)
+  - SDWebImage/Core (4.4.8)
+  - Socket.IO-Client-Swift (14.0.0):
+    - Starscream (~> 3.0.6)
+  - Starscream (3.0.6)
+  - "UIAlertController+Blocks (0.9.2)"
+  - UseDesk_SDK_Swift (0.3.8):
+    - Alamofire (~> 4.0)
+    - MBProgressHUD (~> 1.0)
+    - NYTPhotoViewer (= 1.2.0)
+    - ProgressHUD
+    - QBImagePickerController (~> 3.4)
+    - SDWebImage (~> 4.0)
+    - Socket.IO-Client-Swift (~> 14.0)
+    - "UIAlertController+Blocks"
+
+DEPENDENCIES:
+  - UseDesk_SDK_Swift (from `../../`)
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - FLAnimatedImage
+    - MBProgressHUD
+    - NYTPhotoViewer
+    - ProgressHUD
+    - QBImagePickerController
+    - SDWebImage
+    - Socket.IO-Client-Swift
+    - Starscream
+    - "UIAlertController+Blocks"
+
+EXTERNAL SOURCES:
+  UseDesk_SDK_Swift:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
+  NYTPhotoViewer: 323217e4590a1586eb3c9674b3fefb0fb8b57896
+  ProgressHUD: e603e8b8622c47d8818b9fb38b3cfe9d3e7ca421
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+  SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
+  Socket.IO-Client-Swift: 21e6a8a23a7d367d5ddfab6cbbd3c679cf3c25d6
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  "UIAlertController+Blocks": 80e28b92523fb58aba4d1bccec013d5a0b0bddb2
+  UseDesk_SDK_Swift: baa5b3dee4fcf2e3033b18c71b10b0d04691fcb4
+
+PODFILE CHECKSUM: 3a66b479ed3209e58920229950188baf14663453
+
+COCOAPODS: 1.9.0
