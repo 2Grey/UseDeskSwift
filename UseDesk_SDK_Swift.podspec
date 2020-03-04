@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 	s.ios.source_files = 'Sources/Classes/**/*.{m,h,swift}'
 
 	s.resources = [
-		'Sources/Assets/*.{png,xcassets,imageset,jpeg,jpg}',
+		'Sources/Assets/**/*.{png,xcassets,imageset,jpeg,jpg}',
 		'Sources/Classes/*.{storyboard,xib,bundle}',
 		'./**/*.{md}'
 	]
