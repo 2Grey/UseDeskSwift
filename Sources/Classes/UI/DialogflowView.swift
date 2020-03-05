@@ -274,6 +274,8 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
             usedesk?.sendMessage(text)
         }
 
+        let imageQueue = DispatchQueue(label: "ImageQueue", qos: DispatchQoS.userInitiated, attributes: DispatchQueue.Attributes.concurrent)
+
         for asset in sendAssets {
             if let phAsset = asset as? PHAsset {
                 if phAsset.mediaType == .video {
@@ -283,11 +285,12 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                         guard let wSelf = self else { return }
                         if let avassetURL = avasset as? AVURLAsset {
                             if let video = try? Data(contentsOf: avassetURL.url) {
-                                let content = "data:video/mp4;base64,\(video.base64EncodedString())"
-                                let fileName = String(format: "%ld", content.hash) + ".mp4"
-                                wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
+                                imageQueue.async {
+                                    let content = "data:video/mp4;base64,\(video.base64EncodedString())"
+                                    let fileName = String(format: "%ld", content.hash) + ".mp4"
+                                    wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
+                                }
                             }
-
                         }
                     }
                 } else {
@@ -296,23 +299,27 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                     PHCachingImageManager.default().requestImage(for: phAsset, targetSize: CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, _ in
                         guard let wSelf = self else {return}
                         if let result = result {
-                            let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
-                            let fileName = String(format: "%ld", content.hash) + ".png"
-                            //self.dicLoadingBuffer.updateValue("1", forKey: fileName)
-                            //dicLoadingBuffer[fileName] = "1"
-                            wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                            imageQueue.async {
+                                let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
+                                let fileName = String(format: "%ld", content.hash) + ".png"
+                                //self.dicLoadingBuffer.updateValue("1", forKey: fileName)
+                                //dicLoadingBuffer[fileName] = "1"
+                                wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                            }
                         }
                     })
                 }
             } else if let uiImage = asset as? UIImage {
-                let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: uiImage))"
-                let fileName = String(format: "%ld", content.hash) + ".png"
-                usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                imageQueue.async {[weak self] in
+                    let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: uiImage))"
+                    let fileName = String(format: "%ld", content.hash) + ".png"
+                    self?.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                }
             }
         }
 
-        sendAssets = []
-        closeAttachCollection()
+        self.sendAssets = []
+        self.closeAttachCollection()
     }
     
     override func actionAttachMessage() {
@@ -366,7 +373,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
             }
             showAttachCollection(assets: sendAssets)
         }
-        buttonInputSend.isHidden = false
+        buttonInputSend.isEnabled = true
         
         dismiss(animated: true)
     }
@@ -381,7 +388,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             sendAssets.append(chosenImage)
             
-            buttonInputSend.isHidden = false
+            buttonInputSend.isEnabled = true
         
             showAttachCollection(assets: sendAssets)
         }
