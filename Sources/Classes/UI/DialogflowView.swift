@@ -1,7 +1,6 @@
 //
 //  DialogflowView.swift
 
-
 import Foundation
 import UIKit
 import QBImagePickerController
@@ -146,7 +145,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         let rcmessage = rcmessages[indexPath.section]
 
         let avatar = rcmessage.avatar
-        var image: UIImage? = nil
+        var image: UIImage?
         do {
             if let avatarURL = URL(string: avatar) {
                 let anAvatar1 = try Data(contentsOf: avatarURL)
@@ -237,17 +236,17 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
          [apiAI enqueue:aiRequest];*/
     }
     
-    func displayDialogflowResponse(_ dictionary: [AnyHashable : Any]?, delay: CGFloat) {
+    func displayDialogflowResponse(_ dictionary: [AnyHashable: Any]?, delay: CGFloat) {
         let time = DispatchTime.now() + Double(Double(delay) )
-        DispatchQueue.main.asyncAfter(deadline: time , execute: { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
             guard let wSelf = self else {return}
             wSelf.displayDialogflowResponse(dictionary)
         })
     }
     
-    func displayDialogflowResponse(_ dictionary: [AnyHashable : Any]?) {
-        let result = dictionary?["result"] as? [AnyHashable : Any]
-        let fulfillment = result?["fulfillment"] as? [AnyHashable : Any]
+    func displayDialogflowResponse(_ dictionary: [AnyHashable: Any]?) {
+        let result = dictionary?["result"] as? [AnyHashable: Any]
+        let fulfillment = result?["fulfillment"] as? [AnyHashable: Any]
         let text = fulfillment?["speech"] as? String
         addMessage(text, incoming: true)
         //UDAudio.playMessageIncoming()
@@ -280,8 +279,8 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                 if phAsset.mediaType == .video {
                     let options = PHVideoRequestOptions()
                     options.version = .original
-                    PHCachingImageManager.default().requestAVAsset(forVideo: phAsset, options: options){ [weak self] avasset, _, _ in
-                        guard let wSelf = self else {return}
+                    PHCachingImageManager.default().requestAVAsset(forVideo: phAsset, options: options) { [weak self] avasset, _, _ in
+                        guard let wSelf = self else { return }
                         if let avassetURL = avasset as? AVURLAsset {
                             if let video = try? Data(contentsOf: avassetURL.url) {
                                 let content = "data:video/mp4;base64,\(video.base64EncodedString())"
@@ -294,7 +293,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                 } else {
                     let options = PHImageRequestOptions()
                     options.isSynchronous = true
-                    PHCachingImageManager.default().requestImage(for: phAsset, targetSize: CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, info in
+                    PHCachingImageManager.default().requestImage(for: phAsset, targetSize: CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, _ in
                         guard let wSelf = self else {return}
                         if let result = result {
                             let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
@@ -378,7 +377,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         dismiss(animated: true)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
         if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             sendAssets.append(chosenImage)
             
@@ -420,12 +419,12 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
             imageVC = UDImageView(nibName: "UDImageView", bundle: nil)
             self.addChildViewController(self.imageVC)
             self.view.addSubview(self.imageVC.view)
-            imageVC.view.frame = CGRect(x:0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+            imageVC.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
             imageVC.delegate = self
 
             let session = URLSession.shared
             if let url = URL(string: messageFile.content) {
-                session.dataTask(with: url, completionHandler: { data, response, error in
+                session.dataTask(with: url, completionHandler: { data, _, error in
                     if error == nil {
                         DispatchQueue.main.async(execute: { [weak self] in
                             guard let wSelf = self else {return}
@@ -459,8 +458,6 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     }
     
 }
-
-
 
 extension DialogflowView: UDImageViewDelegate {
     func close() {

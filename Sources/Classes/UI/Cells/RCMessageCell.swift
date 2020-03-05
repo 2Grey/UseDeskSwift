@@ -1,7 +1,6 @@
 //
 //  RCMessageCell.swift
 
-
 import Foundation
 
 class RCMessageCell: UITableViewCell {

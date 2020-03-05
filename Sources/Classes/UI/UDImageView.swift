@@ -1,7 +1,6 @@
 //
 //  UDImageView.swift
 
-
 import Foundation
 import UIKit
 import AVKit
@@ -42,4 +41,3 @@ class UDImageView: UIViewController, UIScrollViewDelegate {
     }
     
 }
-

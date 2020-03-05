@@ -1,7 +1,6 @@
 //
 //  RCEmojiMessage.swift
 
-
 import Foundation
 
 class RCEmojiMessageCell: RCMessageCell {

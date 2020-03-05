@@ -1,7 +1,6 @@
 //
 //  UDBaseCollection.swift
 
-
 import Foundation
 import UIKit
 
@@ -99,5 +98,3 @@ import UIKit
         return collections
     }
 }
-
-

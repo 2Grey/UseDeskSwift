@@ -42,7 +42,7 @@ public class RCMessages: NSObject {
     public var navBarBackgroundColor: UIColor? = UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
     public var navBarTextColor: UIColor? = UIColor.white
 
-    //MARK: * Section
+    // MARK: * Section
     public var sectionHeaderMargin: CGFloat = 8.0
     public var sectionHeaderHeight: CGFloat = 20.0
     public var sectionHeaderLeft: CGFloat = 10.0
@@ -57,7 +57,7 @@ public class RCMessages: NSObject {
     public var sectionFooterFont: UIFont? = UIFont.systemFont(ofSize: 12)
     public var sectionFooterMargin: CGFloat = 8.0
 
-    //MARK: * Bubble
+    // MARK: * Bubble
     public var bubbleHeaderHeight: CGFloat = 15.0
     public var bubbleHeaderLeft: CGFloat = 50.0
     public var bubbleHeaderRight: CGFloat = 50.0
@@ -74,7 +74,7 @@ public class RCMessages: NSObject {
     public var bubbleFooterColor: UIColor? = UIColor.lightGray
     public var bubbleFooterFont: UIFont? = UIFont.systemFont(ofSize: 12)
 
-    //MARK: * Avatar
+    // MARK: * Avatar
     public var avatarDiameter: CGFloat = 30.0
     public var avatarMarginLeft: CGFloat = 4.0
     public var avatarMarginRight: CGFloat = 4.0
@@ -83,7 +83,7 @@ public class RCMessages: NSObject {
     public var avatarTextColor: UIColor? = UIColor.white
     public var avatarFont: UIFont? = UIFont.systemFont(ofSize: 12)
 
-    //MARK: * Status cell
+    // MARK: * Status cell
     public var statusBubbleRadius: CGFloat = 10.0
     public var statusBubbleColor: UIColor? = UIColor(hexString: "00000030")
     public var statusTextColor: UIColor? = UIColor.white
@@ -98,7 +98,7 @@ public class RCMessages: NSObject {
         UIEdgeInsets(top: statusInsetTop, left: statusInsetLeft, bottom: statusInsetBottom, right: statusInsetRight)
     }
 
-    //MARK: * Text cell
+    // MARK: * Text cell
     public var textBubbleWidthMin: CGFloat = 45.0
     public var textBubbleHeightMin: CGFloat = 35.0
 
@@ -116,7 +116,7 @@ public class RCMessages: NSObject {
         UIEdgeInsets(top: textInsetTop, left: textInsetLeft, bottom: textInsetBottom, right: textInsetRight)
     }
 
-    //MARK: * Emoji cell
+    // MARK: * Emoji cell
     public var emojiBubbleWidthMin: CGFloat = 45.0
     public var emojiBubbleHeightMin: CGFloat = 35.0
     public var emojiBubbleColorOutgoing: UIColor? = UIColor(hexString: "007affff")

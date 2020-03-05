@@ -1,7 +1,6 @@
 //
 //  UDBaseViewCell.swift
 
-
 import Foundation
 import UIKit
 

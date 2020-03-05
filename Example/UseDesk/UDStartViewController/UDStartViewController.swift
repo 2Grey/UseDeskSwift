@@ -6,9 +6,8 @@ import Foundation
 import UIKit
 import UseDesk_SDK_Swift
 
-
 class UDStartViewController: UIViewController, UITextFieldDelegate {
-    
+
     @IBOutlet var companyIdTextField: UITextField!
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var urlTextField: UITextField!
@@ -18,12 +17,12 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var phoneTextField: UITextField!
     @IBOutlet weak var nameChatTextField: UITextField!
-    
-    var collection: BaseCollection? = nil
+
+    var collection: BaseCollection?
     var usedesk = UseDeskSDK()
-    
+
     override func viewDidLoad() {
-        
+
         super.viewDidLoad()
         
         navigationController?.navigationBar.titleTextAttributes = [
@@ -31,30 +30,28 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
         ]
 
         navigationController?.navigationBar.barStyle = .black
-        
+
         title = "UseDesk SDK"
         let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleSingleTap(_:)))
-        
+
         singleTapGestureRecognizer.numberOfTapsRequired = 1
         view.addGestureRecognizer(singleTapGestureRecognizer)
-        
+
     }
-    
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
-    
+
     @objc func handleSingleTap(_ sender: UITapGestureRecognizer?) {
         view.endEditing(true)
     }
-    
+
     override func didReceiveMemoryWarning() {
-        
         super.didReceiveMemoryWarning()
-        
     }
-    
+
     @IBAction func startChatButton(_ sender: Any) {
         var accountId = ""
         var nameChat = ""
@@ -80,7 +77,7 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
         config.name = nameTextField.text
         config.nameChat = nameChat
 
-        usedesk.start(with: config) { (succes, error) in
+        usedesk.start(with: config) { _, _ in
             
         }
     }

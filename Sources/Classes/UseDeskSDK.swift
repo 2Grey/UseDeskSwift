@@ -81,7 +81,7 @@ public class UseDeskSDK: NSObject {
                         RootView?.present(navController, animated: true)
                         hud.hide(animated: true)
                     } else {
-                        if (error == "noOperators") {
+                        if error == "noOperators" {
                             let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
                             offlineVC.url = config.urlWithPort
                             offlineVC.usedesk = wSelf
@@ -126,7 +126,7 @@ public class UseDeskSDK: NSObject {
 
         socket?.on("error", callback: { [weak self] data, ack in
             guard let wSelf = self else {return}
-            if (wSelf.errorBlock != nil) {
+            if wSelf.errorBlock != nil {
                 wSelf.errorBlock!(data)
             }
         })
@@ -599,7 +599,7 @@ public class UseDeskSDK: NSObject {
             // return
         }
         
-        if (type == "bot_to_client") {
+        if type == "bot_to_client" {
             
         }
 
