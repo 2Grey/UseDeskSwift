@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
 
 	s.resources = [
 		'Sources/Assets/**/*.{png,xcassets,imageset,jpeg,jpg}',
-		'Sources/Classes/*.{storyboard,xib,bundle}',
+		'Sources/Classes/**/*.{storyboard,xib,bundle}',
 		'./**/*.{md}'
 	]
 

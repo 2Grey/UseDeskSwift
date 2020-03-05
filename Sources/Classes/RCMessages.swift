@@ -7,342 +7,212 @@ import CoreLocation
 import MapKit
 import UIKit
 
-extension UIColor {
-    
-    convenience init(hexString: String) {
-        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int = UInt32()
-        Scanner(string: hex).scanHexInt32(&int)
-        let a, r, g, b: UInt32
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
-    }
-}
-
 let SCREEN_WIDTH = UIScreen.main.bounds.size.width
 let SCREEN_HEIGHT = UIScreen.main.bounds.size.height
 
-let RC_TYPE_STATUS = 1
-let RC_TYPE_TEXT = 2
-let RC_TYPE_EMOJI = 3
-let RC_TYPE_PICTURE = 4
-let RC_TYPE_VIDEO = 5
-let RC_TYPE_AUDIO = 6
-let RC_TYPE_LOCATION = 7
-let RC_TYPE_File = 8
-let RC_TYPE_Feedback = 9
 
-let RC_STATUS_LOADING = 1
-let RC_STATUS_SUCCEED = 2
-let RC_STATUS_MANUAL = 3
-let RC_STATUS_OPENIMAGE = 3
+@objc public enum RCType: Int {
+    case unknown = 0
+    case status = 1
+    case text
+    case emoji
+    case picture
+    case video
+    case audio
+    case location
+    case file
+    case feedback
+}
 
-let RC_AUDIOSTATUS_STOPPED = 1
-let RC_AUDIOSTATUS_PLAYING = 2
+@objc public enum RCStatus: Int {
+    case unknown = 0
+    case loading = 1
+    case succeed
+    case manual
+    case openimage
+}
 
-class RCMessages: NSObject {
-    // Section
-    var sectionHeaderMargin: CGFloat = 0.0
-    var sectionHeaderHeight: CGFloat = 0.0
-    var sectionHeaderLeft: CGFloat = 0.0
-    var sectionHeaderRight: CGFloat = 0.0
-    var sectionHeaderColor: UIColor?
-    var sectionHeaderFont: UIFont?
-    var sectionFooterHeight: CGFloat = 0.0
-    var sectionFooterLeft: CGFloat = 0.0
-    var sectionFooterRight: CGFloat = 0.0
-    var sectionFooterColor: UIColor?
-    var sectionFooterFont: UIFont?
-    var sectionFooterMargin: CGFloat = 0.0
-    // Bubble
-    var bubbleHeaderHeight: CGFloat = 0.0
-    var bubbleHeaderLeft: CGFloat = 0.0
-    var bubbleHeaderRight: CGFloat = 0.0
-    var bubbleHeaderColor: UIColor?
-    var bubbleHeaderFont: UIFont?
-    var bubbleMarginLeft: CGFloat = 0.0
-    var bubbleMarginRight: CGFloat = 0.0
-    var bubbleRadius: CGFloat = 0.0
-    var bubbleFooterHeight: CGFloat = 0.0
-    var bubbleFooterLeft: CGFloat = 0.0
-    var bubbleFooterRight: CGFloat = 0.0
-    var bubbleFooterColor: UIColor?
-    var bubbleFooterFont: UIFont?
-    // Avatar
-    
-    var avatarDiameter: CGFloat = 0.0
-    var avatarMarginLeft: CGFloat = 0.0
-    var avatarMarginRight: CGFloat = 0.0
-    var avatarBackColor: UIColor?
-    var avatarTextColor: UIColor?
-    var avatarFont: UIFont?
-    // Status cell
-    var statusBubbleRadius: CGFloat = 0.0
-    var statusBubbleColor: UIColor?
-    var statusTextColor: UIColor?
-    var statusFont: UIFont?
-    var statusInsetLeft: CGFloat = 0.0
-    var statusInsetRight: CGFloat = 0.0
-    var statusInsetTop: CGFloat = 0.0
-    var statusInsetBottom: CGFloat = 0.0
-    var statusInset: UIEdgeInsets?
-    // Text cell
-    var textBubbleWidthMin: CGFloat = 0.0
-    var textBubbleHeightMin: CGFloat = 0.0
-    var textBubbleColorOutgoing: UIColor?
-    var textBubbleColorIncoming: UIColor?
-    var textTextColorOutgoing: UIColor?
-    var textTextColorIncoming: UIColor?
-    var textFont: UIFont?
-    var textInsetLeft: CGFloat = 0.0
-    var textInsetRight: CGFloat = 0.0
-    var textInsetTop: CGFloat = 0.0
-    var textInsetBottom: CGFloat = 0.0
-    var textInset: UIEdgeInsets?
-    // Emoji cell
-    
-    var emojiBubbleWidthMin: CGFloat = 0.0
-    var emojiBubbleHeightMin: CGFloat = 0.0
-    var emojiBubbleColorOutgoing: UIColor?
-    var emojiBubbleColorIncoming: UIColor?
-    var emojiFont: UIFont?
-    var emojiInsetLeft: CGFloat = 0.0
-    var emojiInsetRight: CGFloat = 0.0
-    var emojiInsetTop: CGFloat = 0.0
-    var emojiInsetBottom: CGFloat = 0.0
-    var emojiInset: UIEdgeInsets?
-    // Picture cell
-    var pictureBubbleWidth: CGFloat = 0.0
-    var pictureBubbleColorOutgoing: UIColor?
-    var pictureBubbleColorIncoming: UIColor?
-    var pictureImageManual: UIImage?
-    // Video cell
-    var videoBubbleWidth: CGFloat = 0.0
-    var videoBubbleHeight: CGFloat = 0.0
-    var videoBubbleColorOutgoing: UIColor?
-    var videoBubbleColorIncoming: UIColor?
-    var videoImagePlay: UIImage?
-    var videoImageManual: UIImage?
+@objc public enum RCAudioStatus: Int {
+    case stopped = 1
+    case playing
+}
+
+public class RCMessages: NSObject {
+
+    public var navBarBackgroundColor: UIColor? = UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
+    public var navBarTextColor: UIColor? = UIColor.white
+
+    //MARK: * Section
+    public var sectionHeaderMargin: CGFloat = 8.0
+    public var sectionHeaderHeight: CGFloat = 20.0
+    public var sectionHeaderLeft: CGFloat = 10.0
+    public var sectionHeaderRight: CGFloat = 10.0
+    public var sectionHeaderColor: UIColor? = UIColor.lightGray
+    public var sectionHeaderFont: UIFont? = UIFont.systemFont(ofSize: 12)
+
+    public var sectionFooterHeight: CGFloat = 15.0
+    public var sectionFooterLeft: CGFloat = 10.0
+    public var sectionFooterRight: CGFloat = 10.0
+    public var sectionFooterColor: UIColor? = UIColor.lightGray
+    public var sectionFooterFont: UIFont? = UIFont.systemFont(ofSize: 12)
+    public var sectionFooterMargin: CGFloat = 8.0
+
+    //MARK: * Bubble
+    public var bubbleHeaderHeight: CGFloat = 15.0
+    public var bubbleHeaderLeft: CGFloat = 50.0
+    public var bubbleHeaderRight: CGFloat = 50.0
+    public var bubbleHeaderColor: UIColor? = UIColor.lightGray
+    public var bubbleHeaderFont: UIFont? = UIFont.systemFont(ofSize: 12)
+
+    public var bubbleMarginLeft: CGFloat = 40.0
+    public var bubbleMarginRight: CGFloat = 40.0
+    public var bubbleRadius: CGFloat = 15.0
+
+    public var bubbleFooterHeight: CGFloat = 15.0
+    public var bubbleFooterLeft: CGFloat = 50.0
+    public var bubbleFooterRight: CGFloat = 50.0
+    public var bubbleFooterColor: UIColor? = UIColor.lightGray
+    public var bubbleFooterFont: UIFont? = UIFont.systemFont(ofSize: 12)
+
+    //MARK: * Avatar
+    public var avatarDiameter: CGFloat = 30.0
+    public var avatarMarginLeft: CGFloat = 4.0
+    public var avatarMarginRight: CGFloat = 4.0
+
+    public var avatarBackColor: UIColor? = UIColor(hexString: "d6d6d6ff")
+    public var avatarTextColor: UIColor? = UIColor.white
+    public var avatarFont: UIFont? = UIFont.systemFont(ofSize: 12)
+
+    //MARK: * Status cell
+    public var statusBubbleRadius: CGFloat = 10.0
+    public var statusBubbleColor: UIColor? = UIColor(hexString: "00000030")
+    public var statusTextColor: UIColor? = UIColor.white
+    public var statusFont: UIFont? = UIFont.systemFont(ofSize: 12)
+
+    public var statusInsetLeft: CGFloat = 1.0
+    public var statusInsetRight: CGFloat = 10.0
+    public var statusInsetTop: CGFloat = 5.0
+    public var statusInsetBottom: CGFloat = 5.0
+
+    public var statusInset: UIEdgeInsets {
+        UIEdgeInsets(top: statusInsetTop, left: statusInsetLeft, bottom: statusInsetBottom, right: statusInsetRight)
+    }
+
+    //MARK: * Text cell
+    public var textBubbleWidthMin: CGFloat = 45.0
+    public var textBubbleHeightMin: CGFloat = 35.0
+
+    public var textBubbleColorOutgoing: UIColor? = UIColor(hexString: "9999ff")
+    public var textBubbleColorIncoming: UIColor? = UIColor(hexString: "e6e5eaff")
+    public var textTextColorOutgoing: UIColor? = UIColor.white
+    public var textTextColorIncoming: UIColor? = UIColor.black
+    public var textFont: UIFont? = UIFont.systemFont(ofSize: 16)
+
+    public var textInsetLeft: CGFloat = 10.0
+    public var textInsetRight: CGFloat = 10.0
+    public var textInsetTop: CGFloat = 10.0
+    public var textInsetBottom: CGFloat = 10.0
+    public var textInset: UIEdgeInsets {
+        UIEdgeInsets(top: textInsetTop, left: textInsetLeft, bottom: textInsetBottom, right: textInsetRight)
+    }
+
+    //MARK: * Emoji cell
+    public var emojiBubbleWidthMin: CGFloat = 45.0
+    public var emojiBubbleHeightMin: CGFloat = 35.0
+    public var emojiBubbleColorOutgoing: UIColor? = UIColor(hexString: "007affff")
+    public var emojiBubbleColorIncoming: UIColor? = UIColor(hexString: "e6e5eaff")
+    public var emojiFont: UIFont? = UIFont.systemFont(ofSize: 46)
+
+    public var emojiInsetLeft: CGFloat = 30.0
+    public var emojiInsetRight: CGFloat = 30.0
+    public var emojiInsetTop: CGFloat = 5.0
+    public var emojiInsetBottom: CGFloat = 5.0
+    public var emojiInset: UIEdgeInsets {
+        UIEdgeInsets(top: emojiInsetTop, left: emojiInsetLeft, bottom: emojiInsetBottom, right: emojiInsetRight)
+    }
+
+    // MARK: * Picture cell
+    public var pictureBubbleWidth: CGFloat = 200.0
+
+    public var pictureBubbleColorOutgoing: UIColor? = UIColor.lightGray
+    public var pictureBubbleColorIncoming: UIColor? = UIColor.lightGray
+    public var pictureImageManual: UIImage? = UIImage.named("rcmessages_manual")
+
+    // MARK: * Video cell
+    public var videoBubbleWidth: CGFloat = 200.0
+    public var videoBubbleHeight: CGFloat = 145.0
+
+    public var videoBubbleColorOutgoing: UIColor? = UIColor.lightGray
+    public var videoBubbleColorIncoming: UIColor? = UIColor.lightGray
+    public var videoImagePlay: UIImage? = UIImage.named("rcmessages_videoplay")
+    public var videoImageManual: UIImage? = UIImage.named("rcmessages_videoplay")
+
     // Audio cell
-    
-    var audioBubbleWidht: CGFloat = 0.0
-    var audioBubbleHeight: CGFloat = 0.0
-    var audioBubbleColorOutgoing: UIColor?
-    var audioBubbleColorIncoming: UIColor?
-    var audioTextColorOutgoing: UIColor?
-    var audioTextColorIncoming: UIColor?
-    var audioImagePlay: UIImage?
-    var audioImagePause: UIImage?
-    var audioImageManual: UIImage?
-    var audioFont: UIFont?
-    // Location cell
-    var locationBubbleWidth: CGFloat = 0.0
-    var locationBubbleHeight: CGFloat = 0.0
-    var locationBubbleColorOutgoing: UIColor?
-    var locationBubbleColorIncoming: UIColor?
-    // Input view
-    var inputViewBackColor: UIColor?
-    var inputTextBackColor: UIColor?
-    var inputTextTextColor: UIColor?
-    var inputFont: UIFont?
-    var inputViewHeightMin: CGFloat = 0.0
-    var inputTextHeightMin: CGFloat = 0.0
-    var inputTextHeightMax: CGFloat = 0.0
-    var inputBorderWidth: CGFloat = 0.0
-    var inputBorderColor: CGColor?
-    var inputRadius: CGFloat = 0.0
-    var inputInsetLeft: CGFloat = 0.0
-    var inputInsetRight: CGFloat = 0.0
-    var inputInsetTop: CGFloat = 0.0
-    var inputInsetBottom: CGFloat = 0.0
-    var inputInset: UIEdgeInsets?
-    
+    public var audioBubbleWidht: CGFloat = 145.0
+    public var audioBubbleHeight: CGFloat = 40.0
+
+    public var audioBubbleColorOutgoing: UIColor? = UIColor(hexString: "007affff")
+    public var audioBubbleColorIncoming: UIColor? = UIColor(hexString: "e6e5eaff")
+    public var audioTextColorOutgoing: UIColor? = UIColor.white
+    public var audioTextColorIncoming: UIColor? = UIColor.black
+
+    public var audioImagePlay: UIImage? = UIImage.named("rcmessages_audioplay")
+    public var audioImagePause: UIImage? = UIImage.named("rcmessages_audiopause")
+    public var audioImageManual: UIImage? = UIImage.named("rcmessages_manual")
+    public var audioFont: UIFont? = UIFont.systemFont(ofSize: 16)
+
+    // MARK: * Location cell
+    public var locationBubbleWidth: CGFloat = 200.0
+    public var locationBubbleHeight: CGFloat = 145.0
+
+    public var locationBubbleColorOutgoing: UIColor? = UIColor.lightGray
+    public var locationBubbleColorIncoming: UIColor? = UIColor.lightGray
+
+    // MARK: * Input view
+
+    public var inputViewBackColor: UIColor? = UIColor.groupTableViewBackground
+    public var inputTextBackColor: UIColor? = UIColor.white
+    public var inputTextTextColor: UIColor? = UIColor.black
+
+    public var inputFont: UIFont? = UIFont.systemFont(ofSize: 17)
+
+    public var inputViewHeightMin: CGFloat = 44.0
+    public var inputTextHeightMin: CGFloat = 30.0
+    public var inputTextHeightMax: CGFloat = 110.0
+    public var inputBorderWidth: CGFloat = 1.0
+    public var inputBorderColor: CGColor? = UIColor.lightGray.cgColor
+
+    public var inputRadius: CGFloat = 5.0
+
+    public var inputInsetLeft: CGFloat = 7.0
+    public var inputInsetRight: CGFloat = 7.0
+    public var inputInsetTop: CGFloat = 5.0
+    public var inputInsetBottom: CGFloat = 5.0
+    public var inputInset: UIEdgeInsets {
+        UIEdgeInsets(top: inputInsetTop, left: inputInsetLeft, bottom: inputInsetBottom, right: inputInsetRight)
+    }
+
+    // MARK: - Chat send area
+    public var attachButtonImage: UIImage? = UIImage.named("rcmessage_attach")
+    public var attachButtonTitle: String?
+    public var attachButtonTextColor: UIColor? = UIColor.black
+    public var attachButtonFont: UIFont? = UIFont.systemFont(ofSize: 14)
+
+    public var sendButtonImage: UIImage? = UIImage.named("rcmessage_send")
+    public var sendButtonTitle: String?
+    public var sendButtonTextColor: UIColor? = UIColor.black
+    public var sendButtonFont: UIFont? = UIFont.systemFont(ofSize: 14)
+
+    // MARK: - Init
+
     static let shared = RCMessages()
-    
-//    class func shared() -> RCMessages? {
-//
-//        var once: Int = 0
-//        var rcmessages: RCMessages?
-//
-//        if (once == 0) {
-//            rcmessages = RCMessages()
-//        }
-//        once = 1
-//
-//        return rcmessages
-//    }
     
     override init() {
         super.init()
-        
-        // Section
-        
-        sectionHeaderMargin = 8.0
-        
-        sectionHeaderHeight = 20.0
-        sectionHeaderLeft = 10.0
-        sectionHeaderRight = 10.0
-        sectionHeaderColor = UIColor.lightGray
-        sectionHeaderFont = UIFont.systemFont(ofSize: 12)
-        
-        sectionFooterHeight = 15.0
-        sectionFooterLeft = 10.0
-        sectionFooterRight = 10.0
-        sectionFooterColor = UIColor.lightGray
-        sectionFooterFont = UIFont.systemFont(ofSize: 12)
-        
-        sectionFooterMargin = 8.0
-        
-        // Bubble
-        bubbleHeaderHeight = 15.0
-        bubbleHeaderLeft = 50.0
-        bubbleHeaderRight = 50.0
-        bubbleHeaderColor = UIColor.lightGray
-        bubbleHeaderFont = UIFont.systemFont(ofSize: 12)
-        
-        bubbleMarginLeft = 40.0
-        bubbleMarginRight = 40.0
-        bubbleRadius = 15.0
-        
-        bubbleFooterHeight = 15.0
-        bubbleFooterLeft = 50.0
-        bubbleFooterRight = 50.0
-        bubbleFooterColor = UIColor.lightGray
-        bubbleFooterFont = UIFont.systemFont(ofSize: 12)
-        
-        // Avatar
-        avatarDiameter = 30.0
-        avatarMarginLeft = 5.0
-        avatarMarginRight = 5.0
-        
-        avatarBackColor = UIColor(hexString: "d6d6d6ff")
-        avatarTextColor = UIColor.white
-        
-        avatarFont = UIFont.systemFont(ofSize: 12)
-        // Status cell
-        
-        statusBubbleRadius = 10.0
-        
-        statusBubbleColor = UIColor(hexString: "00000030")
-        statusTextColor = UIColor.white
-
-        statusFont = UIFont.systemFont(ofSize: 12)
-        
-        statusInsetLeft = 10.0
-        statusInsetRight = 10.0
-        statusInsetTop = 5.0
-        statusInsetBottom = 5.0
-        statusInset = UIEdgeInsets(top: statusInsetTop, left: statusInsetLeft, bottom: statusInsetBottom, right: statusInsetRight)
-        
-        // Text cell
-        
-        textBubbleWidthMin = 45.0
-        textBubbleHeightMin = 35.0
-        
-        textBubbleColorOutgoing = UIColor(hexString: "9999ff")
-        textBubbleColorIncoming = UIColor(hexString: "e6e5eaff")
-        textTextColorOutgoing = UIColor.white
-        textTextColorIncoming = UIColor.black
-        
-        textFont = UIFont.systemFont(ofSize: 16)
-        textInsetLeft = 10.0
-        textInsetRight = 10.0
-        textInsetTop = 10.0
-        textInsetBottom = 10.0
-        textInset = UIEdgeInsets(top: textInsetTop, left: textInsetLeft, bottom: textInsetBottom, right: textInsetRight)
-        
-        // Emoji cell
-        emojiBubbleWidthMin = 45.0
-        emojiBubbleHeightMin = 35.0
-        
-        emojiBubbleColorOutgoing = UIColor(hexString: "007affff")
-        emojiBubbleColorIncoming = UIColor(hexString: "e6e5eaff")
-        
-        emojiFont = UIFont.systemFont(ofSize: 46)
-        
-        emojiInsetLeft = 30.0
-        emojiInsetRight = 30.0
-        emojiInsetTop = 5.0
-        emojiInsetBottom = 5.0
-        emojiInset = UIEdgeInsets(top: emojiInsetTop, left: emojiInsetLeft, bottom: emojiInsetBottom, right: emojiInsetRight)
-        // Picture cell
-        
-        pictureBubbleWidth = 200.0
-        
-        pictureBubbleColorOutgoing = UIColor.lightGray
-        pictureBubbleColorIncoming = UIColor.lightGray
-
-        pictureImageManual = UIImage(named: "rcmessages_manual")
-        
-        // Video cell
-        
-        videoBubbleWidth = 200.0
-        videoBubbleHeight = 145.0
-        
-        videoBubbleColorOutgoing = UIColor.lightGray
-        videoBubbleColorIncoming = UIColor.lightGray
-        
-        videoImagePlay = UIImage(named: "rcmessages_videoplay")
-        videoImageManual = UIImage(named: "rcmessages_manual")
-        
-        // Audio cell
-        
-        audioBubbleWidht = 150.0
-        audioBubbleHeight = 40.0
-        
-        audioBubbleColorOutgoing = UIColor(hexString: "007affff")
-        audioBubbleColorIncoming = UIColor(hexString: "e6e5eaff")
-        audioTextColorOutgoing = UIColor.white
-        audioTextColorIncoming = UIColor.black
-        
-        audioImagePlay = UIImage(named: "rcmessages_audioplay")
-        audioImagePause = UIImage(named: "rcmessages_audiopause")
-        audioImageManual = UIImage(named: "rcmessages_manual")
-        
-        audioFont = UIFont.systemFont(ofSize: 16)
-        
-        // Location cell
-        
-        locationBubbleWidth = 200.0
-        locationBubbleHeight = 145.0
-        
-        locationBubbleColorOutgoing = UIColor.lightGray
-        locationBubbleColorIncoming = UIColor.lightGray
-        
-        // Input view
-        
-        inputViewBackColor = UIColor.groupTableViewBackground
-        inputTextBackColor = UIColor.white
-        inputTextTextColor = UIColor.black
-        
-        inputFont = UIFont.systemFont(ofSize: 17)
-        
-        inputViewHeightMin = 44.0
-        inputTextHeightMin = 30.0
-        inputTextHeightMax = 110.0
-        
-        inputBorderWidth = 1.0
-        inputBorderColor = UIColor.lightGray.cgColor
-        
-        inputRadius = 5.0
-        
-        inputInsetLeft = 7.0
-        inputInsetRight = 7.0
-        inputInsetTop = 5.0
-        inputInsetBottom = 5.0
-        inputInset = UIEdgeInsets(top: inputInsetTop, left: inputInsetLeft, bottom: inputInsetBottom, right: inputInsetRight)
-        
     }
-    
+
+
+    // MARK: - Static
     // Section
     
     class func sectionHeaderMargin() -> CGFloat {
@@ -505,7 +375,7 @@ class RCMessages: NSObject {
     }
     
     class func statusInset() -> UIEdgeInsets {
-        return self.shared.statusInset!
+        return self.shared.statusInset
     }
     
     // Text cell
@@ -555,7 +425,7 @@ class RCMessages: NSObject {
     }
     
     class func textInset() -> UIEdgeInsets {
-        return self.shared.textInset!
+        return self.shared.textInset
     }
     
     // Emoji cell
@@ -596,7 +466,7 @@ class RCMessages: NSObject {
     }
     
     class func emojiInset() -> UIEdgeInsets {
-        return self.shared.emojiInset!
+        return self.shared.emojiInset
     }
     // Picture cell
     
@@ -758,7 +628,7 @@ class RCMessages: NSObject {
     }
     
     class func inputInset() -> UIEdgeInsets {
-        return self.shared.inputInset!
+        return self.shared.inputInset
     }
 
 }

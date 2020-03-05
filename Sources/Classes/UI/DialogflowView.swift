@@ -21,18 +21,13 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(self.actionDone))
         navigationItem.title = usedesk?.config?.nameChat
 
-        hudErrorConnection = MBProgressHUD(view: view)
-        hudErrorConnection?.removeFromSuperViewOnHide = true
-        view.addSubview(hudErrorConnection!)
-        
-        hudErrorConnection?.mode = MBProgressHUDMode.indeterminate//MBProgressHUDModeIndeterminate
-        //hudErrorConnection.label.text = @"Loading";
-        //dicLoadingBuffer = [AnyHashable : Any]()
-        
-        //buttonInputAttach.isUserInteractionEnabled = false
-        //if ([FUser wallpaper] != nil)
-        //self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[FUser wallpaper]]];
-        
+        let hudErrorConnection = MBProgressHUD(view: view)
+        hudErrorConnection.removeFromSuperViewOnHide = true
+        hudErrorConnection.mode = MBProgressHUDMode.indeterminate
+        view.addSubview(hudErrorConnection)
+
+        self.hudErrorConnection = hudErrorConnection
+
         //Notification
         NotificationCenter.default.addObserver(self, selector: #selector(self.openUrlFromMessageButton(_:)), name: Notification.Name("messageButtonURLOpen"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.sendMessageButton(_:)), name: Notification.Name("messageButtonSend"), object: nil)
@@ -42,17 +37,18 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         
         updateTitleDetails()
         
-        guard usedesk != nil else {
+        guard let usedesk = usedesk else {
             reloadhistory()
             return
         }
-        usedesk!.connectBlock = { [weak self] success, error in
+
+        usedesk.connectBlock = { [weak self] success, error in
             guard let wSelf = self else {return}
             wSelf.hudErrorConnection?.hide(animated: true)
             wSelf.reloadhistory()
         }
         
-        usedesk!.newMessageBlock = { [weak self] success, message in
+        usedesk.newMessageBlock = { [weak self] success, message in
             guard let wSelf = self else {return}
             if let aMessage = message {
                 wSelf.rcmessages.append(aMessage)
@@ -63,30 +59,26 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
 //            }
         }
         
-        usedesk!.feedbackAnswerMessageBlock = { [weak self] success in
+        usedesk.feedbackAnswerMessageBlock = { [weak self] success in
             guard let wSelf = self else {return}
+
             let alert = UIAlertController(title: "", message: "Спасибо за вашу оценку", preferredStyle: .alert)
-            
-            
-            let yesButton = UIAlertAction(title: "Ok", style: .default, handler: { action in
-                //Handle your yes please button action here
-            })
-            
-            alert.addAction(yesButton)
-            
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default))
             wSelf.present(alert, animated: true)
         }
         
-        usedesk!.errorBlock = { [weak self] errors in
+        usedesk.errorBlock = { [weak self] errors in
             guard let wSelf = self else {return}
+
             if (errors?.count ?? 0) > 0 {
-                wSelf.hudErrorConnection?.label.text = (errors?[0] as! String)
+                wSelf.hudErrorConnection?.label.text = (errors?.first as? String)
             }
             wSelf.hudErrorConnection?.show(animated: true)
         }
         
-        usedesk!.feedbackMessageBlock = { [weak self] message in
+        usedesk.feedbackMessageBlock = { [weak self] message in
             guard let wSelf = self else {return}
+
             if let aMessage = message {
                 wSelf.rcmessages.append(aMessage)
             }
@@ -102,9 +94,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     }
     
     func reloadhistory() {
-        if usedesk != nil {
+        if let usedesk = self.usedesk {
             rcmessages = []
-            for message in (usedesk!.historyMess) {
+            for message in (usedesk.historyMess) {
                 rcmessages.append(message)
             }
             refreshTableView1()
@@ -113,7 +105,8 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     
     // MARK: - Message methods
     override func rcmessage(_ indexPath: IndexPath?) -> RCMessage? {
-        return (rcmessages[indexPath!.section])
+        guard let indexPath = indexPath else { return nil }
+        return (rcmessages[indexPath.section])
     }
     
     func addMessage(_ text: String?, incoming: Bool) {
@@ -121,6 +114,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         rcmessages.append(rcmessage)
         refreshTableView1()
     }
+
     // MARK: - Message Button methods
     @objc func openUrlFromMessageButton(_ notification: NSNotification) {
         if let urlString = notification.userInfo?["url"] as? String, let url = URL(string: urlString) {
@@ -136,7 +130,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     
     // MARK: - Avatar methods
     override func avatarInitials(_ indexPath: IndexPath?) -> String? {
-        let rcmessage = rcmessages[indexPath!.section]
+        guard let indexPath = indexPath else { return nil }
+
+        let rcmessage = rcmessages[indexPath.section]
         if rcmessage.outgoing {
             return "you"
         } else {
@@ -145,7 +141,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     }
     
     override func avatarImage(_ indexPath: IndexPath?) -> UIImage? {
-        let rcmessage = rcmessages[indexPath!.section]
+        guard let indexPath = indexPath else { return nil }
+
+        let rcmessage = rcmessages[indexPath.section]
 
         let avatar = rcmessage.avatar
         var image: UIImage? = nil
@@ -321,7 +319,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     override func actionAttachMessage() {
         if sendAssets.count < Constants.maxCountAssets {
             let alertController = UIAlertController(title: "Прикрепить файл", message: nil, preferredStyle: UIAlertController.Style.alert)
-            let cancelAction = UIAlertAction(title: "Отмена", style: .destructive) { (_) -> Void in }
+            let cancelAction = UIAlertAction(title: "Отмена", style: .destructive)
             let takePhotoAction = UIAlertAction(title: "Камера", style: .default) { (_) -> Void in
                 self.takePhoto()
             }
@@ -404,38 +402,45 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     }
     
     override func actionTapBubble(_ indexPath: IndexPath?) {
-        let rcmessage = rcmessages[indexPath!.section] 
-        guard rcmessage.file != nil else {return}
-        if rcmessage.file!.type == "image" {
+        guard let indexPath = indexPath else { return }
+
+        let rcmessage = rcmessages[indexPath.section]
+
+        guard let messageFile = rcmessage.file  else { return }
+
+        if messageFile.type == "image" {
             navigationItem.leftBarButtonItem?.isEnabled = false
             navigationItem.leftBarButtonItem?.tintColor = .clear
-            if let cell = tableView.cellForRow(at: indexPath!) as? RCPictureMessageCell {
-                rcmessage.status = RC_STATUS_OPENIMAGE
-                cell.bindData(indexPath!, messagesView: self)
+
+            if let cell = tableView.cellForRow(at: indexPath) as? RCPictureMessageCell {
+                rcmessage.status = RCStatus.openimage
+                cell.bindData(indexPath, messagesView: self)
             }
+
             imageVC = UDImageView(nibName: "UDImageView", bundle: nil)
             self.addChildViewController(self.imageVC)
             self.view.addSubview(self.imageVC.view)
             imageVC.view.frame = CGRect(x:0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
             imageVC.delegate = self
-                let session = URLSession.shared
-                if let url = URL(string: rcmessage.file!.content) {
-                    (session.dataTask(with: url, completionHandler: { data, response, error in
-                        if error == nil {
-                            DispatchQueue.main.async(execute: { [weak self] in
-                                guard let wSelf = self else {return}
-                                rcmessage.picture_image = UIImage(data: data!)
-                                if rcmessage.picture_image != nil {
-                                    wSelf.imageVC.showImage(image: rcmessage.picture_image!)
-                                }
-                                if let cell = wSelf.tableView.cellForRow(at: indexPath!) as? RCPictureMessageCell {
-                                    rcmessage.status = RC_STATUS_SUCCEED
-                                    cell.bindData(indexPath!, messagesView: wSelf)
-                                }
-                            })
-                        }
-                    })).resume()
-                }
+
+            let session = URLSession.shared
+            if let url = URL(string: messageFile.content) {
+                session.dataTask(with: url, completionHandler: { data, response, error in
+                    if error == nil {
+                        DispatchQueue.main.async(execute: { [weak self] in
+                            guard let wSelf = self else {return}
+                            rcmessage.picture_image = UIImage(data: data!)
+                            if let pictureImage = rcmessage.picture_image {
+                                wSelf.imageVC.showImage(image: pictureImage)
+                            }
+                            if let cell = wSelf.tableView.cellForRow(at: indexPath) as? RCPictureMessageCell {
+                                rcmessage.status = RCStatus.succeed
+                                cell.bindData(indexPath, messagesView: wSelf)
+                            }
+                        })
+                    }
+                }).resume()
+            }
         } else if rcmessage.file!.type == "video" {
             if rcmessage.video_path != "" {
                 let videoURL = URL(fileURLWithPath: rcmessage.video_path)
@@ -455,54 +460,7 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
     
 }
 
-extension Date {
-    var isToday: Bool {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MM yyyy"
-        dateFormatter.locale = Locale(identifier: "ru")
-        dateFormatter.timeZone = TimeZone(identifier: "Europe/Moscow")
-        let date1 = dateFormatter.string(from: self)
-        let date2 = dateFormatter.string(from: Date())
-        if date1 == date2 {
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    var timeString: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        dateFormatter.locale = Locale(identifier: "ru")
-        dateFormatter.timeZone = TimeZone(identifier: "Europe/Moscow")
-        return dateFormatter.string(from: self)
-    }
-    
-    var timeAndDayString: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
-        dateFormatter.locale = Locale(identifier: "ru")
-        dateFormatter.timeZone = TimeZone(identifier: "Europe/Moscow")
-        return dateFormatter.string(from: self)
-    }
-    
-    var dateFromHeaderComments: String {
-        let calendar = Calendar.current
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ru")
-        dateFormatter.timeZone = TimeZone.current
-        var dayString = ""
-        if calendar.isDateInYesterday(self) {
-            dayString = "Вчера"
-        } else if calendar.isDateInToday(self) {
-            dayString = "Сегодня"
-        } else {
-            dateFormatter.dateFormat = "d MMMM"
-            dayString = dateFormatter.string(from: self)
-        }
-        return dayString + " " + self.timeString//dateFormatter.string(from: self)
-    }
-}
+
 
 extension DialogflowView: UDImageViewDelegate {
     func close() {

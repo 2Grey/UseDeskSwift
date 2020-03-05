@@ -19,7 +19,7 @@ class RCPictureMessageCell: RCMessageCell {
         indexPath = indexPath_
         messagesView = messagesView_
         let rcmessage: RCMessage? = messagesView!.rcmessage(indexPath)
-        if rcmessage?.status == RC_STATUS_OPENIMAGE {
+        if rcmessage?.status == RCStatus.openimage {
             //viewImage!.image = nil
             spinner?.startAnimating()
             //imageManual!.isHidden = false
@@ -63,7 +63,7 @@ class RCPictureMessageCell: RCMessageCell {
                 viewBubble.addSubview(imageManual!)
             }
             
-            if rcmessage?.status == RC_STATUS_LOADING {
+            if rcmessage?.status == RCStatus.loading {
                 viewImage!.image = nil
                 spinner!.startAnimating()
                 imageManual!.isHidden = true
@@ -80,7 +80,7 @@ class RCPictureMessageCell: RCMessageCell {
                                     rcmessage?.picture_image = UIImage(data: data!)
                                     weakSelf?.viewImage!.image = rcmessage!.picture_image
                                     wSelf.spinner?.stopAnimating()
-                                    rcmessage?.status = RC_STATUS_SUCCEED
+                                    rcmessage?.status = RCStatus.succeed
                                     rcmessage?.file!.type = mimeType
                                     
                                 })
@@ -89,7 +89,7 @@ class RCPictureMessageCell: RCMessageCell {
                                     rcmessage?.picture_image = UIImage.named( "icon_file.png")
                                     weakSelf?.imageView!.image = rcmessage!.picture_image
                                     wSelf.spinner?.stopAnimating()
-                                    rcmessage?.status = RC_STATUS_SUCCEED
+                                    rcmessage?.status = RCStatus.succeed
                                     rcmessage?.file?.type = mimeType
                                 })
                             }
@@ -99,13 +99,13 @@ class RCPictureMessageCell: RCMessageCell {
                 spinner!.startAnimating()
             }
             
-            if rcmessage?.status == RC_STATUS_SUCCEED {
+            if rcmessage?.status == RCStatus.succeed {
                 viewImage?.image = rcmessage!.picture_image
                 spinner?.stopAnimating()
                 imageManual?.isHidden = true
             }
 
-            if rcmessage?.status == RC_STATUS_MANUAL {
+            if rcmessage?.status == RCStatus.manual {
                 viewImage?.image = nil
                 spinner?.stopAnimating()
                 imageManual?.isHidden = false

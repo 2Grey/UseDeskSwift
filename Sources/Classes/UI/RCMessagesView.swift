@@ -5,7 +5,7 @@ import AVFoundation
 import Photos
 
 class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
-    //-------------------------------------------------------------------------------------------------------------------------------------------------
+
     @IBOutlet weak var viewTitle: UIView!
     @IBOutlet weak var labelTitle1: UILabel!
     @IBOutlet weak var labelTitle2: UILabel!
@@ -15,15 +15,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var viewTypingIndicator: UIView!
     @IBOutlet weak var viewInput: UIView!
     @IBOutlet weak var buttonInputAttach: UIButton!
-//    @IBOutlet weak var buttonInputAudio: UIButton!
     @IBOutlet weak var buttonInputSend: UIButton!
     @IBOutlet weak var textInput: UITextView!
     @IBOutlet weak var textInputHC: NSLayoutConstraint!
     @IBOutlet weak var textInputBC: NSLayoutConstraint!
     @IBOutlet weak var attachCollectionView: UICollectionView!
-    // @IBOutlet var viewInputAudio: UIView!
-    //@IBOutlet var labelInputAudio: UILabel!
-    
+
     weak var usedesk: UseDeskSDK?
     
     public var sendAssets: [Any] = []
@@ -43,9 +40,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     private var pointAudioStart = CGPoint.zero
     private var audioRecorder: AVAudioRecorder?
     private var safeAreaInsetsBottom: CGFloat = 0.0
-//    private var attachImages: [UIImage] = []
-//    private var attachImage: UIImage = UIImage()
-    
+
     convenience init() {
         self.init(nibName: "RCMessagesView", bundle: nil)
     }
@@ -78,12 +73,8 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(self.audioRecorderGesture(_:)))
         gesture.minimumPressDuration = 0
         gesture.cancelsTouchesInView = false
-//        buttonInputAudio.addGestureRecognizer(gesture)
-        
-        //viewInputAudio.isHidden = true
-        
+
         inputPanelInit()
-        
     }
     
     deinit {
@@ -192,9 +183,6 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-//    func typingIndicatorUpdate() {
-//    }
-    
     // MARK: - Keyboard methods
     @objc func keyboardShow(_ notification: Notification?) {
         if !isShowKeyboard {
@@ -264,7 +252,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
    
         textInput.layer.borderColor = RCMessages.inputBorderColor()
         textInput.layer.borderWidth = RCMessages.inputBorderWidth()
-        
+
         textInput.layer.cornerRadius = RCMessages.inputRadius()
         textInput.clipsToBounds = true
     }
@@ -303,44 +291,50 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         frameTextInput.size.height = heightInput
         textInput.frame = frameTextInput
         textInputHC.constant = heightInput
-//        var frameAudio: CGRect = buttonInputAudio.frame
-//        frameAudio.origin.y = heightInput - frameAudio.size.height
-//        buttonInputAudio.frame = frameAudio
+
         self.view.layoutIfNeeded()
-        
-//        var frameSend: CGRect = buttonInputSend.frame
-//        frameSend.origin.y = heightInput - frameSend.size.height
-       // buttonInputSend.frame = frameSend
-        
-//        buttonInputAudio.isHidden = textInput.text.count != 0
-        buttonInputSend.isHidden = textInput.text.count == 0
-        
+
+        // Buttons
+
+        buttonInputAttach.setImage(RCMessages.shared.attachButtonImage, for: UIControlState.normal)
+        buttonInputAttach.setTitle(RCMessages.shared.attachButtonTitle, for: UIControlState.normal)
+        buttonInputAttach.setTitleColor(RCMessages.shared.attachButtonTextColor, for: UIControlState.normal)
+        if let attachButtonTextColor = RCMessages.shared.attachButtonTextColor {
+            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.75), for: UIControlState.highlighted)
+            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.5), for: UIControlState.disabled)
+        }
+        buttonInputAttach.titleLabel?.font = RCMessages.shared.attachButtonFont
+
+        buttonInputSend.isEnabled = textInput.text.isEmpty == false
+        buttonInputSend.setImage(RCMessages.shared.sendButtonImage, for: UIControlState.normal)
+        buttonInputSend.setTitle(RCMessages.shared.sendButtonTitle, for: UIControlState.normal)
+        buttonInputSend.setTitleColor(RCMessages.shared.sendButtonTextColor, for: UIControlState.normal)
+        if let sendButtonTextColor = RCMessages.shared.sendButtonTextColor {
+            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.75), for: UIControlState.highlighted)
+            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.5), for: UIControlState.disabled)
+        }
+        buttonInputSend.titleLabel?.font = RCMessages.shared.sendButtonFont
     }
     
-    // MARK: - User actions (title)
+    // MARK: * User actions (title)
     @IBAction func actionTitle(_ sender: Any) {
         actionTitle()
     }
     
-    func actionTitle() {
-    }
-    
-    // MARK: - User actions (load earlier)
+    func actionTitle() {}
+
+    // MARK: * User actions (load earlier)
     @IBAction func actionLoadEarlier(_ sender: Any) {
-        //-------------------------------------------------------------------------------------------------------------------------------------------------
         actionLoadEarlier()
     }
     
-    func actionLoadEarlier() {
-    }
-    
-    // MARK: - User actions (bubble tap)
-    func actionTapBubble(_ indexPath: IndexPath?) {
-    }
-    
-    // MARK: - User actions (avatar tap)
-    func actionTapAvatar(_ indexPath: IndexPath?) {
-    }
+    func actionLoadEarlier() {}
+
+    // MARK: * User actions (bubble tap)
+    func actionTapBubble(_ indexPath: IndexPath?) {}
+
+    // MARK: * User actions (avatar tap)
+    func actionTapAvatar(_ indexPath: IndexPath?) {}
 
     // MARK: - User actions (input panel)
     @IBAction func actionInputAttach(_ sender: Any) {
@@ -349,29 +343,20 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @IBAction func actionInputSend(_ sender: Any) {
-        //if ([textInput.text length] != 0)
-        //{
         actionSendMessage(textInput.text)
         dismissKeyboard()
         textInput.text = nil
         inputPanelUpdate()
-        //}
     }
     
-    @objc func buttonFromMessageAction() {
-        
-    }
-    
-    func actionAttachMessage() {
-        
-    }
-    
-    func actionSendAudio(_ path: String?) {
-    }
-    
-    func actionSendMessage(_ text: String?) {
-    }
-    
+    @objc func buttonFromMessageAction() {}
+
+    func actionAttachMessage() {}
+
+    func actionSendAudio(_ path: String?) {}
+
+    func actionSendMessage(_ text: String?) {}
+
     // MARK: - UIScrollViewDelegate
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         dismissKeyboard()
@@ -411,10 +396,10 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         if indexPath.row == 2 {
             let rcmessage: RCMessage? = self.rcmessage(indexPath)
-            if rcmessage?.type == RC_TYPE_STATUS {
+            if rcmessage?.type == RCType.status {
                 return RCStatusCell.height(indexPath, messagesView: self)
             }
-            if rcmessage?.type == RC_TYPE_TEXT {
+            if rcmessage?.type == RCType.text {
                 var heightButtons: CGFloat = 0
                 for _ in rcmessage!.rcButtons {
                     heightButtons += 40
@@ -422,19 +407,19 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
                 heightButtons += 25
                 return RCTextMessageCell.height(indexPath, messagesView: self) + heightButtons
             }
-            if rcmessage?.type == RC_TYPE_Feedback {
+            if rcmessage?.type == RCType.feedback {
                 return RCEmojiMessageCell.height(indexPath, messagesView: self)
             }
-            if rcmessage?.type == RC_TYPE_PICTURE {
+            if rcmessage?.type == RCType.picture {
                 return RCPictureMessageCell.height(indexPath, messagesView: self)
             }
-            if rcmessage?.type == RC_TYPE_VIDEO {
+            if rcmessage?.type == RCType.video {
                 return RCVideoMessageCell.height(indexPath, messagesView: self)
             }
-            if rcmessage?.type == RC_TYPE_AUDIO {
+            if rcmessage?.type == RCType.audio {
                 return RCAudioMessageCell.height(indexPath, messagesView: self)
             }
-            if rcmessage?.type == RC_TYPE_LOCATION {
+            if rcmessage?.type == RCType.location {
                 return RCLocationMessageCell.height(indexPath, messagesView: self)
             }
         }
@@ -458,12 +443,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             return cell
         } else if indexPath.row == 2 {
             let rcmessage: RCMessage? = self.rcmessage(indexPath)
-            if rcmessage?.type == RC_TYPE_STATUS {
+            if rcmessage?.type == RCType.status {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCStatusCell", for: indexPath) as! RCStatusCell
                 cell.bindData(indexPath, messagesView: self)
                 return cell
             }
-            if rcmessage?.type == RC_TYPE_TEXT {
+            if rcmessage?.type == RCType.text {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCTextMessageCell", for: indexPath) as! RCTextMessageCell
                 cell.bindData(indexPath, messagesView: self)
 //                for button in cell.buttons {
@@ -471,7 +456,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 //                }
                 return cell
             }
-            if rcmessage?.type == RC_TYPE_Feedback {
+            if rcmessage?.type == RCType.feedback {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCEmojiMessageCell", for: indexPath) as! RCEmojiMessageCell
                 if usedesk != nil {
                     cell.usedesk = usedesk!
@@ -479,12 +464,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
                 cell.bindData(indexPath, messagesView: self)
                 return cell
             }
-            if rcmessage?.type == RC_TYPE_PICTURE {
+            if rcmessage?.type == RCType.picture {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCPictureMessageCell", for: indexPath) as! RCPictureMessageCell
                 cell.bindData(indexPath, messagesView: self)
                 return cell
             }
-            if rcmessage!.type == RC_TYPE_VIDEO {
+            if rcmessage!.type == RCType.video {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCVideoMessageCell", for: indexPath) as! RCVideoMessageCell
                 
                 let rcmessage = self.rcmessage(indexPath)
@@ -507,12 +492,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
                 return cell
             }
-            if rcmessage!.type == RC_TYPE_AUDIO {
+            if rcmessage!.type == RCType.audio {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCAudioMessageCell", for: indexPath) as! RCAudioMessageCell
                 cell.bindData(indexPath, messagesView: self)
                 return cell
             }
-            if rcmessage!.type == RC_TYPE_LOCATION {
+            if rcmessage!.type == RCType.location {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCLocationMessageCell", for: indexPath) as! RCLocationMessageCell
                 cell.bindData(indexPath, messagesView: self)
                 return cell

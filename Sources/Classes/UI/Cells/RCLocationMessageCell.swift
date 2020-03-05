@@ -32,12 +32,12 @@ class RCLocationMessageCell: RCMessageCell {
             viewBubble.addSubview(spinner!)
         }
         
-        if rcmessage?.status == RC_STATUS_LOADING {
+        if rcmessage?.status == RCStatus.loading {
             viewImage?.image = nil
             spinner?.startAnimating()
         }
         
-        if rcmessage?.status == RC_STATUS_SUCCEED {
+        if rcmessage?.status == RCStatus.succeed {
             viewImage?.image = rcmessage?.location_thumbnail
             spinner?.stopAnimating()
         }

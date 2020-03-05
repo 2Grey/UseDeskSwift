@@ -15,9 +15,9 @@ class UDNavigationController: UINavigationController {
         
         self.navigationBar.isTranslucent = false
         
-        self.tintColor = self.tintColor ?? navBarTextColor
-        self.barTintColor = barTintColor ?? navBarBackgroundColor
-        self.titleTextAttributes = titleTextAttributes ?? navBarTextColor
+        self.tintColor = self.tintColor ?? RCMessages.shared.navBarTextColor
+        self.barTintColor = self.barTintColor ?? RCMessages.shared.navBarBackgroundColor
+        self.titleTextAttributes = self.titleTextAttributes ?? RCMessages.shared.navBarTextColor
     }
     
     func setTitleTextAttributes() {

@@ -27,9 +27,9 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         navigationController?.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: navBarTextColor
+            NSAttributedString.Key.foregroundColor: UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
         ]
-        
+
         navigationController?.navigationBar.barStyle = .black
         
         title = "UseDesk SDK"

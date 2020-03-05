@@ -34,6 +34,12 @@ public class UseDeskSDK: NSObject {
 
     var token: String?
 
+    // MARK: - UI/UX
+
+    public func configureUI(configurator: ((_ messages: RCMessages) -> Void)) {
+        configurator(RCMessages.shared)
+    }
+
     // MARK: - Start
 
     public func start(with config: UDSDKConfig, startBlock: @escaping UDSStartBlock) {
@@ -470,9 +476,9 @@ public class UseDeskSDK: NSObject {
             file.name = fileDic?["name"] as! String
             file.type = fileDic?["type"] as! String
             m.file = file
-            m.status = RC_STATUS_LOADING
+            m.status = RCStatus.loading
             if (file.type == "image/png") || (file.name.contains(".png")) {
-                m.type = RC_TYPE_PICTURE
+                m.type = RCType.picture
                 do {
                     if  URL(string: file.content) != nil {
                         let aContent = URL(string: file.content)
@@ -483,21 +489,19 @@ public class UseDeskSDK: NSObject {
                 } catch {                    
                 }
             } else if (file.type.contains("video/")) || (file.name.contains(".mp4")) {
-                m.type = RC_TYPE_VIDEO
+                m.type = RCType.video
                 file.type = "video"
             }
             
             m.picture_width = Int(0.6 * SCREEN_WIDTH)
             m.picture_height = Int(0.6 * SCREEN_WIDTH)
         }
-        
-        if payload != nil && (payload is [AnyHashable : Any]) {
-            if ((payload as! [AnyHashable : Any])["csi"] != nil) {
-                m.feedback = true
-                m.type = 9
-            }
-        }
 
+        if let payload = payload as? [AnyHashable: Any], payload["csi"] != nil {
+            m.feedback = true
+            m.type = RCType.feedback
+        }
+        
         return m
     }
     

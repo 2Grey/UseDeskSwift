@@ -13,7 +13,7 @@ public class RCFile: NSObject {
 
 public class RCMessage: NSObject {
     // MARK: - Properties
-    @objc public var type: Int = 0
+    @objc public var type: RCType = RCType.unknown
     @objc public var incoming = false
     @objc public var outgoing = false
     @objc public var feedback = false
@@ -27,12 +27,12 @@ public class RCMessage: NSObject {
     @objc public var video_duration: Int = 0
     @objc public var audio_path = ""
     @objc public var audio_duration: Int = 0
-    @objc public var audio_status: Int = 0
+    @objc public var audio_status = RCAudioStatus.stopped
     @objc public var date: Date?
     @objc public var latitude: CLLocationDegrees = 0
     @objc public var longitude: CLLocationDegrees = 0
     @objc public var location_thumbnail: UIImage?
-    @objc public var status: Int = 0
+    @objc public var status: RCStatus = RCStatus.unknown
     @objc public var chat: Int = 0
     @objc public var messageId: Int = 0
     @objc public var ticket_id: Int = 0
@@ -44,7 +44,7 @@ public class RCMessage: NSObject {
     // MARK: - Initialization methods
     init(status text: String?) {
         super.init()
-        type = RC_TYPE_STATUS
+        type =  RCType.status
         
         incoming = false
         outgoing = false
@@ -56,7 +56,7 @@ public class RCMessage: NSObject {
     init(text: String?, incoming: Bool) {
         super.init()
         
-        type = RC_TYPE_TEXT
+        type = RCType.text
         
         self.incoming = incoming
         outgoing = !incoming
@@ -68,7 +68,7 @@ public class RCMessage: NSObject {
     init(emoji text: String?, incoming: Bool) {
         super.init()
         
-        type = RC_TYPE_EMOJI
+        type = RCType.emoji
         
         self.incoming = incoming
         outgoing = !incoming
@@ -79,7 +79,7 @@ public class RCMessage: NSObject {
     init(picture image: UIImage?, width: Int, height: Int, incoming: Bool) {
         super.init()
         
-        type = RC_TYPE_PICTURE
+        type = RCType.picture
         
         self.incoming = incoming
         outgoing = !incoming
@@ -93,7 +93,7 @@ public class RCMessage: NSObject {
     init(video path: String?, durarion duration: Int, incoming: Bool) {
         super.init()
         
-        type = RC_TYPE_VIDEO
+        type = RCType.video
         
         self.incoming = incoming
         outgoing = !incoming
@@ -105,20 +105,20 @@ public class RCMessage: NSObject {
     init(audio path: String?, durarion duration: Int, incoming: Bool) {
         super.init()
         
-        type = RC_TYPE_AUDIO
+        type = RCType.audio
         
         self.incoming = incoming
         outgoing = !incoming
         
         audio_path = path != nil ? path! : ""
         audio_duration = duration
-        audio_status = RC_AUDIOSTATUS_STOPPED
+        audio_status = RCAudioStatus.stopped
     }
     
     init(latitude: CLLocationDegrees, longitude: CLLocationDegrees, incoming: Bool, completion: @escaping () -> Void) {
         super.init()
         
-        type = RC_TYPE_LOCATION
+        type = RCType.location
         
         self.incoming = incoming
         outgoing = !incoming
@@ -126,7 +126,7 @@ public class RCMessage: NSObject {
         self.latitude = latitude
         self.longitude = longitude
         
-        status = RC_STATUS_LOADING
+        status = RCStatus.loading
         
         var region = MKCoordinateRegion()
         region.center.latitude = latitude
@@ -157,7 +157,7 @@ public class RCMessage: NSObject {
                 }
                 UIGraphicsEndImageContext()
                 
-                wSelf.status = RC_STATUS_SUCCEED
+                wSelf.status = RCStatus.succeed
                 DispatchQueue.main.async(execute: {
                         completion()
                 })

@@ -38,10 +38,10 @@ class RCAudioMessageCell: RCMessageCell {
             imageManual = UIImageView(image: RCMessages.audioImageManual())
             viewBubble.addSubview(imageManual)
         }
-        if rcmessage?.audio_status == RC_AUDIOSTATUS_STOPPED {
+        if rcmessage?.audio_status == RCAudioStatus.stopped {
             imageStatus.image = RCMessages.audioImagePlay()
         }
-        if rcmessage?.audio_status == RC_AUDIOSTATUS_PLAYING {
+        if rcmessage?.audio_status == RCAudioStatus.playing {
             imageStatus.image = RCMessages.audioImagePause()
         }
         labelDuration.textColor = rcmessage?.incoming != false ? RCMessages.audioTextColorIncoming() : RCMessages.audioTextColorOutgoing()
@@ -51,19 +51,19 @@ class RCAudioMessageCell: RCMessageCell {
             labelDuration.text = String(format: "%ld:%02ld", Int(rcmessage?.audio_duration ?? 0) / 60, Int(rcmessage?.audio_duration ?? 0) % 60)
         }
         
-        if rcmessage?.status == RC_STATUS_LOADING {
+        if rcmessage?.status == RCStatus.loading {
             imageStatus?.isHidden = true
             labelDuration.isHidden = true
             spinner.startAnimating()
             imageManual.isHidden = true
         }
-        if rcmessage?.status == RC_STATUS_SUCCEED {
+        if rcmessage?.status == RCStatus.succeed {
             imageStatus.isHidden = false
             labelDuration.isHidden = false
             spinner.stopAnimating()
             imageManual.isHidden = true
         }
-        if rcmessage?.status == RC_STATUS_MANUAL {
+        if rcmessage?.status == RCStatus.manual {
             imageStatus.isHidden = true
             labelDuration.isHidden = true
             spinner.stopAnimating()

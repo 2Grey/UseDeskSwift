@@ -38,7 +38,7 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   Socket.IO-Client-Swift: 21e6a8a23a7d367d5ddfab6cbbd3c679cf3c25d6
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
-  UseDesk_SDK_Swift: 84c2fc6d2a04503281750f1f860117f36dca0be6
+  UseDesk_SDK_Swift: 75e39beaf9ebd9e3db16103c960d424fadb0b75a
 
 PODFILE CHECKSUM: bbc3836925ebcc11f98b8ec2676c7a91e860d84a
 

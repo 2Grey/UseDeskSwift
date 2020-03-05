@@ -43,21 +43,21 @@ class RCVideoMessageCell: RCMessageCell {
             viewBubble.addSubview(imageManual!)
         }
         
-        if rcmessage?.status == RC_STATUS_LOADING {
+        if rcmessage?.status == RCStatus.loading {
             viewImage?.image = nil
             imagePreview?.isHidden = true
             spinner?.startAnimating()
             imageManual?.isHidden = true
         }
         
-        if rcmessage?.status == RC_STATUS_SUCCEED {
+        if rcmessage?.status == RCStatus.succeed {
             viewImage?.image = rcmessage?.video_thumbnail
             imagePreview?.isHidden = false
             spinner?.stopAnimating()
             imageManual?.isHidden = true
         }
         
-        if rcmessage?.status == RC_STATUS_MANUAL {
+        if rcmessage?.status == RCStatus.manual {
             viewImage?.image = nil
             imagePreview?.isHidden = true
             spinner?.stopAnimating()
