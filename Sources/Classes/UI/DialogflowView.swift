@@ -356,11 +356,13 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
     func selectPhoto() {
         PHPhotoLibrary.requestAuthorization {[weak self] (status) in
             if status == .authorized {
-                self?.openPhotoSelector()
-            } else {
-                let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertControllerStyle.alert)
-                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default))
                 DispatchQueue.main.async {[weak self] in
+                    self?.openPhotoSelector()
+                }
+            } else {
+                DispatchQueue.main.async {[weak self] in
+                    let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertControllerStyle.alert)
+                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default))
                     self?.present(alertController, animated: true)
                 }
             }
