@@ -292,8 +292,12 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                     }
                 } else {
                     let options = PHImageRequestOptions()
+                    options.deliveryMode = PHImageRequestOptionsDeliveryMode.highQualityFormat
                     options.isSynchronous = true
-                    PHCachingImageManager.default().requestImage(for: phAsset, targetSize: CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight)), contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, _ in
+                    options.isNetworkAccessAllowed = true
+
+                    let targetSize = CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight))
+                    PHCachingImageManager.default().requestImage(for: phAsset, targetSize: targetSize, contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, _ in
                         guard let wSelf = self else {return}
                         if let result = result {
                             imageQueue.async {
