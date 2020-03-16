@@ -17,8 +17,6 @@ public typealias UDSErrorBlock = ([Any]?) -> Void
 public typealias UDSFeedbackMessageBlock = (RCMessage?) -> Void
 public typealias UDSFeedbackAnswerMessageBlock = (Bool) -> Void
 
-let RootView = UIApplication.shared.keyWindow?.rootViewController
-
 public class UseDeskSDK: NSObject {
     @objc public var newMessageBlock: UDSNewMessageBlock?
     @objc public var connectBlock: UDSConnectBlock?
@@ -42,10 +40,10 @@ public class UseDeskSDK: NSObject {
 
     // MARK: - Start
 
-    public func start(with config: UDSDKConfig, startBlock: @escaping UDSStartBlock) {
+    public func start(with config: UDSDKConfig, on viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
-        let hud = MBProgressHUD.showAdded(to: (RootView?.view ?? UIView()), animated: true)
+        let hud = MBProgressHUD.showAdded(to: (viewController?.view ?? UIView()), animated: true)
         hud.mode = MBProgressHUDMode.indeterminate
         hud.label.text = "Loading"
 
@@ -62,7 +60,7 @@ public class UseDeskSDK: NSObject {
             let navController = UDNavigationController(rootViewController: baseView)
             navController.setTitleTextAttributes()
             navController.modalPresentationStyle = .fullScreen
-            RootView?.present(navController, animated: true)
+            viewController?.present(navController, animated: true)
             hud.hide(animated: true)
         } else {
             if config.isUseBase && config.accountId == nil {
@@ -78,7 +76,7 @@ public class UseDeskSDK: NSObject {
                         let navController = UDNavigationController(rootViewController: dialogflowVC)
                         navController.setTitleTextAttributes()
                         navController.modalPresentationStyle = .fullScreen
-                        RootView?.present(navController, animated: true)
+                        viewController?.present(navController, animated: true)
                         hud.hide(animated: true)
                     } else {
                         if error == "noOperators" {
@@ -87,7 +85,7 @@ public class UseDeskSDK: NSObject {
                             offlineVC.usedesk = wSelf
                             let navController = UDNavigationController(rootViewController: offlineVC)
                             navController.modalPresentationStyle = .fullScreen
-                            RootView?.present(navController, animated: true)
+                            viewController?.present(navController, animated: true)
                             hud.hide(animated: true)
                         }
                     }
