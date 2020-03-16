@@ -293,7 +293,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                 } else {
                     let options = PHImageRequestOptions()
                     options.deliveryMode = PHImageRequestOptionsDeliveryMode.highQualityFormat
-                    options.isSynchronous = true
+                    options.isSynchronous = false
                     options.isNetworkAccessAllowed = true
 
                     let targetSize = CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight))
