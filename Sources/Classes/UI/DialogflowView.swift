@@ -7,7 +7,7 @@ import QBImagePickerController
 import MBProgressHUD
 import AVKit
 
-class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigationControllerDelegate, QBImagePickerControllerDelegate {
+class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
     var rcmessages: [RCMessage] = []
     var isFromBase = false
@@ -191,10 +191,6 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         return false
     }
     
-//    var canBecomeFirstResponder: Bool {
-//        return true
-//    }
-    
     // MARK: - Typing indicator methods
     func typingIndicatorShow(_ show: Bool, animated: Bool, delay: CGFloat) {
         let time = DispatchTime.now() + (Double(delay))
@@ -249,7 +245,6 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         let fulfillment = result?["fulfillment"] as? [AnyHashable: Any]
         let text = fulfillment?["speech"] as? String
         addMessage(text, incoming: true)
-        //UDAudio.playMessageIncoming()
     }
     
     // MARK: - User actions
@@ -288,7 +283,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                                 imageQueue.async {
                                     let content = "data:video/mp4;base64,\(video.base64EncodedString())"
                                     let fileName = String(format: "%ld", content.hash) + ".mp4"
-                                    wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
+                                    DispatchQueue.main.async {
+                                        wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "video/mp4", contentBase64: content)
+                                    }
                                 }
                             }
                         }
@@ -302,9 +299,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                             imageQueue.async {
                                 let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
                                 let fileName = String(format: "%ld", content.hash) + ".png"
-                                //self.dicLoadingBuffer.updateValue("1", forKey: fileName)
-                                //dicLoadingBuffer[fileName] = "1"
-                                wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                                DispatchQueue.main.async {
+                                    wSelf.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                                }
                             }
                         }
                     })
@@ -313,7 +310,9 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
                 imageQueue.async {[weak self] in
                     let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: uiImage))"
                     let fileName = String(format: "%ld", content.hash) + ".png"
-                    self?.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                    DispatchQueue.main.async {
+                        self?.usedesk?.sendMessage("", withFileName: fileName, fileType: "image/png", contentBase64: content)
+                    }
                 }
             }
         }
@@ -326,13 +325,15 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         if sendAssets.count < Constants.maxCountAssets {
             let alertController = UIAlertController(title: "Прикрепить файл", message: nil, preferredStyle: UIAlertController.Style.alert)
             let cancelAction = UIAlertAction(title: "Отмена", style: .destructive)
-            let takePhotoAction = UIAlertAction(title: "Камера", style: .default) { (_) -> Void in
-                self.takePhoto()
+            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
+                let takePhotoAction = UIAlertAction(title: "Камера", style: .default) { (_) -> Void in
+                    self.takePhoto()
+                }
+                alertController.addAction(takePhotoAction)
             }
             let selectFromPhotosAction = UIAlertAction(title: "Галерея", style: .default) { (_) -> Void in
                 self.selectPhoto()
             }
-            alertController.addAction(takePhotoAction)
             alertController.addAction(selectFromPhotosAction)
             alertController.addAction(cancelAction)
             self.present(alertController, animated: true, completion: nil)
@@ -349,52 +350,32 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         picker.delegate = self
         picker.allowsEditing = true
         picker.sourceType = .camera
-        present(picker, animated: true)
+        self.present(picker, animated: true)
     }
     
-    func selectPhoto() {        
+    func selectPhoto() {
+        PHPhotoLibrary.requestAuthorization {[weak self] (status) in
+            if status == .authorized {
+                self?.openPhotoSelector()
+            } else {
+                let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertControllerStyle.alert)
+                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default))
+                DispatchQueue.main.async {[weak self] in
+                    self?.present(alertController, animated: true)
+                }
+            }
+        }
+    }
+
+    private func openPhotoSelector() {
         let imagePickerController = QBImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.allowsMultipleSelection = true
         imagePickerController.maximumNumberOfSelection = UInt(Constants.maxCountAssets - sendAssets.count)
         imagePickerController.showsNumberOfSelectedAssets = true
-        
-        present(imagePickerController, animated: true)
+        self.present(imagePickerController, animated: true)
     }
-    
-    func qb_imagePickerController(_ imagePickerController: QBImagePickerController?, didFinishPickingAssets assets: [Any]?) {
-        if let assets = assets {
-            for asset in assets {
-                if let anAsset = asset as? PHAsset {
-                    if anAsset.mediaType == .image || anAsset.mediaType == .video {
-                        sendAssets.append(anAsset)
-                    }
-                }
-            }
-            showAttachCollection(assets: sendAssets)
-        }
-        buttonInputSend.isEnabled = true
-        
-        dismiss(animated: true)
-    }
-    
-    func qb_imagePickerControllerDidCancel(_ imagePickerController: QBImagePickerController?) {
-        print("Canceled.")
-        
-        dismiss(animated: true)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
-        if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
-            sendAssets.append(chosenImage)
-            
-            buttonInputSend.isEnabled = true
-        
-            showAttachCollection(assets: sendAssets)
-        }
-        picker.dismiss(animated: true)
-    }
-    
+
     // MARK: - User actions (menu)
     @objc func actionMenuCopy(_ sender: Any?) {
         let indexPath: IndexPath? = RCMenuItem.indexPath((sender as! UIMenuController))
@@ -464,6 +445,45 @@ class DialogflowView: RCMessagesView, UIImagePickerControllerDelegate, UINavigat
         }
     }
     
+}
+
+extension DialogflowView: QBImagePickerControllerDelegate {
+
+    func qb_imagePickerController(_ imagePickerController: QBImagePickerController?, didFinishPickingAssets assets: [Any]?) {
+        if let assets = assets {
+            for asset in assets {
+                if let anAsset = asset as? PHAsset {
+                    if anAsset.mediaType == .image || anAsset.mediaType == .video {
+                        sendAssets.append(anAsset)
+                    }
+                }
+            }
+            showAttachCollection(assets: sendAssets)
+        }
+        buttonInputSend.isEnabled = true
+
+        dismiss(animated: true)
+    }
+
+    func qb_imagePickerControllerDidCancel(_ imagePickerController: QBImagePickerController?) {
+        print("Canceled.")
+
+        dismiss(animated: true)
+    }
+}
+
+extension DialogflowView: UIImagePickerControllerDelegate {
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
+        if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            sendAssets.append(chosenImage)
+
+            buttonInputSend.isEnabled = true
+
+            showAttachCollection(assets: sendAssets)
+        }
+        picker.dismiss(animated: true)
+    }
 }
 
 extension DialogflowView: UDImageViewDelegate {
