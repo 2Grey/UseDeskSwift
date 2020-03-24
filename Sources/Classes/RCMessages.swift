@@ -203,6 +203,12 @@ public class RCMessages: NSObject {
     public var sendButtonTextColor: UIColor? = UIColor.black
     public var sendButtonFont: UIFont? = UIFont.systemFont(ofSize: 14)
 
+    // MARK: - Error messages
+
+    /// Error message text for socket connection error
+    /// - Note: If nil - show error message from socket
+    public var defaultSocketErrorMessage: String?
+
     // MARK: - Init
 
     static let shared = RCMessages()
