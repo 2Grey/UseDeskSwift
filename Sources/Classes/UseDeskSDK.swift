@@ -16,11 +16,13 @@ public typealias UDSNewMessageBlock = (Bool, RCMessage?) -> Void
 public typealias UDSErrorBlock = ([Any]?) -> Void
 public typealias UDSFeedbackMessageBlock = (RCMessage?) -> Void
 public typealias UDSFeedbackAnswerMessageBlock = (Bool) -> Void
+public typealias UDCloseBlock = () -> Void
 
 public class UseDeskSDK: NSObject {
     @objc public var newMessageBlock: UDSNewMessageBlock?
     @objc public var connectBlock: UDSConnectBlock?
     @objc public var errorBlock: UDSErrorBlock?
+    @objc public var closeBlock: UDCloseBlock?
     @objc public var feedbackMessageBlock: UDSFeedbackMessageBlock?
     @objc public var feedbackAnswerMessageBlock: UDSFeedbackAnswerMessageBlock?
     @objc public var historyMess: [RCMessage] = []
@@ -57,9 +59,14 @@ public class UseDeskSDK: NSObject {
             let baseView = UDBaseView()
             baseView.usedesk = self
             baseView.url = config.urlWithPort
+
             let navController = UDNavigationController(rootViewController: baseView)
             navController.setTitleTextAttributes()
             navController.modalPresentationStyle = .fullScreen
+            navController.onDissmis = {[weak self] in
+                self?.closeBlock?()
+            }
+
             viewController?.present(navController, animated: true)
             hud.hide(animated: true)
         } else {
@@ -73,9 +80,14 @@ public class UseDeskSDK: NSObject {
                     if success {
                         let dialogflowVC : DialogflowView = DialogflowView()
                         dialogflowVC.usedesk = wSelf
+
                         let navController = UDNavigationController(rootViewController: dialogflowVC)
                         navController.setTitleTextAttributes()
                         navController.modalPresentationStyle = .fullScreen
+                        navController.onDissmis = {[weak self] in
+                            self?.closeBlock?()
+                        }
+
                         viewController?.present(navController, animated: true)
                         hud.hide(animated: true)
                     } else {
@@ -85,6 +97,10 @@ public class UseDeskSDK: NSObject {
                             offlineVC.usedesk = wSelf
                             let navController = UDNavigationController(rootViewController: offlineVC)
                             navController.modalPresentationStyle = .fullScreen
+                            navController.onDissmis = {[weak self] in
+                                self?.closeBlock?()
+                            }
+
                             viewController?.present(navController, animated: true)
                             hud.hide(animated: true)
                         }
