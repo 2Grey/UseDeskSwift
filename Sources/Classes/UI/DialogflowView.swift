@@ -379,6 +379,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         imagePickerController.allowsMultipleSelection = true
         imagePickerController.maximumNumberOfSelection = UInt(Constants.maxCountAssets - sendAssets.count)
         imagePickerController.showsNumberOfSelectedAssets = true
+        imagePickerController.mediaType = usedesk?.config?.pickerMediaType ?? QBImagePickerMediaType.any
         self.present(imagePickerController, animated: true)
     }
 
