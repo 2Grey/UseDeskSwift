@@ -70,7 +70,8 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             guard let wSelf = self else {return}
 
             if (errors?.count ?? 0) > 0 {
-                wSelf.hudErrorConnection?.label.text = (errors?.first as? String)
+//                wSelf.hudErrorConnection?.label.text = (errors?.first as? String)
+                wSelf.hudErrorConnection?.label.text = "Ошибка сети.\nВосстанавливаем соединение."
             }
             wSelf.hudErrorConnection?.show(animated: true)
         }

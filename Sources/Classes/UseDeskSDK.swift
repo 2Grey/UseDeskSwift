@@ -45,7 +45,7 @@ public class UseDeskSDK: NSObject {
 
         let hud = MBProgressHUD.showAdded(to: (viewController?.view ?? UIView()), animated: true)
         hud.mode = MBProgressHUDMode.indeterminate
-        hud.label.text = "Loading"
+        hud.label.text = "Загрузка"
 
         if let nameChat = config.nameChat, nameChat.isEmpty == false {
             self.config?.nameChat = nameChat

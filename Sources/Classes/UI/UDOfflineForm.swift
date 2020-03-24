@@ -36,7 +36,7 @@ class UDOfflineForm: UIViewController, UITextFieldDelegate {
 
         let hud = MBProgressHUD.showAdded(to: view, animated: true)
         hud.mode = MBProgressHUDMode.indeterminate
-        hud.label.text = "Sending Message..."
+        hud.label.text = "Отправка сообщения..."
 
         usedesk.sendOfflineForm(withMessage: messageTextField.text) { [weak self] (result, error) in
             guard let wSelf = self else {return}
