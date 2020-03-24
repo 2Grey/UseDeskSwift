@@ -26,7 +26,7 @@ public class UseDeskSDK: NSObject {
     @objc public var feedbackMessageBlock: UDSFeedbackMessageBlock?
     @objc public var feedbackAnswerMessageBlock: UDSFeedbackAnswerMessageBlock?
     @objc public var historyMess: [RCMessage] = []
-    
+
     public private(set) var config: UDSDKConfig?
     
     var manager: SocketManager?
@@ -42,10 +42,10 @@ public class UseDeskSDK: NSObject {
 
     // MARK: - Start
 
-    public func start(with config: UDSDKConfig, on viewController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, startBlock: @escaping UDSStartBlock) {
+    public func start(with config: UDSDKConfig, on viewController: UIViewController, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
-        let hud = MBProgressHUD.showAdded(to: (viewController?.view ?? UIView()), animated: true)
+        let hud = MBProgressHUD.showAdded(to: (viewController.view), animated: true)
         hud.mode = MBProgressHUDMode.indeterminate
         hud.label.text = "Загрузка"
 
@@ -67,7 +67,7 @@ public class UseDeskSDK: NSObject {
                 self?.closeBlock?()
             }
 
-            viewController?.present(navController, animated: true)
+            viewController.present(navController, animated: true)
             hud.hide(animated: true)
         } else {
             if config.isUseBase && config.accountId == nil {
@@ -88,7 +88,7 @@ public class UseDeskSDK: NSObject {
                             self?.closeBlock?()
                         }
 
-                        viewController?.present(navController, animated: true)
+                        viewController.present(navController, animated: true)
                         hud.hide(animated: true)
                     } else {
                         if error == "noOperators" {
@@ -101,7 +101,7 @@ public class UseDeskSDK: NSObject {
                                 self?.closeBlock?()
                             }
 
-                            viewController?.present(navController, animated: true)
+                            viewController.present(navController, animated: true)
                             hud.hide(animated: true)
                         }
                     }
@@ -638,7 +638,13 @@ public class UseDeskSDK: NSObject {
     func loadToken(for email: String?) -> String? {
         return UserDefaults.standard.string(forKey: email ?? "")
     }
-    
+
+    // MARK: - HUD
+    public func cancel(on viewController: UIViewController) {
+        self.releaseChat()
+        MBProgressHUD.hide(for: viewController.view, animated: true)
+    }
+
     // MARK: - Helpers
 
     func buttonFromString(stringButton: String) -> RCMessageButton? {

@@ -77,7 +77,7 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
         config.name = nameTextField.text
         config.nameChat = nameChat
 
-        usedesk.start(with: config) { _, _ in
+        usedesk.start(with: config, on: self) { (_, _) in
             
         }
     }
