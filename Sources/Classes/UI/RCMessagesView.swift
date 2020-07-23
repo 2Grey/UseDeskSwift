@@ -6,23 +6,25 @@ import Photos
 
 class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
 
-    @IBOutlet weak var viewTitle: UIView!
-    @IBOutlet weak var labelTitle1: UILabel!
-    @IBOutlet weak var labelTitle2: UILabel!
-    @IBOutlet weak var buttonTitle: UIButton!
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var viewLoadEarlier: UIView!
-    @IBOutlet weak var viewTypingIndicator: UIView!
-    @IBOutlet weak var viewInput: UIView!
-    @IBOutlet weak var buttonInputAttach: UIButton!
-    @IBOutlet weak var buttonInputSend: UIButton!
-    @IBOutlet weak var textInput: UITextView!
-    @IBOutlet weak var textInputHC: NSLayoutConstraint!
-    @IBOutlet weak var textInputBC: NSLayoutConstraint!
-    @IBOutlet weak var attachCollectionView: UICollectionView!
+    @IBOutlet var viewTitle: UIView!
+    @IBOutlet var labelTitle1: UILabel!
+    @IBOutlet var labelTitle2: UILabel!
+    @IBOutlet var buttonTitle: UIButton!
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var viewLoadEarlier: UIView!
+    @IBOutlet var viewTypingIndicator: UIView!
+    @IBOutlet var viewInput: UIView!
+    @IBOutlet var buttonInputAttach: UIButton!
+    @IBOutlet var buttonInputSend: UIButton!
+    @IBOutlet var attachCollectionView: UICollectionView!
+    @IBOutlet var textInput: UITextView!
+
+    @IBOutlet var textInputHC: NSLayoutConstraint!
+    @IBOutlet var textInputBC: NSLayoutConstraint!
+    @IBOutlet var bottomViewBC: NSLayoutConstraint!
 
     weak var usedesk: UseDeskSDK?
-    
+
     public var sendAssets: [Any] = []
 
     private var initialized = false
@@ -44,10 +46,10 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     convenience init() {
         self.init(nibName: "RCMessagesView", bundle: nil)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.register(RCSectionHeaderCell.self, forCellReuseIdentifier: "RCSectionHeaderCell")
         tableView.register(RCBubbleHeaderCell.self, forCellReuseIdentifier: "RCBubbleHeaderCell")
         tableView.register(RCBubbleFooterCell.self, forCellReuseIdentifier: "RCBubbleFooterCell")
@@ -60,30 +62,24 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.register(RCAudioMessageCell.self, forCellReuseIdentifier: "RCAudioMessageCell")
         tableView.register(RCLocationMessageCell.self, forCellReuseIdentifier: "RCLocationMessageCell")
         tableView.tableHeaderView = viewLoadEarlier
-        
+
         attachCollectionView.delegate = self
         attachCollectionView.dataSource = self
         attachCollectionView.register(RCAttachCollectionViewCell.self, forCellWithReuseIdentifier: "RCAttachCollectionViewCell")
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardShow(_:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
-        
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
+
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(self.audioRecorderGesture(_:)))
         gesture.minimumPressDuration = 0
         gesture.cancelsTouchesInView = false
 
         inputPanelInit()
     }
-    
+
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+        NotificationCenter.default.removeObserver(self)
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         heightView = view.frame.size.height
@@ -98,30 +94,31 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             inputPanelUpdate()
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         dismissKeyboard()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if initialized == false {
             initialized = true
             scroll(toBottom: true)
         }
-        
+
         centerView = view.center
         heightView = view.frame.size.height
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         dismissKeyboard()
     }
-    
+
     // MARK: - Load earlier methods
+
     func loadEarlierShow(_ show: Bool) {
         viewLoadEarlier.isHidden = !show
         var frame: CGRect = viewLoadEarlier.frame
@@ -129,49 +126,53 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         viewLoadEarlier.frame = frame
         tableView.reloadData()
     }
-    
+
     // MARK: - Message methods
+
     func rcmessage(_ indexPath: IndexPath?) -> RCMessage? {
         return nil
     }
-    
+
     // MARK: - Avatar methods
+
     func avatarInitials(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     func avatarImage(_ indexPath: IndexPath?) -> UIImage? {
         return nil
     }
-    
+
     // MARK: - Header, Footer methods
-    
+
     func textBubbleHeader(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     func textBubbleFooter(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     func textSectionFooter(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     // MARK: - Menu controller methods
+
     func menuItems(_ indexPath: IndexPath?) -> [Any]? {
         return nil
     }
-    
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return false
     }
-    
+
     override var canBecomeFirstResponder: Bool {
         return true
     }
 
     // MARK: - Typing indicator methods
+
     func typingIndicatorShow(_ show: Bool, animated: Bool) {
         if show {
             tableView.tableFooterView = viewTypingIndicator
@@ -182,74 +183,24 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             })
         }
     }
-    
-    // MARK: - Keyboard methods
-    @objc func keyboardShow(_ notification: Notification?) {
-        if !isShowKeyboard {
-            let info = notification?.userInfo
-            let keyboard: CGRect? = (info?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-            let duration = TimeInterval((info?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0.0)
-            
-            let keyboardHeight: CGFloat? = keyboard?.size.height
-            if keyboardHeight != nil {
-                heightKeyboard = keyboardHeight!
-            }
-            
-            UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
-                if self.safeAreaInsetsBottom != 0 {
-                    self.textInputBC.constant = 7
-                }
-                if self.isAttachFiles {
-                    self.textInputBC.constant += Constants.heightAssetsCollection
-                }
-                self.tableView.contentInset.top += keyboardHeight ?? 0.0
-                self.view.center = CGPoint(x: self.centerView.x, y: self.centerView.y - (keyboardHeight ?? 0.0))
-            })
-            isShowKeyboard = true
-            UIMenuController.shared.menuItems = nil
-            inputPanelUpdate()
-        }
-    }
-    
-    @objc func keyboardHide(_ notification: Notification?) {
-        if isShowKeyboard {
-            let info = notification?.userInfo
-            let duration = TimeInterval((info?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0.0)
-            let keyboard: CGRect? = (info?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-            let keyboardHeight: CGFloat? = keyboard?.size.height
-            if keyboardHeight != nil {
-                heightKeyboard = keyboardHeight!
-            }
-            UIView.animate(withDuration: duration, delay: 0, options: .allowUserInteraction, animations: {
-                if self.safeAreaInsetsBottom != 0 {
-                    self.textInputBC.constant = 7 + self.safeAreaInsetsBottom
-                }
-                if self.isAttachFiles {
-                    self.textInputBC.constant += Constants.heightAssetsCollection
-                }
-                self.view.center = self.centerView
-                self.tableView.contentInset.top -= keyboardHeight ?? 0.0
-            })
-            isShowKeyboard = false
-        }
-    }
-    
+
     func dismissKeyboard() {
         view.endEditing(true)
     }
-    
+
     // MARK: - Input panel methods
+
     func inputPanelInit() {
         viewInput.backgroundColor = RCMessages.inputViewBackColor()
         textInput.backgroundColor = RCMessages.inputTextBackColor()
         textInput.isScrollEnabled = false
-        
+
         textInput.font = RCMessages.inputFont()
         textInput.textColor = RCMessages.inputTextTextColor()
-        
+
         textInput.textContainer.lineFragmentPadding = 0
         textInput.textContainerInset = RCMessages.inputInset()
-   
+
         textInput.layer.borderColor = RCMessages.inputBorderColor()
         textInput.layer.borderWidth = RCMessages.inputBorderWidth()
 
@@ -261,9 +212,10 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         let widthText = textInput.frame.size.width
         var heightText: CGFloat
         let sizeText = textInput.sizeThatFits(CGSize(width: widthText, height: CGFloat(MAXFLOAT)))
-        
+
         heightText = CGFloat(fmaxf(Float(RCMessages.inputTextHeightMin()), Float(sizeText.height)))
         heightText = CGFloat(fminf(Float(RCMessages.inputTextHeightMax()), Float(heightText)))
+
         var heightInput: CGFloat = 0
         if heightText > 104 {
             heightInput = 110
@@ -278,15 +230,15 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             textInputBC.constant = isShowKeyboard ? 7 : safeAreaInsetsBottom + 7
         }
         frameViewInput.size.height = isShowKeyboard ? heightInput : heightInput + safeAreaInsetsBottom
-        
+
         if isAttachFiles {
             frameViewInput.size.height += Constants.heightAssetsCollection
             frameViewInput.origin.y -= Constants.heightAssetsCollection
-            textInputBC.constant += Constants.heightAssetsCollection
+//            textInputBC.constant += Constants.heightAssetsCollection
         }
         viewInput.frame = frameViewInput
         viewInput.layoutIfNeeded()
-        
+
         var frameTextInput: CGRect = textInput.frame
         frameTextInput.size.height = heightInput
         textInput.frame = frameTextInput
@@ -305,7 +257,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         buttonInputAttach.titleLabel?.font = RCMessages.shared.attachButtonFont
 
-        buttonInputSend.isEnabled = textInput.text.isEmpty == false
+        self.updateSendButtonState()
         buttonInputSend.setImage(RCMessages.shared.sendButtonImage, for: UIControlState.normal)
         buttonInputSend.setTitle(RCMessages.shared.sendButtonTitle, for: UIControlState.normal)
         buttonInputSend.setTitleColor(RCMessages.shared.sendButtonTextColor, for: UIControlState.normal)
@@ -315,40 +267,55 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         buttonInputSend.titleLabel?.font = RCMessages.shared.sendButtonFont
     }
-    
+
+    // MARK: * Send button
+
+    func isSendButtonEnabled() -> Bool {
+        return textInput.text.isEmpty == false
+    }
+
+    func updateSendButtonState() {
+        buttonInputSend.isEnabled = self.isSendButtonEnabled()
+    }
+
     // MARK: * User actions (title)
+
     @IBAction func actionTitle(_ sender: Any) {
         actionTitle()
     }
-    
+
     func actionTitle() {}
 
     // MARK: * User actions (load earlier)
+
     @IBAction func actionLoadEarlier(_ sender: Any) {
         actionLoadEarlier()
     }
-    
+
     func actionLoadEarlier() {}
 
     // MARK: * User actions (bubble tap)
+
     func actionTapBubble(_ indexPath: IndexPath?) {}
 
     // MARK: * User actions (avatar tap)
+
     func actionTapAvatar(_ indexPath: IndexPath?) {}
 
     // MARK: - User actions (input panel)
+
     @IBAction func actionInputAttach(_ sender: Any) {
         dismissKeyboard()
         actionAttachMessage()
     }
-    
+
     @IBAction func actionInputSend(_ sender: Any) {
         actionSendMessage(textInput.text)
         dismissKeyboard()
         textInput.text = nil
         inputPanelUpdate()
     }
-    
+
     @objc func buttonFromMessageAction() {}
 
     func actionAttachMessage() {}
@@ -358,35 +325,37 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     func actionSendMessage(_ text: String?) {}
 
     // MARK: - UIScrollViewDelegate
+
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         dismissKeyboard()
     }
 
     // MARK: - Table view data source
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return 0
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
-    
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return RCMessages.sectionHeaderMargin()
     }
-    
+
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return RCMessages.sectionFooterMargin()
     }
-    
+
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         view.tintColor = UIColor.clear
     }
-    
+
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
         view.tintColor = UIColor.clear
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 {
             return RCSectionHeaderCell.height(indexPath, messagesView: self)
@@ -451,9 +420,9 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             if rcmessage?.type == RCType.text {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCTextMessageCell", for: indexPath) as! RCTextMessageCell
                 cell.bindData(indexPath, messagesView: self)
-//                for button in cell.buttons {
-//                    button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.buttonFromMessageAction)))
-//                }
+                //                for button in cell.buttons {
+                //                    button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.buttonFromMessageAction)))
+                //                }
                 return cell
             }
             if rcmessage?.type == RCType.feedback {
@@ -471,24 +440,25 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             }
             if rcmessage!.type == RCType.video {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RCVideoMessageCell", for: indexPath) as! RCVideoMessageCell
-                
+
                 let rcmessage = self.rcmessage(indexPath)
                 if rcmessage?.video_path == "" {
                     cell.setData(indexPath, messagesView: self)
-                    UDFileManager.downloadFile(indexPath: indexPath, urlPath: rcmessage!.file?.content ?? "", successBlock: { [weak self] (indexPath, urlVideo) in
-                        guard let wSelf = self else {return}
+                    UDFileManager.downloadFile(indexPath: indexPath, urlPath: rcmessage!.file?.content ?? "", successBlock: { [weak self] indexPath, urlVideo in
+                        guard let wSelf = self else { return }
                         if let rcmessage = wSelf.rcmessage(indexPath) {
                             rcmessage.video_path = urlVideo.path
                             rcmessage.picture_image = UDFileManager.videoPreview(filePath: urlVideo.path)
                             cell.addVideo(previewImage: rcmessage.picture_image!)
                         }
-                    }, errorBlock: { (error) in
-                        
+                    }, errorBlock: { error in
+
                     })
                 } else {
                     cell.setData(indexPath, messagesView: self)
                     if rcmessage != nil {
-                        cell.addVideo(previewImage: rcmessage!.picture_image ?? UDFileManager.videoPreview(filePath: rcmessage!.video_path))                    }
+                        cell.addVideo(previewImage: rcmessage!.picture_image ?? UDFileManager.videoPreview(filePath: rcmessage!.video_path))
+                    }
                 }
                 return cell
             }
@@ -506,7 +476,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             let cell = tableView.dequeueReusableCell(withIdentifier: "RCBubbleFooterCell", for: indexPath) as! RCBubbleFooterCell
             cell.bindData(indexPath, messagesView: self)
             return cell
-        } else /*if indexPath.row == 4 */{
+        } else /* if indexPath.row == 4 */ {
             let cell = tableView.dequeueReusableCell(withIdentifier: "RCSectionFooterCell", for: indexPath) as! RCSectionFooterCell
             cell.bindData(indexPath, messagesView: self)
             return cell
@@ -515,8 +485,9 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         cell.bindData(indexPath, messagesView: self)
         return cell
     }
-    
+
     // MARK: - Table view data source
+
     func showAttachCollection(assets: [Any]) {
         attachCollectionView.reloadData()
         isAttachFiles = true
@@ -531,7 +502,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
     }
-    
+
     func closeAttachCollection() {
         if isAttachFiles {
             isAttachFiles = false
@@ -545,24 +516,29 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         }
     }
+
     // MARK: - Helper methods
+
     func scroll(toBottom animated: Bool) {
         if tableView.numberOfSections > 0 {
             let indexPath = IndexPath(row: 0, section: tableView.numberOfSections - 1)
             tableView.scrollToRow(at: indexPath, at: .top, animated: animated)
         }
     }
-    
+
     // MARK: - UITextViewDelegate
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         return true
     }
-    
+
     func textViewDidChange(_ textView: UITextView) {
-          inputPanelUpdate()
-        //typingIndicatorUpdate()
+        inputPanelUpdate()
+        // typingIndicatorUpdate()
     }
+
     // MARK: - Audio recorder methods
+
     @objc func audioRecorderGesture(_ gestureRecognizer: UILongPressGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
@@ -574,14 +550,14 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         case .ended:
             let pointAudioStop: CGPoint? = gestureRecognizer.location(in: view)
             let distanceAudio = sqrtf(powf(Float((pointAudioStop?.x ?? 0.0) - pointAudioStart.x), 2) + Float(pow((pointAudioStop?.y ?? 0.0) - pointAudioStart.y, 2)))
-            audioRecorderStop((distanceAudio < 50))
+            audioRecorderStop(distanceAudio < 50)
         case .possible, .cancelled, .failed:
             break
         default:
             break
         }
     }
-    
+
     func audioRecorderInit() {
         let dir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first
         let path = URL(fileURLWithPath: dir ?? "").appendingPathComponent("audiorecorder.m4a").absoluteString
@@ -592,68 +568,65 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
             } else {
                 AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSessionCategoryPlayAndRecord)
             }
-        } catch {
-        }
-        
-        var settings: [AnyHashable : Any] = [:]
+        } catch {}
+
+        var settings: [AnyHashable: Any] = [:]
         settings[AVFormatIDKey] = NSNumber(value: kAudioFormatMPEG4AAC)
         settings[AVSampleRateKey] = NSNumber(value: 44100)
         settings[AVNumberOfChannelsKey] = NSNumber(value: 2)
-        //---------------------------------------------------------------------------------------------------------------------------------------------
-        if let settings = settings as? [String : Any] {
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        if let settings = settings as? [String: Any] {
             audioRecorder = try? AVAudioRecorder(url: URL(fileURLWithPath: path), settings: settings)
         }
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         audioRecorder!.isMeteringEnabled = true
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         audioRecorder!.prepareToRecord()
     }
 
     func audioRecorderStart() {
         audioRecorder!.record()
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         dateAudioStart = Date()
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         timerAudio = Timer.scheduledTimer(timeInterval: 0.07, target: self, selector: #selector(self.audioRecorderUpdate), userInfo: nil, repeats: true)
-        //RunLoop.main.add(timerAudio!, forMode: RunLoopMode.commonModes)
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // RunLoop.main.add(timerAudio!, forMode: RunLoopMode.commonModes)
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         audioRecorderUpdate()
-        //---------------------------------------------------------------------------------------------------------------------------------------------
-        //viewInputAudio.isHidden = false
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        // viewInputAudio.isHidden = false
     }
-    
+
     func audioRecorderStop(_ sending: Bool) {
         audioRecorder?.stop()
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
         timerAudio?.invalidate()
         timerAudio = nil
-        //---------------------------------------------------------------------------------------------------------------------------------------------
-        if (sending) && (Date().timeIntervalSince(dateAudioStart!) >= 1) {
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        if sending, Date().timeIntervalSince(dateAudioStart!) >= 1 {
             dismissKeyboard()
             actionSendAudio(audioRecorder!.url.path)
         } else {
             audioRecorder!.deleteRecording()
         }
-        //---------------------------------------------------------------------------------------------------------------------------------------------
-        //viewInputAudio.isHidden = true
+        // ---------------------------------------------------------------------------------------------------------------------------------------------
+        // viewInputAudio.isHidden = true
     }
-    
-    @objc func audioRecorderUpdate() {
-//        let interval: TimeInterval = Date().timeIntervalSince(dateAudioStart!)
-//        let millisec = Int(interval * 100) % 100
-//        let seconds = Int(interval) % 60
-//        let minutes = Int(interval) / 60
-        //labelInputAudio.text = String(format: "%01d:%02d,%02d", minutes, seconds, millisec)
-    }
-    
-}
 
+    @objc func audioRecorderUpdate() {
+        //        let interval: TimeInterval = Date().timeIntervalSince(dateAudioStart!)
+        //        let millisec = Int(interval * 100) % 100
+        //        let seconds = Int(interval) % 60
+        //        let minutes = Int(interval) / 60
+        // labelInputAudio.text = String(format: "%01d:%02d,%02d", minutes, seconds, millisec)
+    }
+}
 
 extension RCMessagesView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return sendAssets.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RCAttachCollectionViewCell", for: indexPath) as! RCAttachCollectionViewCell
         cell.delegate = self
@@ -669,22 +642,22 @@ extension RCMessagesView: UICollectionViewDelegate, UICollectionViewDataSource, 
                                                          contentMode: .aspectFit,
                                                          options: options,
                                                          resultHandler: { [weak cell] result, info in
-                                                            if let result = result {
-                                                                cell?.setingCell(image: result,
-                                                                                 type: asset.mediaType,
-                                                                                 videoDuration: asset.duration,
-                                                                                 index: indexPath.row)
-                                                            }
+                                                             if let result = result {
+                                                                 cell?.setingCell(image: result,
+                                                                                  type: asset.mediaType,
+                                                                                  videoDuration: asset.duration,
+                                                                                  index: indexPath.row)
+                                                             }
             })
         }
 
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: Constants.heightAssetsCollection, height: Constants.heightAssetsCollection)
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 4.0
     }
@@ -694,9 +667,47 @@ extension RCMessagesView: RCAttachCVCellDelegate {
     func deleteFile(index: Int) {
         sendAssets.remove(at: index)
         attachCollectionView.reloadData()
+
         if sendAssets.count == 0 {
             sendAssets = []
             closeAttachCollection()
+            self.updateSendButtonState()
         }
+    }
+}
+
+extension RCMessagesView {
+
+    @objc func keyboardNotification(notification: NSNotification) {
+        guard let userInfo = notification.userInfo else { return }
+
+        let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+        let endFrameY = endFrame?.origin.y ?? 0
+
+        let duration: TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+        let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
+        let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+        let animationCurve: UIView.AnimationOptions = UIView.AnimationOptions(rawValue: animationCurveRaw)
+
+        if endFrameY >= UIScreen.main.bounds.size.height {
+            isShowKeyboard = false
+            self.heightKeyboard = 0.0
+            self.bottomViewBC.constant = 0.0
+        } else {
+            let height = endFrame?.size.height ?? 0.0 // TODO: add buttom safeAreaInsetsBottom
+
+            isShowKeyboard = true
+            self.heightKeyboard = height
+            self.bottomViewBC.constant = height
+            UIMenuController.shared.menuItems = nil
+        }
+        UIView.animate(withDuration: duration,
+                       delay: TimeInterval(0),
+                       options: animationCurve,
+                       animations: {
+                        self.view.layoutIfNeeded()
+                        self.inputPanelUpdate()
+        },
+                       completion: nil)
     }
 }

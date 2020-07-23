@@ -11,10 +11,10 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
     var rcmessages: [RCMessage] = []
     var isFromBase = false
-    
+
     private var hudErrorConnection: MBProgressHUD?
     private var imageVC: UDImageView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(self.actionDone))
@@ -27,28 +27,28 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
         self.hudErrorConnection = hudErrorConnection
 
-        //Notification
+        // Notification
         NotificationCenter.default.addObserver(self, selector: #selector(self.openUrlFromMessageButton(_:)), name: Notification.Name("messageButtonURLOpen"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.sendMessageButton(_:)), name: Notification.Name("messageButtonSend"), object: nil)
-        
+
         rcmessages = [RCMessage]()
         loadEarlierShow(false)
-        
+
         updateTitleDetails()
-        
+
         guard let usedesk = usedesk else {
             reloadhistory()
             return
         }
 
         usedesk.connectBlock = { [weak self] success, error in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             wSelf.hudErrorConnection?.hide(animated: true)
             wSelf.reloadhistory()
         }
-        
+
         usedesk.newMessageBlock = { [weak self] success, message in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             if let aMessage = message {
                 wSelf.rcmessages.append(aMessage)
             }
@@ -57,17 +57,17 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 //                UDAudio.playMessageIncoming()
 //            }
         }
-        
+
         usedesk.feedbackAnswerMessageBlock = { [weak self] success in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
 
             let alert = UIAlertController(title: "", message: "Спасибо за вашу оценку", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default))
             wSelf.present(alert, animated: true)
         }
-        
+
         usedesk.errorBlock = { [weak self] errors in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
 
             if (errors?.count ?? 0) > 0 {
                 let errorMessage = RCMessages.shared.defaultSocketErrorMessage ?? errors?.first as? String
@@ -75,40 +75,47 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             }
             wSelf.hudErrorConnection?.show(animated: true)
         }
-        
+
         usedesk.feedbackMessageBlock = { [weak self] message in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
 
             if let aMessage = message {
                 wSelf.rcmessages.append(aMessage)
             }
             wSelf.refreshTableView1()
         }
-        
+
         reloadhistory()
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self, name: Notification.Name("messageButtonURLOpen"), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name("messageButtonSend"), object: nil)
     }
-    
+
     func reloadhistory() {
-        if let usedesk = self.usedesk {
-            rcmessages = []
-            for message in (usedesk.historyMess) {
-                rcmessages.append(message)
-            }
-            refreshTableView1()
+        guard let usedesk = self.usedesk else { return }
+
+        rcmessages = []
+        for message in usedesk.historyMess {
+            rcmessages.append(message)
         }
+        refreshTableView1()
     }
-    
+
+    // MARK: - Parent methods
+
+    override func isSendButtonEnabled() -> Bool {
+        return super.isSendButtonEnabled() || self.sendAssets.isEmpty == false
+    }
+
     // MARK: - Message methods
+
     override func rcmessage(_ indexPath: IndexPath?) -> RCMessage? {
         guard let indexPath = indexPath else { return nil }
         return (rcmessages[indexPath.section])
     }
-    
+
     func addMessage(_ text: String?, incoming: Bool) {
         let rcmessage = RCMessage(text: text, incoming: incoming)
         rcmessages.append(rcmessage)
@@ -116,19 +123,19 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
     }
 
     // MARK: - Message Button methods
+
     @objc func openUrlFromMessageButton(_ notification: NSNotification) {
-        if let urlString = notification.userInfo?["url"] as? String, let url = URL(string: urlString) {
-            UIApplication.shared.open(url, options: [:])
-        }
+        guard let urlString = notification.userInfo?["url"] as? String, let url = URL(string: urlString) else { return }
+        UIApplication.shared.open(url, options: [:])
     }
-    
+
     @objc func sendMessageButton(_ notification: NSNotification) {
-        if let text = notification.userInfo?["text"] as? String {
-            usedesk?.sendMessage(text)
-        }
+        guard let text = notification.userInfo?["text"] as? String else { return }
+        usedesk?.sendMessage(text)
     }
-    
+
     // MARK: - Avatar methods
+
     override func avatarInitials(_ indexPath: IndexPath?) -> String? {
         guard let indexPath = indexPath else { return nil }
 
@@ -139,7 +146,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             return "Ad"
         }
     }
-    
+
     override func avatarImage(_ indexPath: IndexPath?) -> UIImage? {
         guard let indexPath = indexPath else { return nil }
 
@@ -155,71 +162,72 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                 if rcmessage.outgoing == true {
                     return UIImage.named("avatarClient")
                 } else {
-                    return UIImage.named("avatarOperator") 
+                    return UIImage.named("avatarOperator")
                 }
             }
-        } catch {
-        }
+        } catch {}
 //        if let anAvatar = URL(string: rcmessage.avatar ?? ""), let anAvatar1 = Data(contentsOf: anAvatar) {
 //            image = UIImage(data: anAvatar1)
 //        }
         return image
     }
-    
+
     // MARK: - Header, Footer methods
+
     override func textBubbleHeader(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     override func textBubbleFooter(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     override func textSectionFooter(_ indexPath: IndexPath?) -> String? {
         return nil
     }
-    
+
     override func menuItems(_ indexPath: IndexPath?) -> [Any]? {
         let menuItemCopy = RCMenuItem(title: "Copy", action: #selector(self.actionMenuCopy(_:)))
         menuItemCopy.indexPath = indexPath
         return [menuItemCopy]
     }
-    
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        if action == #selector(self.actionMenuCopy(_:)) {
-            return true
-        }
-        return false
+        return action == #selector(self.actionMenuCopy(_:))
     }
-    
+
     // MARK: - Typing indicator methods
+
     func typingIndicatorShow(_ show: Bool, animated: Bool, delay: CGFloat) {
-        let time = DispatchTime.now() + (Double(delay))
-        DispatchQueue.main.asyncAfter(deadline: (time), execute: { [weak self] in
-            guard let wSelf = self else {return}
+        let time = DispatchTime.now() + Double(delay)
+
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
+            guard let wSelf = self else { return }
             wSelf.typingIndicatorShow(show, animated: animated)
         })
     }
-    
+
     // MARK: - Title details methods
+
     func updateTitleDetails() {
         labelTitle1.text = "UseDesk"
         labelTitle2.text = "online now"
     }
-    
+
     // MARK: - Refresh methods
+
     func refreshTableView1() {
         refreshTableView2()
         scroll(toBottom: true)
     }
-    
+
     func refreshTableView2() {
         tableView.reloadData()
     }
-    
+
     func sendDialogflowRequest(_ text: String?) {
         typingIndicatorShow(true, animated: true, delay: 0.5)
-        /*AITextRequest *aiRequest = [apiAI textRequest];
+        /* AITextRequest *aiRequest = [apiAI textRequest];
          aiRequest.query = @[text];
          [aiRequest setCompletionBlockSuccess:^(AIRequest *request, id response)
          {
@@ -230,41 +238,40 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
          {
          [ProgressHUD showError:@"Dialogflow request error."];
          }];
-         [apiAI enqueue:aiRequest];*/
+         [apiAI enqueue:aiRequest]; */
     }
-    
+
     func displayDialogflowResponse(_ dictionary: [AnyHashable: Any]?, delay: CGFloat) {
-        let time = DispatchTime.now() + Double(Double(delay) )
+        let time = DispatchTime.now() + Double(delay)
+
         DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             wSelf.displayDialogflowResponse(dictionary)
         })
     }
-    
+
     func displayDialogflowResponse(_ dictionary: [AnyHashable: Any]?) {
         let result = dictionary?["result"] as? [AnyHashable: Any]
         let fulfillment = result?["fulfillment"] as? [AnyHashable: Any]
         let text = fulfillment?["speech"] as? String
         addMessage(text, incoming: true)
     }
-    
+
     // MARK: - User actions
+
     @objc func actionDone() {
-        for rcmessage in rcmessages {
-            if rcmessage.video_path != "" {
-                do {
-                    try? FileManager().removeItem(atPath: rcmessage.video_path)
-                }
-            }
+        for rcmessage in rcmessages where rcmessage.video_path.isEmpty == false {
+            try? FileManager().removeItem(atPath: rcmessage.video_path)
         }
         usedesk?.releaseChat()
+
         if isFromBase {
             navigationController?.popViewController(animated: true)
         } else {
             dismiss(animated: true)
         }
     }
-    
+
     override func actionSendMessage(_ text: String?) {
         if let text = text?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), text.isEmpty == false {
             usedesk?.sendMessage(text)
@@ -299,7 +306,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
                     let targetSize = CGSize(width: CGFloat(phAsset.pixelWidth), height: CGFloat(phAsset.pixelHeight))
                     PHCachingImageManager.default().requestImage(for: phAsset, targetSize: targetSize, contentMode: .aspectFit, options: options, resultHandler: { [weak self] result, _ in
-                        guard let wSelf = self else {return}
+                        guard let wSelf = self else { return }
                         if let result = result {
                             imageQueue.async {
                                 let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: result))"
@@ -312,7 +319,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                     })
                 }
             } else if let uiImage = asset as? UIImage {
-                imageQueue.async {[weak self] in
+                imageQueue.async { [weak self] in
                     let content = "data:image/png;base64,\(UseDeskSDKHelp.image(toNSString: uiImage))"
                     let fileName = String(format: "%ld", content.hash) + ".png"
                     DispatchQueue.main.async {
@@ -325,7 +332,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         self.sendAssets = []
         self.closeAttachCollection()
     }
-    
+
     override func actionAttachMessage() {
         if sendAssets.count < Constants.maxCountAssets {
             let alertController = UIAlertController(title: "Прикрепить файл", message: nil, preferredStyle: UIAlertController.Style.alert)
@@ -349,7 +356,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             self.present(alertController, animated: true, completion: nil)
         }
     }
-    
+
     func takePhoto() {
         let picker = UIImagePickerController()
         picker.delegate = self
@@ -357,15 +364,15 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         picker.sourceType = .camera
         self.present(picker, animated: true)
     }
-    
+
     func selectPhoto() {
-        PHPhotoLibrary.requestAuthorization {[weak self] (status) in
+        PHPhotoLibrary.requestAuthorization { [weak self] status in
             if status == .authorized {
-                DispatchQueue.main.async {[weak self] in
+                DispatchQueue.main.async { [weak self] in
                     self?.openPhotoSelector()
                 }
             } else {
-                DispatchQueue.main.async {[weak self] in
+                DispatchQueue.main.async { [weak self] in
                     let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertControllerStyle.alert)
                     alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default))
                     self?.present(alertController, animated: true)
@@ -385,23 +392,25 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
     }
 
     // MARK: - User actions (menu)
+
     @objc func actionMenuCopy(_ sender: Any?) {
-        let indexPath: IndexPath? = RCMenuItem.indexPath((sender as! UIMenuController))
+        let indexPath: IndexPath? = RCMenuItem.indexPath(sender as? UIMenuController)
         let rcmessage: RCMessage? = self.rcmessage(indexPath)
         UIPasteboard.general.string = rcmessage?.text
     }
-   
+
     // MARK: - Table view data source
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return rcmessages.count
     }
-    
+
     override func actionTapBubble(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return }
 
         let rcmessage = rcmessages[indexPath.section]
 
-        guard let messageFile = rcmessage.file  else { return }
+        guard let messageFile = rcmessage.file else { return }
 
         if messageFile.type == "image" {
             navigationItem.leftBarButtonItem?.isEnabled = false
@@ -423,7 +432,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                 session.dataTask(with: url, completionHandler: { data, _, error in
                     if error == nil {
                         DispatchQueue.main.async(execute: { [weak self] in
-                            guard let wSelf = self else {return}
+                            guard let wSelf = self else { return }
                             rcmessage.picture_image = UIImage(data: data!)
                             if let pictureImage = rcmessage.picture_image {
                                 wSelf.imageVC.showImage(image: pictureImage)
@@ -452,7 +461,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             }
         }
     }
-    
 }
 
 extension DialogflowView: QBImagePickerControllerDelegate {
@@ -468,7 +476,7 @@ extension DialogflowView: QBImagePickerControllerDelegate {
             }
             showAttachCollection(assets: sendAssets)
         }
-        buttonInputSend.isEnabled = true
+        self.updateSendButtonState()
 
         dismiss(animated: true)
     }
@@ -486,7 +494,7 @@ extension DialogflowView: UIImagePickerControllerDelegate {
         if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
             sendAssets.append(chosenImage)
 
-            buttonInputSend.isEnabled = true
+            self.updateSendButtonState()
 
             showAttachCollection(assets: sendAssets)
         }
@@ -500,5 +508,4 @@ extension DialogflowView: UDImageViewDelegate {
         navigationItem.leftBarButtonItem?.isEnabled = true
         navigationItem.leftBarButtonItem?.tintColor = nil
     }
-    
 }
