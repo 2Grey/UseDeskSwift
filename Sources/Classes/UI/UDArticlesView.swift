@@ -118,7 +118,7 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         var id: Int = 0
         if isSearch {
             id = (searchArticles?.articles[indexPath.row].id)!
