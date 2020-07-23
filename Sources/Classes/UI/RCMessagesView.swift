@@ -6,13 +6,7 @@ import Photos
 
 class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
 
-    @IBOutlet var viewTitle: UIView!
-    @IBOutlet var labelTitle1: UILabel!
-    @IBOutlet var labelTitle2: UILabel!
-    @IBOutlet var buttonTitle: UIButton!
     @IBOutlet var tableView: UITableView!
-    @IBOutlet var viewLoadEarlier: UIView!
-    @IBOutlet var viewTypingIndicator: UIView!
     @IBOutlet var viewInput: UIView!
     @IBOutlet var buttonInputAttach: UIButton!
     @IBOutlet var buttonInputSend: UIButton!
@@ -61,7 +55,6 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.register(RCVideoMessageCell.self, forCellReuseIdentifier: "RCVideoMessageCell")
         tableView.register(RCAudioMessageCell.self, forCellReuseIdentifier: "RCAudioMessageCell")
         tableView.register(RCLocationMessageCell.self, forCellReuseIdentifier: "RCLocationMessageCell")
-        tableView.tableHeaderView = viewLoadEarlier
 
         attachCollectionView.delegate = self
         attachCollectionView.dataSource = self
@@ -117,16 +110,6 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         dismissKeyboard()
     }
 
-    // MARK: - Load earlier methods
-
-    func loadEarlierShow(_ show: Bool) {
-        viewLoadEarlier.isHidden = !show
-        var frame: CGRect = viewLoadEarlier.frame
-        frame.size.height = show ? 50 : 0
-        viewLoadEarlier.frame = frame
-        tableView.reloadData()
-    }
-
     // MARK: - Message methods
 
     func rcmessage(_ indexPath: IndexPath?) -> RCMessage? {
@@ -169,19 +152,6 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
     override var canBecomeFirstResponder: Bool {
         return true
-    }
-
-    // MARK: - Typing indicator methods
-
-    func typingIndicatorShow(_ show: Bool, animated: Bool) {
-        if show {
-            tableView.tableFooterView = viewTypingIndicator
-            scroll(toBottom: animated)
-        } else {
-            UIView.animate(withDuration: animated ? 0.25 : 0, animations: {
-                self.tableView.tableFooterView = nil
-            })
-        }
     }
 
     func dismissKeyboard() {
@@ -277,22 +247,6 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     func updateSendButtonState() {
         buttonInputSend.isEnabled = self.isSendButtonEnabled()
     }
-
-    // MARK: * User actions (title)
-
-    @IBAction func actionTitle(_ sender: Any) {
-        actionTitle()
-    }
-
-    func actionTitle() {}
-
-    // MARK: * User actions (load earlier)
-
-    @IBAction func actionLoadEarlier(_ sender: Any) {
-        actionLoadEarlier()
-    }
-
-    func actionLoadEarlier() {}
 
     // MARK: * User actions (bubble tap)
 

@@ -27,12 +27,12 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.dataSource = self
         tableView.delegate = self
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Чат", style: .done, target: self, action: #selector(self.actionChat))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
         navigationView = UIView(frame: navigationController?.navigationBar.bounds ?? .zero)
         navigationItem.titleView = navigationView
         searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
-        searchBar.tintColor = .white
+        searchBar.placeholder = searchBarPlaceholderText
+        searchBar.tintColor = searchBarTintColor
         searchBar.delegate = self
         navigationView.addSubview(searchBar)
         
@@ -117,6 +117,8 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         var id: Int = 0
         if isSearch {
             id = (searchArticles?.articles[indexPath.row].id)!

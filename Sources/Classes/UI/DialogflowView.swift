@@ -32,9 +32,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(self.sendMessageButton(_:)), name: Notification.Name("messageButtonSend"), object: nil)
 
         rcmessages = [RCMessage]()
-        loadEarlierShow(false)
-
-        updateTitleDetails()
 
         guard let usedesk = usedesk else {
             reloadhistory()
@@ -53,9 +50,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                 wSelf.rcmessages.append(aMessage)
             }
             wSelf.refreshTableView1()
-//            if message?.incoming != false {
-//                UDAudio.playMessageIncoming()
-//            }
         }
 
         usedesk.feedbackAnswerMessageBlock = { [weak self] success in
@@ -196,24 +190,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         return action == #selector(self.actionMenuCopy(_:))
     }
 
-    // MARK: - Typing indicator methods
-
-    func typingIndicatorShow(_ show: Bool, animated: Bool, delay: CGFloat) {
-        let time = DispatchTime.now() + Double(delay)
-
-        DispatchQueue.main.asyncAfter(deadline: time, execute: { [weak self] in
-            guard let wSelf = self else { return }
-            wSelf.typingIndicatorShow(show, animated: animated)
-        })
-    }
-
-    // MARK: - Title details methods
-
-    func updateTitleDetails() {
-        labelTitle1.text = "UseDesk"
-        labelTitle2.text = "online now"
-    }
-
     // MARK: - Refresh methods
 
     func refreshTableView1() {
@@ -223,22 +199,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
     func refreshTableView2() {
         tableView.reloadData()
-    }
-
-    func sendDialogflowRequest(_ text: String?) {
-        typingIndicatorShow(true, animated: true, delay: 0.5)
-        /* AITextRequest *aiRequest = [apiAI textRequest];
-         aiRequest.query = @[text];
-         [aiRequest setCompletionBlockSuccess:^(AIRequest *request, id response)
-         {
-         [self typingIndicatorShow:NO animated:YES delay:1.0];
-         [self displayDialogflowResponse:response delay:1.1];
-         }
-         failure:^(AIRequest *request, NSError *error)
-         {
-         [ProgressHUD showError:@"Dialogflow request error."];
-         }];
-         [apiAI enqueue:aiRequest]; */
     }
 
     func displayDialogflowResponse(_ dictionary: [AnyHashable: Any]?, delay: CGFloat) {
