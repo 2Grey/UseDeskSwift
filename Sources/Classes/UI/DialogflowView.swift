@@ -40,8 +40,14 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
         usedesk.connectBlock = { [weak self] success, error in
             guard let wSelf = self else { return }
+            wSelf.hideInfo(animated: true)
             wSelf.hudErrorConnection?.hide(animated: true)
             wSelf.reloadhistory()
+        }
+
+        usedesk.disconnectBlock = { [weak self] data in
+            guard let wSelf = self else { return }
+            wSelf.showInfo(text: "Соединение потеряно", animated: true)
         }
 
         usedesk.newMessageBlock = { [weak self] success, message in

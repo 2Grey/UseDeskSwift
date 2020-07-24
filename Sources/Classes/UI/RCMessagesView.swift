@@ -13,9 +13,13 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet var attachCollectionView: UICollectionView!
     @IBOutlet var textInput: UITextView!
 
+    @IBOutlet var infoView: UIView!
+    @IBOutlet var infoLabel: UILabel!
+
     @IBOutlet var textInputHC: NSLayoutConstraint!
     @IBOutlet var textInputBC: NSLayoutConstraint!
     @IBOutlet var bottomViewBC: NSLayoutConstraint!
+    @IBOutlet var infoViewHeightConstraint: NSLayoutConstraint!
 
     weak var usedesk: UseDeskSDK?
 
@@ -66,7 +70,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         gesture.minimumPressDuration = 0
         gesture.cancelsTouchesInView = false
 
+        let tapInfoGesture = UITapGestureRecognizer(target: self, action: #selector(self.infoViewAction(_:)))
+        self.infoView.addGestureRecognizer(tapInfoGesture)
+
         inputPanelInit()
+
+        self.hideInfo(animated: false)
     }
 
     deinit {
@@ -124,6 +133,49 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func avatarImage(_ indexPath: IndexPath?) -> UIImage? {
         return nil
+    }
+
+    // MARK: - Info viw methods
+
+    func showInfo(text: String?, animated: Bool) {
+        guard let text = text else {
+            self.hideInfo(animated: animated)
+            return
+        }
+
+        self.infoLabel.text = text
+
+        let contentSize = CGSize(width: infoView.frame.width - 10.0 * 2.0, height: CGFloat.greatestFiniteMagnitude)
+        let preHeight = self.infoLabel.sizeThatFits(contentSize).height
+
+        let height = preHeight + 5.0 * 2.0
+
+
+        self.infoView.isHidden = false
+
+        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: {[weak self] in
+            self?.infoViewHeightConstraint.constant = height
+            self?.infoView.setNeedsUpdateConstraints()
+            self?.view.layoutIfNeeded()
+        })
+    }
+
+    func hideInfo(animated: Bool) {
+        self.view.layoutIfNeeded()
+
+        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: {[weak self] in
+            self?.infoViewHeightConstraint.constant = 0
+            self?.infoView.setNeedsUpdateConstraints()
+            self?.view.layoutIfNeeded()
+        }) {[weak self] _ in
+            self?.infoLabel.text = nil
+            self?.infoView.isHidden = true
+        }
+    }
+
+    @objc private func infoViewAction(_ sender: UITapGestureRecognizer) {
+        self.hideInfo(animated: true)
     }
 
     // MARK: - Header, Footer methods

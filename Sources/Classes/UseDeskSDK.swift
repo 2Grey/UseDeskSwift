@@ -12,6 +12,7 @@ public typealias UDSBaseBlock = (Bool, [BaseCollection]?, String?) -> Void
 public typealias UDSArticleBlock = (Bool, Article?, String?) -> Void
 public typealias UDSArticleSearchBlock = (Bool, SearchArticle?, String?) -> Void
 public typealias UDSConnectBlock = (Bool, String?) -> Void
+public typealias UDSDisconnectBlock = ([Any]?) -> Void
 public typealias UDSNewMessageBlock = (Bool, RCMessage?) -> Void
 public typealias UDSErrorBlock = ([Any]?) -> Void
 public typealias UDSFeedbackMessageBlock = (RCMessage?) -> Void
@@ -21,6 +22,7 @@ public typealias UDCloseBlock = () -> Void
 public class UseDeskSDK: NSObject {
     @objc public var newMessageBlock: UDSNewMessageBlock?
     @objc public var connectBlock: UDSConnectBlock?
+    @objc public var disconnectBlock: UDSDisconnectBlock?
     @objc public var errorBlock: UDSErrorBlock?
     @objc public var closeBlock: UDCloseBlock?
     @objc public var feedbackMessageBlock: UDSFeedbackMessageBlock?
@@ -140,15 +142,16 @@ public class UseDeskSDK: NSObject {
 
         socket?.on("error", callback: { [weak self] data, ack in
             guard let wSelf = self else {return}
-            if wSelf.errorBlock != nil {
-                wSelf.errorBlock!(data)
-            }
+            wSelf.errorBlock?(data)
         })
+
         socket?.on("disconnect", callback: { [weak self, weak config] data, ack in
             guard let wConfig = config else {return}
             guard let wSelf = self else {return}
 
             print("socket disconnect")
+
+            wSelf.disconnectBlock?(data)
 
             let token = wSelf.loadToken(for: wConfig.email)
             let arrConfStart = UseDeskSDKHelp.config_CompanyID(wConfig.companyId, email: wConfig.email, phone: wConfig.phone, name: wConfig.name, url: wConfig.url, token: token)
@@ -157,9 +160,7 @@ public class UseDeskSDK: NSObject {
 
         socket?.on("dispatch", callback: { [weak self] data, ack in
             guard let wSelf = self else {return}
-            if data.count == 0 {
-                return
-            }
+            guard data.count > 0 else { return }
 
             wSelf.action_INITED(data)
 
@@ -177,8 +178,8 @@ public class UseDeskSDK: NSObject {
                     startBlock(auth_success, "false inited")
                 }
 
-                if auth_success && (wSelf.connectBlock != nil) {
-                    wSelf.connectBlock!(true, nil)
+                if auth_success {
+                    wSelf.connectBlock?(true, nil)
                 }
 
                 wSelf.action_Feedback_Answer(data)

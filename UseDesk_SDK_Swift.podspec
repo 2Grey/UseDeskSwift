@@ -32,5 +32,4 @@ Pod::Spec.new do |s|
 	s.dependency 'Alamofire', '~> 4.0'
 	s.dependency 'QBImagePickerController', '~> 3.4'
 	s.dependency 'SDWebImage', '~> 4.0'
-
 end

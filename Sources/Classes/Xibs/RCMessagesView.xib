@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -13,6 +13,9 @@
                 <outlet property="bottomViewBC" destination="M5j-Eh-ief" id="zAo-eb-QNm"/>
                 <outlet property="buttonInputAttach" destination="Wx7-PH-b4G" id="rdS-HP-55b"/>
                 <outlet property="buttonInputSend" destination="aaP-dQ-ykO" id="SVD-OS-0XZ"/>
+                <outlet property="infoLabel" destination="qLq-cl-gBn" id="Ie2-eW-y5H"/>
+                <outlet property="infoView" destination="AQ8-LO-pDd" id="jqU-Ux-m81"/>
+                <outlet property="infoViewHeightConstraint" destination="teW-wE-TLF" id="AHD-bU-ltF"/>
                 <outlet property="tableView" destination="i5M-Pr-FkT" id="lyD-HE-CdL"/>
                 <outlet property="textInput" destination="WF4-Ti-KqT" id="fwE-JZ-jPs"/>
                 <outlet property="textInputBC" destination="0QF-3K-Leo" id="kGo-RE-VxI"/>
@@ -26,8 +29,27 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" bouncesZoom="NO" style="plain" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="i5M-Pr-FkT">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="524"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AQ8-LO-pDd" userLabel="InfoView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Info" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qLq-cl-gBn" userLabel="InfoLabel">
+                            <rect key="frame" x="10" y="5" width="300" height="25"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.89803921568627454" green="0.22352941176470587" blue="0.20784313725490194" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="qLq-cl-gBn" secondAttribute="trailing" constant="10" id="HEX-9H-HG2"/>
+                        <constraint firstItem="qLq-cl-gBn" firstAttribute="top" secondItem="AQ8-LO-pDd" secondAttribute="top" constant="5" id="fkg-CH-gQQ"/>
+                        <constraint firstAttribute="bottom" secondItem="qLq-cl-gBn" secondAttribute="bottom" constant="5" id="nc3-ge-78n"/>
+                        <constraint firstItem="qLq-cl-gBn" firstAttribute="leading" secondItem="AQ8-LO-pDd" secondAttribute="leading" constant="10" id="raJ-bn-yh6"/>
+                        <constraint firstAttribute="height" constant="35" id="teW-wE-TLF"/>
+                    </constraints>
+                </view>
+                <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" bouncesZoom="NO" style="plain" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="i5M-Pr-FkT" userLabel="Chat Table View">
+                    <rect key="frame" x="0.0" y="35" width="320" height="489"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="Tng-2m-Rnh"/>
@@ -98,12 +120,15 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="AQ8-LO-pDd" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="top" id="0ng-Br-V6M"/>
                 <constraint firstItem="xuU-RB-86v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="AWf-YO-X5Y"/>
+                <constraint firstItem="AQ8-LO-pDd" firstAttribute="leading" secondItem="PpO-Gc-0B7" secondAttribute="leading" id="D72-8r-9LR"/>
                 <constraint firstAttribute="trailing" secondItem="xuU-RB-86v" secondAttribute="trailing" id="H1D-Pa-OaA"/>
                 <constraint firstAttribute="bottom" secondItem="xuU-RB-86v" secondAttribute="bottom" id="M5j-Eh-ief"/>
                 <constraint firstItem="xuU-RB-86v" firstAttribute="leading" secondItem="PpO-Gc-0B7" secondAttribute="leading" id="P6d-Se-fzz"/>
-                <constraint firstItem="i5M-Pr-FkT" firstAttribute="top" secondItem="PpO-Gc-0B7" secondAttribute="top" id="bn0-oS-5Q0"/>
+                <constraint firstAttribute="trailing" secondItem="AQ8-LO-pDd" secondAttribute="trailing" id="ZZc-zf-GBq"/>
                 <constraint firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" id="ivS-wA-vbN"/>
+                <constraint firstItem="AQ8-LO-pDd" firstAttribute="top" secondItem="PpO-Gc-0B7" secondAttribute="top" id="kVD-cl-rXA"/>
                 <constraint firstItem="i5M-Pr-FkT" firstAttribute="leading" secondItem="PpO-Gc-0B7" secondAttribute="leading" id="pI8-fN-4he"/>
             </constraints>
             <point key="canvasLocation" x="266.25" y="762.67605633802816"/>
