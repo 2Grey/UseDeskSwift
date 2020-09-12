@@ -19,7 +19,7 @@ import Foundation
 
 @objc public enum OrderArticle: Int {
     case asc
-    case desc 
+    case desc
 }
 
 @objc public class Article: NSObject {
@@ -31,9 +31,9 @@ import Foundation
     var collection_id: Int = 0
     var views: Int = 0
     var created_at: String = ""
-    
+
     init?(json: [String: Any]) {
-        
+
         guard
             let id = json["id"] as? Int,
             let title = json["title"] as? String,
@@ -43,8 +43,8 @@ import Foundation
             let collection_id = json["collection_id"] as? Int,
             let views = json["views"] as? Int,
             let created_at = json["created_at"] as? String
-            else { return nil }
-        
+        else { return nil }
+
         self.id = id
         self.title = title
         self.text = text
@@ -58,7 +58,7 @@ import Foundation
             self.open = false
         }
     }
-    
+
     static func get(from jsonObject: Any) -> Article? {
         guard let jsonObject = jsonObject as? [String: Any] else { return nil }
         if let article = Article(json: jsonObject) {
@@ -73,7 +73,7 @@ import Foundation
     var count: Int = 0
     var total_count: Int = 0
     var articles: [Article] = []
-    
+
     init?(from: Any) {
         guard let json = from as? [String: Any] else { return nil }
         guard
@@ -81,8 +81,8 @@ import Foundation
             let last_page = json["last-page"] as? Int,
             let count = json["count"] as? Int,
             let total_count = json["total-count"] as? Int,
-            let articlesArray = json["articles"] as? Array<[String: Any]>
-            else { return nil }
+            let articlesArray = json["articles"] as? [[String: Any]]
+        else { return nil }
         self.page = page
         self.last_page = last_page
         self.count = count

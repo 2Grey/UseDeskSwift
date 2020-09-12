@@ -3,36 +3,42 @@
 
 import Foundation
 import UIKit
+import WebKit
 
 class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
-    
-    @IBOutlet weak var webView: UIWebView!
-    @IBOutlet weak var loadingView: UIView!
-    
-    var article: Article? = nil
+
+    @IBOutlet var webView: WKWebView!
+    @IBOutlet var loadingView: UIView!
+
+    var article: Article?
     weak var usedesk: UseDeskSDK?
     var url: String?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
-        
-        webView.delegate = self
-        webView.loadHTMLString(article!.text, baseURL: nil)
+
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
+
+        self.webView.navigationDelegate = self
+        self.webView.loadHTMLString(article!.text, baseURL: nil)
     }
-    
+
     // MARK: - User actions
+
     @objc func actionChat() {
-        guard let usedesk = usedesk, let config = usedesk.config else {return}
+        guard let usedesk = usedesk, let config = usedesk.config else { return }
+
         UIView.animate(withDuration: 0.3) {
             self.loadingView.alpha = 1
         }
+
         usedesk.startWithoutGUICompanyID(with: config) { [weak self] success, error in
-            guard let wSelf = self else {return}
-            guard wSelf.usedesk != nil else {return}
+            guard let wSelf = self else { return }
+            guard wSelf.usedesk != nil else { return }
+
             if success {
                 DispatchQueue.main.async(execute: {
-                    let dialogflowVC : DialogflowView = DialogflowView()
+                    let dialogflowVC = DialogflowView()
                     dialogflowVC.usedesk = wSelf.usedesk
                     dialogflowVC.isFromBase = true
                     wSelf.navigationController?.pushViewController(dialogflowVC, animated: true)
@@ -41,7 +47,7 @@ class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
                     }
                 })
             } else {
-                if (error == "noOperators") {
+                if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
                     if wSelf.url != nil {
                         offlineVC.url = wSelf.url!
@@ -55,8 +61,13 @@ class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
             }
         }
     }
-    
-    func webViewDidFinishLoad(_ webView: UIWebView) {
+}
+
+// MARK: - WKNavigationDelegate
+
+extension UDArticleView: WKNavigationDelegate {
+
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         UIView.animate(withDuration: 0.3) {
             self.loadingView.alpha = 0
         }

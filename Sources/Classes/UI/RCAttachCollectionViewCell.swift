@@ -12,7 +12,7 @@ protocol RCAttachCVCellDelegate: class {
 
 class RCAttachCollectionViewCell: UICollectionViewCell {
     
-    //@IBOutlet weak var imageAttachView: UIImageView!
+    // @IBOutlet weak var imageAttachView: UIImageView!
     
     weak var delegate: RCAttachCVCellDelegate?
     
@@ -53,7 +53,7 @@ class RCAttachCollectionViewCell: UICollectionViewCell {
                 formatter.zeroFormattingBehavior = .pad
                 if var formattedString = formatter.string(from: TimeInterval(videoDuration!)) {
                     if videoDuration! < 3600 {
-                        formattedString.removeSubrange(formattedString.startIndex..<String.Index(encodedOffset: 3))
+                        formattedString.removeSubrange(formattedString.startIndex ..< String.Index(encodedOffset: 3))
                     }
                     durationLabel.text = formattedString
                     videoView.addSubview(durationLabel)
@@ -62,7 +62,6 @@ class RCAttachCollectionViewCell: UICollectionViewCell {
                 let videoIndicatorView = UIImageView(image: UIImage.named("videoIndicator"))
                 videoIndicatorView.frame = CGRect(x: 2, y: 0, width: 12, height: 12)
                 videoView.addSubview(videoIndicatorView)
-                
             }
             imageAttachView.addSubview(videoView)
         }
@@ -71,8 +70,7 @@ class RCAttachCollectionViewCell: UICollectionViewCell {
         self.index = index
     }
     
-    override func layoutSubviews() {
-    }
+    override func layoutSubviews() {}
     
     @objc func deleteAction(sender: UIButton!) {
         delegate?.deleteFile(index: index)

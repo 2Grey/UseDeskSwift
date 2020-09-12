@@ -4,10 +4,9 @@
 import Foundation
 
 class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionViewDataSource {
-    
 
     var textView: UITextView?
-    var collectionView: UICollectionView? = nil
+    var collectionView: UICollectionView?
 
     private var indexPath: IndexPath?
     private weak var messagesView: RCMessagesView?
@@ -85,6 +84,7 @@ class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionVi
     }
 
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         return size.height
@@ -97,7 +97,7 @@ class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionVi
 
         let rect: CGRect? = rcmessage?.text.boundingRect(with: CGSize(width: maxwidth, height: CGFloat(MAXFLOAT)), options: .usesLineFragmentOrigin, attributes: [
             NSAttributedString.Key.font: RCMessages.textFont() as Any
-            ], context: nil)
+        ], context: nil)
 
         let width: CGFloat = (rect?.size.width ?? 0.0) + RCMessages.textInsetLeft() + RCMessages.textInsetRight()
         let height: CGFloat = (rect?.size.height ?? 0.0) + RCMessages.textInsetTop() + RCMessages.textInsetBottom()
@@ -121,12 +121,11 @@ class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionVi
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if rcmessage?.rcButtons[indexPath.row].url != "" {
-            let urlDataDict:[String: String] = ["url": rcmessage!.rcButtons[indexPath.row].url]
+            let urlDataDict: [String: String] = ["url": rcmessage!.rcButtons[indexPath.row].url]
             NotificationCenter.default.post(name: Notification.Name("messageButtonURLOpen"), object: nil, userInfo: urlDataDict)
         } else {
-            let textDataDict:[String: String] = ["text": rcmessage?.rcButtons[indexPath.row].title ?? ""]
+            let textDataDict: [String: String] = ["text": rcmessage?.rcButtons[indexPath.row].title ?? ""]
             NotificationCenter.default.post(name: Notification.Name("messageButtonSend"), object: nil, userInfo: textDataDict)
         }
     }
 }
-

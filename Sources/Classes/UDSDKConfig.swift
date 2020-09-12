@@ -21,7 +21,7 @@ public class UDSDKConfig {
     public var phone: String?
     public var name: String?
     public var nameChat: String?
-    public var pickerMediaType: QBImagePickerMediaType = QBImagePickerMediaType.any
+    public var pickerMediaType = QBImagePickerMediaType.any
 
     public init(url: String, port: String, apiToken: String, companyId: String, email: String, isUseBase: Bool) {
         self.url = url

@@ -55,6 +55,7 @@ class RCEmojiMessageCell: RCMessageCell {
     }
     
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         return size.height
@@ -65,9 +66,9 @@ class RCEmojiMessageCell: RCMessageCell {
 
         let maxwidth: CGFloat = (0.6 * SCREEN_WIDTH) - RCMessages.emojiInsetLeft() - RCMessages.emojiInsetRight()
         let rect: CGRect? = rcmessage.text.boundingRect(with: CGSize(width: maxwidth, height: CGFloat(MAXFLOAT)),
-                                                         options: .usesLineFragmentOrigin,
-                                                         attributes: [NSAttributedStringKey.font: RCMessages.emojiFont() as Any],
-                                                         context: nil)
+                                                        options: .usesLineFragmentOrigin,
+                                                        attributes: [NSAttributedStringKey.font: RCMessages.emojiFont() as Any],
+                                                        context: nil)
 
         let width: CGFloat = (rect?.size.width ?? 0.0) + RCMessages.emojiInsetLeft() + RCMessages.emojiInsetRight()
         let height: CGFloat = (rect?.size.height ?? 0.0) + RCMessages.emojiInsetTop() + RCMessages.emojiInsetBottom()
@@ -90,7 +91,6 @@ class RCEmojiMessageCell: RCMessageCell {
         super.layoutSubviews(size)
         textView?.frame = CGRect(x: 0, y: size.height - 80, width: size.width, height: 80)
         dislikeButton?.frame = CGRect(x: size.width * 1 / 10, y: size.height / 4, width: size.width / 4, height: size.height / 4)
-        likeButton?.frame = CGRect(x: size.width * 2 / 3, y: size.height / 4, width: size.width / 4, height: size.height / 4)        
+        likeButton?.frame = CGRect(x: size.width * 2 / 3, y: size.height / 4, width: size.width / 4, height: size.height / 4)
     }
-    
 }

@@ -10,7 +10,6 @@ import UIKit
 let SCREEN_WIDTH = UIScreen.main.bounds.size.width
 let SCREEN_HEIGHT = UIScreen.main.bounds.size.height
 
-
 @objc public enum RCType: Int {
     case unknown = 0
     case status = 1
@@ -43,6 +42,7 @@ public class RCMessages: NSObject {
     public var navBarTextColor: UIColor? = UIColor.white
 
     // MARK: * Section
+
     public var sectionHeaderMargin: CGFloat = 8.0
     public var sectionHeaderHeight: CGFloat = 20.0
     public var sectionHeaderLeft: CGFloat = 10.0
@@ -58,6 +58,7 @@ public class RCMessages: NSObject {
     public var sectionFooterMargin: CGFloat = 8.0
 
     // MARK: * Bubble
+
     public var bubbleHeaderHeight: CGFloat = 15.0
     public var bubbleHeaderLeft: CGFloat = 50.0
     public var bubbleHeaderRight: CGFloat = 50.0
@@ -75,6 +76,7 @@ public class RCMessages: NSObject {
     public var bubbleFooterFont: UIFont? = UIFont.systemFont(ofSize: 12)
 
     // MARK: * Avatar
+
     public var avatarDiameter: CGFloat = 30.0
     public var avatarMarginLeft: CGFloat = 4.0
     public var avatarMarginRight: CGFloat = 4.0
@@ -84,6 +86,7 @@ public class RCMessages: NSObject {
     public var avatarFont: UIFont? = UIFont.systemFont(ofSize: 12)
 
     // MARK: * Status cell
+
     public var statusBubbleRadius: CGFloat = 10.0
     public var statusBubbleColor: UIColor? = UIColor(hexString: "00000030")
     public var statusTextColor: UIColor? = UIColor.white
@@ -99,6 +102,7 @@ public class RCMessages: NSObject {
     }
 
     // MARK: * Text cell
+
     public var textBubbleWidthMin: CGFloat = 45.0
     public var textBubbleHeightMin: CGFloat = 35.0
 
@@ -117,6 +121,7 @@ public class RCMessages: NSObject {
     }
 
     // MARK: * Emoji cell
+
     public var emojiBubbleWidthMin: CGFloat = 45.0
     public var emojiBubbleHeightMin: CGFloat = 35.0
     public var emojiBubbleColorOutgoing: UIColor? = UIColor(hexString: "007affff")
@@ -132,6 +137,7 @@ public class RCMessages: NSObject {
     }
 
     // MARK: * Picture cell
+
     public var pictureBubbleWidth: CGFloat = 200.0
 
     public var pictureBubbleColorOutgoing: UIColor? = UIColor.lightGray
@@ -139,6 +145,7 @@ public class RCMessages: NSObject {
     public var pictureImageManual: UIImage? = UIImage.named("rcmessages_manual")
 
     // MARK: * Video cell
+
     public var videoBubbleWidth: CGFloat = 200.0
     public var videoBubbleHeight: CGFloat = 145.0
 
@@ -162,6 +169,7 @@ public class RCMessages: NSObject {
     public var audioFont: UIFont? = UIFont.systemFont(ofSize: 16)
 
     // MARK: * Location cell
+
     public var locationBubbleWidth: CGFloat = 200.0
     public var locationBubbleHeight: CGFloat = 145.0
 
@@ -193,6 +201,7 @@ public class RCMessages: NSObject {
     }
 
     // MARK: - Chat send area
+
     public var attachButtonImage: UIImage? = UIImage.named("rcmessage_attach")
     public var attachButtonTitle: String?
     public var attachButtonTextColor: UIColor? = UIColor.black
@@ -217,8 +226,8 @@ public class RCMessages: NSObject {
         super.init()
     }
 
-
     // MARK: - Static
+
     // Section
     
     class func sectionHeaderMargin() -> CGFloat {
@@ -268,6 +277,7 @@ public class RCMessages: NSObject {
     class func sectionFooterMargin() -> CGFloat {
         return self.shared.sectionFooterMargin
     }
+
     // Bubble
     
     class func bubbleHeaderHeight() -> CGFloat {
@@ -321,6 +331,7 @@ public class RCMessages: NSObject {
     class func bubbleFooterFont() -> UIFont? {
         return self.shared.bubbleFooterFont
     }
+
     // Avatar
     
     class func avatarDiameter() -> CGFloat {
@@ -474,6 +485,7 @@ public class RCMessages: NSObject {
     class func emojiInset() -> UIEdgeInsets {
         return self.shared.emojiInset
     }
+
     // Picture cell
     
     class func pictureBubbleWidth() -> CGFloat {
@@ -636,5 +648,4 @@ public class RCMessages: NSObject {
     class func inputInset() -> UIEdgeInsets {
         return self.shared.inputInset
     }
-
 }

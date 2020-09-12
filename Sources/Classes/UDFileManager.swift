@@ -8,11 +8,11 @@ import Alamofire
 import Photos
 
 class UDFileManager: NSObject {
-    
-    class func downloadFile(indexPath: IndexPath, urlPath: String, successBlock: @escaping (IndexPath, URL)->(), errorBlock: (_ error: String) -> Void) {
+
+    class func downloadFile(indexPath: IndexPath, urlPath: String, successBlock: @escaping (IndexPath, URL) -> Void, errorBlock: (_ error: String) -> Void) {
         if let url = URL(string: urlPath) {
             let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-            
+
             Alamofire.download(url, to: destination).responseData { response in
                 if let destinationUrl = response.destinationURL {
                     successBlock(indexPath, destinationUrl)
@@ -20,7 +20,7 @@ class UDFileManager: NSObject {
             }
         }
     }
-    
+
     class func videoPreview(filePath: String) -> UIImage {
         let vidURL = URL(fileURLWithPath: filePath)
         let asset = AVURLAsset(url: vidURL)
@@ -36,13 +36,12 @@ class UDFileManager: NSObject {
             return UIImage()
         }
     }
-    
+
     func timeStringFor(seconds: Int) -> String {
-      let formatter = DateComponentsFormatter()
-      formatter.allowedUnits = [.second, .minute, .hour]
-      formatter.zeroFormattingBehavior = .pad
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.second, .minute, .hour]
+        formatter.zeroFormattingBehavior = .pad
 
-      return formatter.string(from: TimeInterval(seconds))!
+        return formatter.string(from: TimeInterval(seconds))!
     }
-
 }

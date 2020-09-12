@@ -58,6 +58,7 @@ class RCLocationMessageCell: RCMessageCell {
     }
     
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         return size.height
@@ -70,7 +71,5 @@ class RCLocationMessageCell: RCMessageCell {
         } else {
             return CGSize(width: 0, height: 0)
         }
-        
     }
-
 }

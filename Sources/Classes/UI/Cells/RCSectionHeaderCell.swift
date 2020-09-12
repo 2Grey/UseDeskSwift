@@ -5,10 +5,10 @@ import Foundation
 
 class RCSectionHeaderCell: UITableViewCell {
     var labelSectionHeader: UILabel?
-    
+
     private var indexPath: IndexPath?
     private weak var messagesView: RCMessagesView?
-    
+
     func bindData(_ indexPath: IndexPath?, messagesView: RCMessagesView?) {
         self.indexPath = indexPath
         self.messagesView = messagesView
@@ -25,7 +25,7 @@ class RCSectionHeaderCell: UITableViewCell {
             }
         }
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
 
@@ -37,8 +37,9 @@ class RCSectionHeaderCell: UITableViewCell {
         let height: CGFloat = (labelSectionHeader?.text != nil) ? RCMessages.sectionHeaderHeight : 0
         labelSectionHeader?.frame = CGRect(x: RCMessages.sectionHeaderLeft(), y: 0, width: width, height: height)
     }
-    
+
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if rcmessage != nil {

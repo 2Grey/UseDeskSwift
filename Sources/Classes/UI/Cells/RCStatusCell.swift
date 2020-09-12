@@ -10,14 +10,14 @@ class RCStatusCell: UITableViewCell {
 
     private var indexPath: IndexPath?
     private weak var messagesView: RCMessagesView?
-    
+
     func bindData(_ indexPath_: IndexPath?, messagesView messagesView_: RCMessagesView?) {
         indexPath = indexPath_
         messagesView = messagesView_
-        
+
         backgroundColor = UIColor.clear
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
-        
+
         if viewBubble == nil {
             viewBubble = UIView()
             viewBubble!.backgroundColor = RCMessages.statusBubbleColor()
@@ -40,33 +40,34 @@ class RCStatusCell: UITableViewCell {
         }
         textView?.text = rcmessage?.text
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         let size: CGSize = RCStatusCell.size(indexPath, messagesView: messagesView)
-        
+
         let yBubble = RCMessages.sectionHeaderMargin()
         let xBubble: CGFloat = (SCREEN_WIDTH - size.width) / 2
         viewBubble?.frame = CGRect(x: xBubble, y: yBubble, width: size.width, height: size.height)
-        
+
         textView?.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
     }
-    
+
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         return size.height
     }
-    
+
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if rcmessage != nil {
             let maxwidth: CGFloat = (0.95 * SCREEN_WIDTH) - RCMessages.statusInsetLeft() - RCMessages.statusInsetRight()
             let rect: CGRect? = rcmessage!.text.boundingRect(with: CGSize(width: maxwidth, height: CGFloat(MAXFLOAT)), options: .usesLineFragmentOrigin, attributes: [
                 NSAttributedString.Key.font: RCMessages.statusFont() as Any
-                ], context: nil)
-            
+            ], context: nil)
+
             let width: CGFloat = (rect?.size.width ?? 0.0) + RCMessages.statusInsetLeft() + RCMessages.statusInsetRight()
             var height: CGFloat = (rect?.size.height ?? 0.0) + RCMessages.statusInsetTop() + RCMessages.statusInsetBottom()
             if rcmessage!.incoming {
@@ -77,15 +78,17 @@ class RCStatusCell: UITableViewCell {
             return CGSize(width: 0, height: 0)
         }
     }
-    
+
     // MARK: - Gesture recognizer methods
+
     func bubbleGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.actionTapBubble))
         viewBubble?.addGestureRecognizer(tapGesture)
         tapGesture.cancelsTouchesInView = false
     }
-    
+
     // MARK: - User actions
+
     @objc func actionTapBubble() {
         messagesView?.view.endEditing(true)
         messagesView?.actionTapBubble(indexPath)

@@ -13,7 +13,8 @@ public class RCFile: NSObject {
 
 public class RCMessage: NSObject {
     // MARK: - Properties
-    @objc public var type: RCType = RCType.unknown
+
+    @objc public var type = RCType.unknown
     @objc public var incoming = false
     @objc public var outgoing = false
     @objc public var feedback = false
@@ -32,7 +33,7 @@ public class RCMessage: NSObject {
     @objc public var latitude: CLLocationDegrees = 0
     @objc public var longitude: CLLocationDegrees = 0
     @objc public var location_thumbnail: UIImage?
-    @objc public var status: RCStatus = RCStatus.unknown
+    @objc public var status = RCStatus.unknown
     @objc public var chat: Int = 0
     @objc public var messageId: Int = 0
     @objc public var ticket_id: Int = 0
@@ -42,9 +43,10 @@ public class RCMessage: NSObject {
     @objc public var file: RCFile?
 
     // MARK: - Initialization methods
+
     init(status text: String?) {
         super.init()
-        type =  RCType.status
+        type = RCType.status
 
         incoming = false
         outgoing = false
@@ -141,7 +143,7 @@ public class RCMessage: NSObject {
 
         let snapshotter = MKMapSnapshotter(options: options)
         snapshotter.start(with: DispatchQueue.global(qos: .default), completionHandler: { [weak self] snapshot, _ in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             if snapshot != nil {
                 UIGraphicsBeginImageContextWithOptions((snapshot?.image.size)!, true, (snapshot?.image.scale)!)
                 do {
@@ -159,7 +161,7 @@ public class RCMessage: NSObject {
 
                 wSelf.status = RCStatus.succeed
                 DispatchQueue.main.async(execute: {
-                        completion()
+                    completion()
                 })
             }
         })

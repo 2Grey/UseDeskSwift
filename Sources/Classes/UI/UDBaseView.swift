@@ -5,10 +5,10 @@ import Foundation
 import UIKit
 import SDWebImage
 
-class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate{
+class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var loadingView: UIView!
     
     weak var usedesk: UseDeskSDK?
     var url: String?
@@ -16,7 +16,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     var navigationView = UIView()
     var isViewDidLayout: Bool = false
     var searchBar = UISearchBar()
-    var searchArticles: SearchArticle? = nil
+    var searchArticles: SearchArticle?
     var isSearch: Bool = false
     
     override func viewDidLoad() {
@@ -38,7 +38,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         searchBar.placeholder = "Поиск"
         searchBar.tintColor = .blue
         searchBar.delegate = self
-        navigationView.addSubview(searchBar)     
+        navigationView.addSubview(searchBar)
       
         tableView.register(UINib(nibName: "UDBaseViewCell", bundle: nil), forCellReuseIdentifier: "UDBaseViewCell")
         tableView.register(UINib(nibName: "UDArticleViewCell", bundle: nil), forCellReuseIdentifier: "UDArticleViewCell")
@@ -47,7 +47,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     override func viewDidAppear(_ animated: Bool) {
         usedesk?.getCollections(connectionStatus: { [weak self] success, collections, error in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             if success {
                 wSelf.arrayCollections = collections!
                 UIView.animate(withDuration: 0.3) {
@@ -61,26 +61,27 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !isViewDidLayout {
-            searchBar.frame = CGRect(origin: .zero, size: CGSize(width: navigationView.frame.width - 30, height: navigationView.frame.height)) 
+            searchBar.frame = CGRect(origin: .zero, size: CGSize(width: navigationView.frame.width - 30, height: navigationView.frame.height))
             isViewDidLayout = true
         }
     }
     
     // MARK: - User actions
+
     @objc func actionChat() {
-        guard let usedesk = usedesk, let config = usedesk.config else {return}
+        guard let usedesk = usedesk, let config = usedesk.config else { return }
 
         UIView.animate(withDuration: 0.3) {
             self.loadingView.alpha = 1
         }
 
         usedesk.startWithoutGUICompanyID(with: config) { [weak self] success, error in
-            guard let wSelf = self else {return}
-            guard wSelf.usedesk != nil else {return}
+            guard let wSelf = self else { return }
+            guard wSelf.usedesk != nil else { return }
 
             if success {
                 DispatchQueue.main.async(execute: {
-                    let dialogflowVC : DialogflowView = DialogflowView()
+                    let dialogflowVC = DialogflowView()
                     dialogflowVC.usedesk = wSelf.usedesk
                     dialogflowVC.isFromBase = true
                     wSelf.navigationController?.pushViewController(dialogflowVC, animated: true)
@@ -89,7 +90,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
                     }
                 })
             } else {
-                if (error == "noOperators") {
+                if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
                     if wSelf.url != nil {
                         offlineVC.url = wSelf.url!
@@ -109,6 +110,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     }
     
     // MARK: - TableView
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
@@ -171,14 +173,14 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard usedesk != nil else {return}
+        guard usedesk != nil else { return }
         
         if isSearch {
             usedesk!.addViewsArticle(articleID: searchArticles?.articles[indexPath.row].id ?? 0, count: searchArticles?.articles[indexPath.row].id != nil ? 1 : 0, connectionStatus: { success, error in
                 
             })
             usedesk!.getArticle(articleID: searchArticles!.articles[indexPath.row].id, connectionStatus: { [weak self] success, article, error in
-                guard let wSelf = self else {return}
+                guard let wSelf = self else { return }
                 if success {
                     let articleVC = UDArticleView(nibName: "UDArticle", bundle: nil)
                     articleVC.usedesk = wSelf.usedesk
@@ -188,7 +190,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
                 }
             })
         } else {
-            let articlesVC : UDArticlesView = UDArticlesView()
+            let articlesVC = UDArticlesView()
             articlesVC.usedesk = usedesk!
             articlesVC.arrayArticles = arrayCollections[indexPath.section].сategories[indexPath.row - 1].articlesTitles
             articlesVC.collection_ids = arrayCollections[indexPath.section].id
@@ -202,14 +204,15 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     }
     
     // MARK: - SearchBar
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
-            guard usedesk != nil else {return}
+            guard usedesk != nil else { return }
             UIView.animate(withDuration: 0.3) {
                 self.loadingView.alpha = 1
             }
-            usedesk!.getSearchArticles(collection_ids: [], category_ids: [], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) { [weak self] (success, searchArticle, error) in
-                guard let wSelf = self else {return}
+            usedesk!.getSearchArticles(collection_ids: [], category_ids: [], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) { [weak self] success, searchArticle, error in
+                guard let wSelf = self else { return }
                 UIView.animate(withDuration: 0.3) {
                     wSelf.loadingView.alpha = 0
                 }
@@ -227,6 +230,4 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             tableView.reloadData()
         }
     }
-    
 }
-

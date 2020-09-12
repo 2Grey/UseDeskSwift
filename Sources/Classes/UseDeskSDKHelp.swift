@@ -5,7 +5,7 @@ import Foundation
 
 class UseDeskSDKHelp {
     class func config_CompanyID(_ companyID: String?, email: String, phone: String?, name: String?, url: String?, token: String?) -> [Any]? {
-        let payload = [ "sdk": "iOS" ]
+        let payload = ["sdk": "iOS"]
         var dic: [String: Any] = [
             "type": "@@server/chat/INIT",
             "payload": payload,
@@ -39,7 +39,7 @@ class UseDeskSDKHelp {
     }
 
     class func messageText(_ text: String?) -> [Any]? {
-        let message = [ "text": text ?? "" ]
+        let message = ["text": text ?? ""]
 
         let dic: [String: Any] = [
             "type": "@@server/chat/SEND_MESSAGE",
@@ -50,13 +50,13 @@ class UseDeskSDKHelp {
 
     class func feedback(_ fb: Bool) -> [Any]? {
 
-        let data = fb ? "LIKE": "DISLIKE"
+        let data = fb ? "LIKE" : "DISLIKE"
 
         let payload = [
             "data": data,
             "type": "action"
         ]
-        
+
         let dic: [String: Any] = [
             "type": "@@server/chat/CALLBACK",
             "payload": payload
@@ -71,12 +71,12 @@ class UseDeskSDKHelp {
             "content": contentBase64 ?? ""
         ]
 
-        let message: [String : Any] = [
+        let message: [String: Any] = [
             "text": text ?? "",
             "file": file
         ]
-        
-        let dic: [String : Any] = [
+
+        let dic: [String: Any] = [
             "type": "@@server/chat/SEND_MESSAGE",
             "message": message
         ]

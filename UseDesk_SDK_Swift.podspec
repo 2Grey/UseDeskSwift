@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 	s.author           = { 'serega@budyakov.com' => 'kon.sergius@gmail.com' }
 	s.source           = { :git => 'https://github.com/usedesk/UseDeskSwift.git', :tag => s.version.to_s }
 
-	s.ios.deployment_target = '10.0'
+	s.ios.deployment_target = '11.0'
 	s.swift_version = '4.0'
 	s.static_framework = true
 

@@ -4,9 +4,11 @@
 import Foundation
 
 // MARK: - Navigation Bar
+
 public let navBarBackgroundColor = UIColor(hexString: "d0585d")
 
 // MARK: - Base
+
 // Base Search Bar
 public let searchBarTextBackgroundColor = UIColor.white
 public let searchBarTextColor = UIColor.black

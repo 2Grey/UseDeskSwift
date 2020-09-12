@@ -60,6 +60,8 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         tableView.register(RCAudioMessageCell.self, forCellReuseIdentifier: "RCAudioMessageCell")
         tableView.register(RCLocationMessageCell.self, forCellReuseIdentifier: "RCLocationMessageCell")
 
+        self.bottomViewBC.constant = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0.0
+
         attachCollectionView.delegate = self
         attachCollectionView.dataSource = self
         attachCollectionView.register(RCAttachCollectionViewCell.self, forCellWithReuseIdentifier: "RCAttachCollectionViewCell")
@@ -150,11 +152,10 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
         let height = preHeight + 5.0 * 2.0
 
-
         self.infoView.isHidden = false
 
         self.view.layoutIfNeeded()
-        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: {[weak self] in
+        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: { [weak self] in
             self?.infoViewHeightConstraint.constant = height
             self?.infoView.setNeedsUpdateConstraints()
             self?.view.layoutIfNeeded()
@@ -164,11 +165,11 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     func hideInfo(animated: Bool) {
         self.view.layoutIfNeeded()
 
-        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: {[weak self] in
+        UIView.animate(withDuration: animated ? 0.45 : 0.0, animations: { [weak self] in
             self?.infoViewHeightConstraint.constant = 0
             self?.infoView.setNeedsUpdateConstraints()
             self?.view.layoutIfNeeded()
-        }) {[weak self] _ in
+        }) { [weak self] _ in
             self?.infoLabel.text = nil
             self?.infoView.isHidden = true
         }
@@ -654,7 +655,7 @@ extension RCMessagesView: UICollectionViewDelegate, UICollectionViewDataSource, 
                                                                                   videoDuration: asset.duration,
                                                                                   index: indexPath.row)
                                                              }
-            })
+                                                         })
         }
 
         return cell
@@ -693,14 +694,14 @@ extension RCMessagesView {
         let duration: TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
         let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
         let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
-        let animationCurve: UIView.AnimationOptions = UIView.AnimationOptions(rawValue: animationCurveRaw)
+        let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
 
         if endFrameY >= UIScreen.main.bounds.size.height {
             isShowKeyboard = false
             self.heightKeyboard = 0.0
-            self.bottomViewBC.constant = 0.0
+            self.bottomViewBC.constant = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0.0
         } else {
-            let height = endFrame?.size.height ?? 0.0 // TODO: add buttom safeAreaInsetsBottom
+            let height = endFrame?.size.height ?? 0.0
 
             isShowKeyboard = true
             self.heightKeyboard = height
@@ -711,9 +712,9 @@ extension RCMessagesView {
                        delay: TimeInterval(0),
                        options: animationCurve,
                        animations: {
-                        self.view.layoutIfNeeded()
-                        self.inputPanelUpdate()
-        },
+                           self.view.layoutIfNeeded()
+                           self.inputPanelUpdate()
+                       },
                        completion: nil)
     }
 }

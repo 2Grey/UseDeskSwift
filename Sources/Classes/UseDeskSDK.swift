@@ -30,7 +30,7 @@ public class UseDeskSDK: NSObject {
     @objc public var historyMess: [RCMessage] = []
 
     public private(set) var config: UDSDKConfig?
-    
+
     var manager: SocketManager?
     var socket: SocketIOClient?
 
@@ -38,7 +38,7 @@ public class UseDeskSDK: NSObject {
 
     // MARK: - UI/UX
 
-    public func configureUI(configurator: ((_ messages: RCMessages) -> Void)) {
+    public func configureUI(configurator: (_ messages: RCMessages) -> Void) {
         configurator(RCMessages.shared)
     }
 
@@ -47,7 +47,7 @@ public class UseDeskSDK: NSObject {
     public func start(with config: UDSDKConfig, on viewController: UIViewController, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
-        let hud = MBProgressHUD.showAdded(to: (viewController.view), animated: true)
+        let hud = MBProgressHUD.showAdded(to: viewController.view, animated: true)
         hud.mode = MBProgressHUDMode.indeterminate
         hud.label.text = "Загрузка"
 
@@ -65,14 +65,14 @@ public class UseDeskSDK: NSObject {
             let navController = UDNavigationController(rootViewController: baseView)
             navController.setTitleTextAttributes()
             navController.modalPresentationStyle = .fullScreen
-            navController.onDissmis = {[weak self] in
+            navController.onDissmis = { [weak self] in
                 self?.closeBlock?()
             }
 
             viewController.present(navController, animated: true)
             hud.hide(animated: true)
         } else {
-            if config.isUseBase && config.accountId == nil {
+            if config.isUseBase, config.accountId == nil {
                 startBlock(false, "You did not specify account_id")
             } else {
 
@@ -80,13 +80,13 @@ public class UseDeskSDK: NSObject {
                     guard let wSelf = self else { return }
 
                     if success {
-                        let dialogflowVC : DialogflowView = DialogflowView()
+                        let dialogflowVC = DialogflowView()
                         dialogflowVC.usedesk = wSelf
 
                         let navController = UDNavigationController(rootViewController: dialogflowVC)
                         navController.setTitleTextAttributes()
                         navController.modalPresentationStyle = .fullScreen
-                        navController.onDissmis = {[weak self] in
+                        navController.onDissmis = { [weak self] in
                             self?.closeBlock?()
                         }
 
@@ -99,7 +99,7 @@ public class UseDeskSDK: NSObject {
                             offlineVC.usedesk = wSelf
                             let navController = UDNavigationController(rootViewController: offlineVC)
                             navController.modalPresentationStyle = .fullScreen
-                            navController.onDissmis = {[weak self] in
+                            navController.onDissmis = { [weak self] in
                                 self?.closeBlock?()
                             }
 
@@ -141,13 +141,13 @@ public class UseDeskSDK: NSObject {
         })
 
         socket?.on("error", callback: { [weak self] data, ack in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             wSelf.errorBlock?(data)
         })
 
         socket?.on("disconnect", callback: { [weak self, weak config] data, ack in
-            guard let wConfig = config else {return}
-            guard let wSelf = self else {return}
+            guard let wConfig = config else { return }
+            guard let wSelf = self else { return }
 
             print("socket disconnect")
 
@@ -159,7 +159,7 @@ public class UseDeskSDK: NSObject {
         })
 
         socket?.on("dispatch", callback: { [weak self] data, ack in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             guard data.count > 0 else { return }
 
             wSelf.action_INITED(data)
@@ -200,12 +200,11 @@ public class UseDeskSDK: NSObject {
         let mess = UseDeskSDKHelp.messageText(text)
         socket?.emit("dispatch", with: mess!)
     }
-    
+
     @objc public func sendMessage(_ text: String?, withFileName fileName: String?, fileType: String?, contentBase64: String?) {
         let mess = UseDeskSDKHelp.message(text, withFileName: fileName, fileType: fileType, contentBase64: contentBase64)
         socket?.emit("dispatch", with: mess!)
     }
-    
 
     @objc public func sendMessageFeedBack(_ status: Bool) {
         socket?.emit("dispatch", with: UseDeskSDKHelp.feedback(status)!)
@@ -221,9 +220,9 @@ public class UseDeskSDK: NSObject {
 
         DispatchQueue.global(qos: .default).async(execute: {
             let urlStr = "https://secure.usedesk.ru/widget.js/post"
-            request(urlStr, method: .post, parameters: param as Parameters).responseJSON{ responseJSON in
+            request(urlStr, method: .post, parameters: param as Parameters).responseJSON { responseJSON in
                 switch responseJSON.result {
-                case .success(_):
+                case .success:
                     resultBlock(true, nil)
                 case .failure(let error):
                     resultBlock(false, error.localizedDescription)
@@ -242,12 +241,13 @@ public class UseDeskSDK: NSObject {
 
         if config.isUseBase, let accountId = config.accountId, accountId.isEmpty == false {
             DispatchQueue.global(qos: .default).async(execute: {
-                request("https://api.usedesk.ru/support/\(accountId)/articles/\(articleID)?api_token=\(config.apiToken)").responseJSON{ responseJSON in
+                request("https://api.usedesk.ru/support/\(accountId)/articles/\(articleID)?api_token=\(config.apiToken)").responseJSON { responseJSON in
                     switch responseJSON.result {
                     case .success(let value):
                         guard let article = Article.get(from: value) else {
                             baseBlock(false, nil, "error parsing")
-                            return }
+                            return
+                        }
                         baseBlock(true, article, "")
                     case .failure(let error):
                         baseBlock(false, nil, error.localizedDescription)
@@ -255,14 +255,14 @@ public class UseDeskSDK: NSObject {
                 }
             })
         } else {
-            if config.isUseBase, (config.accountId == nil || config.accountId?.isEmpty == true) {
+            if config.isUseBase, config.accountId == nil || config.accountId?.isEmpty == true {
                 baseBlock(false, nil, "You did not specify account_id")
             } else {
                 baseBlock(false, nil, "You specify isUseBase = false")
             }
         }
     }
-    
+
     @objc public func addViewsArticle(articleID: Int, count: Int, connectionStatus connectBlock: @escaping UDSConnectBlock) {
         guard let config = self.config else {
             connectBlock(false, "UseDeskSDK config isn't set")
@@ -271,9 +271,9 @@ public class UseDeskSDK: NSObject {
 
         if config.isUseBase, let accountId = config.accountId, accountId.isEmpty == false {
             DispatchQueue.global(qos: .default).async(execute: {
-                request("https://api.usedesk.ru/support/\(accountId)/articles/\(articleID)/add-views?api_token=\(config.apiToken)&count=\(count)").responseJSON{ responseJSON in
+                request("https://api.usedesk.ru/support/\(accountId)/articles/\(articleID)/add-views?api_token=\(config.apiToken)&count=\(count)").responseJSON { responseJSON in
                     switch responseJSON.result {
-                    case .success(_):
+                    case .success:
                         connectBlock(true, "")
                     case .failure(let error):
                         connectBlock(false, error.localizedDescription)
@@ -281,14 +281,14 @@ public class UseDeskSDK: NSObject {
                 }
             })
         } else {
-            if config.isUseBase, (config.accountId == nil || config.accountId?.isEmpty == true) {
+            if config.isUseBase, config.accountId == nil || config.accountId?.isEmpty == true {
                 connectBlock(false, "You did not specify account_id")
             } else {
                 connectBlock(false, "You specify isUseBase = false")
             }
         }
     }
-    
+
     @objc public func getSearchArticles(collection_ids: [Int],
                                         category_ids: [Int],
                                         article_ids: [Int],
@@ -298,7 +298,8 @@ public class UseDeskSDK: NSObject {
                                         type: TypeArticle = .all,
                                         sort: SortArticle = .id,
                                         order: OrderArticle = .asc,
-                                        connectionStatus searchBlock: @escaping UDSArticleSearchBlock) {
+                                        connectionStatus searchBlock: @escaping UDSArticleSearchBlock)
+    {
         guard let config = self.config else {
             searchBlock(false, nil, "UseDeskSDK config isn't set")
             return
@@ -316,7 +317,7 @@ public class UseDeskSDK: NSObject {
             default:
                 break
             }
-            
+
             switch sort {
             case .id:
                 urlForEncode += "&sort=id"
@@ -331,7 +332,7 @@ public class UseDeskSDK: NSObject {
             default:
                 break
             }
-            
+
             switch order {
             case .asc:
                 urlForEncode += "&order=asc"
@@ -382,7 +383,7 @@ public class UseDeskSDK: NSObject {
             url += escapedUrl ?? ""
 
             DispatchQueue.global(qos: .default).async(execute: {
-                request(url).responseJSON{ responseJSON in
+                request(url).responseJSON { responseJSON in
                     switch responseJSON.result {
                     case .success(let value):
                         guard let articles = SearchArticle(from: value) else {
@@ -396,7 +397,7 @@ public class UseDeskSDK: NSObject {
                 }
             })
         } else {
-            if config.isUseBase, (config.accountId == nil || config.accountId?.isEmpty == true) {
+            if config.isUseBase, config.accountId == nil || config.accountId?.isEmpty == true {
                 searchBlock(false, nil, "You did not specify account_id")
             } else {
                 searchBlock(false, nil, "You specify isUseBase = false")
@@ -414,7 +415,7 @@ public class UseDeskSDK: NSObject {
 
         if config.isUseBase, let accountId = config.accountId, accountId.isEmpty == false {
             DispatchQueue.global(qos: .default).async(execute: {
-                request("https://api.usedesk.ru/support/\(accountId)/list?api_token=\(config.apiToken)").responseJSON{ responseJSON in
+                request("https://api.usedesk.ru/support/\(accountId)/list?api_token=\(config.apiToken)").responseJSON { responseJSON in
                     switch responseJSON.result {
                     case .success(let value):
                         guard let collections = BaseCollection.getArray(from: value) else {
@@ -428,19 +429,19 @@ public class UseDeskSDK: NSObject {
                 }
             })
         } else {
-            if config.isUseBase, (config.accountId == nil || config.accountId?.isEmpty == true) {
+            if config.isUseBase, config.accountId == nil || config.accountId?.isEmpty == true {
                 baseBlock(false, nil, "You did not specify account_id")
             } else {
                 baseBlock(false, nil, "You specify isUseBase = false")
             }
         }
     }
-    
+
     // MARK: * Parse
-    
-    func parseMessageDic(_ mess: [AnyHashable : Any]?) -> RCMessage? {
+
+    func parseMessageDic(_ mess: [AnyHashable: Any]?) -> RCMessage? {
         let m = RCMessage(text: "", incoming: false)
-        
+
         let createdAt = mess?["createdAt"] as! String
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ru")
@@ -450,7 +451,7 @@ public class UseDeskSDK: NSObject {
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         }
         m.date = dateFormatter.date(from: createdAt)!
-        
+
         m.messageId = Int(mess?["id"] as! Int)
         m.incoming = (mess?["type"] as! String == "operator_to_client" || mess?["type"] as! String == "bot_to_client") ? true : false
         m.outgoing = !m.incoming
@@ -472,19 +473,19 @@ public class UseDeskSDK: NSObject {
                 }
             }
             m.name = mess?["name"] as! String
-        }        
-        
-        let payload = mess?["payload"] //as? [AnyHashable : Any]
-        
-        if payload != nil && (payload is [AnyHashable : Any]){
-            let payload1 = mess?["payload"] as! [AnyHashable : Any]
+        }
+
+        let payload = mess?["payload"] // as? [AnyHashable : Any]
+
+        if payload != nil, payload is [AnyHashable: Any] {
+            let payload1 = mess?["payload"] as! [AnyHashable: Any]
             let avatar = payload1["avatar"]
             if avatar != nil {
                 m.avatar = payload1["avatar"] as! String
             }
         }
-        
-        let fileDic = mess?["file"] as? [AnyHashable : Any]
+
+        let fileDic = mess?["file"] as? [AnyHashable: Any]
         if fileDic != nil {
             let file = RCFile()
             file.content = fileDic?["content"] as! String
@@ -492,22 +493,20 @@ public class UseDeskSDK: NSObject {
             file.type = fileDic?["type"] as! String
             m.file = file
             m.status = RCStatus.loading
-            if (file.type == "image/png") || (file.name.contains(".png")) {
+            if (file.type == "image/png") || file.name.contains(".png") {
                 m.type = RCType.picture
                 do {
-                    if  URL(string: file.content) != nil {
+                    if URL(string: file.content) != nil {
                         let aContent = URL(string: file.content)
                         let aContent1 = try Data(contentsOf: aContent!)
                         m.picture_image = UIImage(data: aContent1)
-                        
                     }
-                } catch {                    
-                }
-            } else if (file.type.contains("video/")) || (file.name.contains(".mp4")) {
+                } catch {}
+            } else if file.type.contains("video/") || file.name.contains(".mp4") {
                 m.type = RCType.video
                 file.type = "video"
             }
-            
+
             m.picture_width = Int(0.6 * SCREEN_WIDTH)
             m.picture_height = Int(0.6 * SCREEN_WIDTH)
         }
@@ -516,10 +515,10 @@ public class UseDeskSDK: NSObject {
             m.feedback = true
             m.type = RCType.feedback
         }
-        
+
         return m
     }
-    
+
     func parseMessageFromButtons(text: String) -> [String] {
         var isAddingButton: Bool = false
         var characterArrayFromRCButton = [Character]()
@@ -530,14 +529,14 @@ public class UseDeskSDK: NSObject {
                 let secondIndexString = text.index(text.startIndex, offsetBy: index + 1)
                 if isAddingButton {
                     characterArrayFromRCButton.append(text[indexString])
-                    if (text[indexString] == "}") && (text[secondIndexString] == "}") {
+                    if text[indexString] == "}", text[secondIndexString] == "}" {
                         characterArrayFromRCButton.append(text[secondIndexString])
                         isAddingButton = false
                         stringsFromRCButton.append(String(characterArrayFromRCButton))
                         characterArrayFromRCButton = []
                     }
                 } else {
-                    if (text[indexString] == "{") && (text[secondIndexString] == "{") {
+                    if text[indexString] == "{", text[secondIndexString] == "{" {
                         characterArrayFromRCButton.append(text[indexString])
                         isAddingButton = true
                     }
@@ -546,7 +545,7 @@ public class UseDeskSDK: NSObject {
         }
         return stringsFromRCButton
     }
-    
+
     // MARK: * Action
 
     func action_INITED(_ data: [Any]?) {
@@ -557,7 +556,7 @@ public class UseDeskSDK: NSObject {
             save(self.config?.email, token: token)
         }
 
-        if let setup = dicServer["setup"] as? [AnyHashable : Any] {
+        if let setup = dicServer["setup"] as? [AnyHashable: Any] {
             historyMess = [RCMessage]()
 
             if let messages = setup["messages"] as? [Any] {
@@ -574,7 +573,7 @@ public class UseDeskSDK: NSObject {
             }
         }
     }
-    
+
     func action_INITED_no_operators(_ data: [Any]?) -> Bool {
         guard let dicServer = data?.first as? [AnyHashable: Any] else { return false }
 
@@ -582,30 +581,30 @@ public class UseDeskSDK: NSObject {
             self.token = token
         }
 
-        if let setup = dicServer["setup"] as? [AnyHashable : Any]  {
+        if let setup = dicServer["setup"] as? [AnyHashable: Any] {
             let noOperators = setup["noOperators"]
             return noOperators != nil
         }
 
         return false
     }
-    
+
     func action_ADD_INIT(_ data: [Any]?) -> Bool {
         guard let dicServer = data?.first as? [AnyHashable: Any] else { return false }
         guard let type = dicServer["type"] as? String else { return false }
 
         return type == "@@chat/current/INITED"
     }
-    
+
     func action_Feedback_Answer(_ data: [Any]?) {
-        guard let dicServer = data?.first as? [AnyHashable : Any] else { return }
+        guard let dicServer = data?.first as? [AnyHashable: Any] else { return }
         guard let type = dicServer["type"] as? String, type == "@@chat/current/CALLBACK_ANSWER" else { return }
 
         if let answer = dicServer["answer"] as? [AnyHashable: Any], let status = answer["status"] as? Bool {
             feedbackAnswerMessageBlock?(status)
         }
     }
-    
+
     func action_ADD_MESSAGE(_ data: [Any]?) {
         guard let dicServer = data?.first as? [AnyHashable: Any] else { return }
         guard let type = dicServer["type"] as? String else { return }
@@ -613,12 +612,10 @@ public class UseDeskSDK: NSObject {
         if !(type == "@@chat/current/ADD_MESSAGE") {
             // return
         }
-        
-        if type == "bot_to_client" {
-            
-        }
 
-        if let message = dicServer["message"] as? [AnyHashable : Any] {
+        if type == "bot_to_client" {}
+
+        if let message = dicServer["message"] as? [AnyHashable: Any] {
             if message["chat"] is NSNull { return }
 
             let mess = parseMessageDic(message) as RCMessage?
@@ -630,17 +627,18 @@ public class UseDeskSDK: NSObject {
             }
         }
     }
-    
+
     func save(_ email: String?, token: String?) {
         UserDefaults.standard.set(token, forKey: email ?? "")
         UserDefaults.standard.synchronize()
     }
-    
+
     func loadToken(for email: String?) -> String? {
         return UserDefaults.standard.string(forKey: email ?? "")
     }
 
     // MARK: - HUD
+
     public func cancel(on viewController: UIViewController) {
         self.releaseChat()
         MBProgressHUD.hide(for: viewController.view, animated: true)
@@ -654,7 +652,7 @@ public class UseDeskSDK: NSObject {
         var index = 9
         var isNameExists = true
 
-        while (index < stringButton.count - 2) && isNameExists {
+        while index < stringButton.count - 2, isNameExists {
             let indexString = stringButton.index(stringButton.startIndex, offsetBy: index)
             if stringButton[indexString] != ";" {
                 charactersFromParameter.append(stringButton[indexString])
@@ -671,7 +669,7 @@ public class UseDeskSDK: NSObject {
             }
         }
 
-        if isNameExists && (stringsParameters.count == 3) {
+        if isNameExists, stringsParameters.count == 3 {
             stringsParameters.append(String(charactersFromParameter))
 
             let rcButton = RCMessageButton()
@@ -686,7 +684,5 @@ public class UseDeskSDK: NSObject {
         } else {
             return nil
         }
-
     }
-    
 }

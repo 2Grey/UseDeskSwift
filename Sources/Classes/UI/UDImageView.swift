@@ -11,12 +11,12 @@ protocol UDImageViewDelegate: class {
 
 class UDImageView: UIViewController, UIScrollViewDelegate {
 
-    @IBOutlet weak var backView: UIView!
-    @IBOutlet weak var viewimage: UIImageView!
-    @IBOutlet weak var scrollView: UIScrollView!
-    
+    @IBOutlet var backView: UIView!
+    @IBOutlet var viewimage: UIImageView!
+    @IBOutlet var scrollView: UIScrollView!
+
     weak var delegate: UDImageViewDelegate?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -26,18 +26,17 @@ class UDImageView: UIViewController, UIScrollViewDelegate {
 
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.handleSingleTap(_:))))
     }
-    
+
     func showImage(image: UIImage) {
         scrollView.alpha = 1
         viewimage.image = image
     }
-    
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.viewimage
     }
-    
+
     @objc func handleSingleTap(_ sender: UITapGestureRecognizer?) {
         delegate?.close()
     }
-    
 }

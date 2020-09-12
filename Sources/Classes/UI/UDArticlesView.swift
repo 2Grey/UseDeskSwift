@@ -1,19 +1,18 @@
 //
 //  UDArticlesView.swift
 
-
 import Foundation
 import UIKit
 
 class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var loadingView: UIView!
     
     weak var usedesk: UseDeskSDK?
     var url: String?
     var arrayArticles: [ArticleTitle] = []
-    var searchArticles: SearchArticle? = nil
+    var searchArticles: SearchArticle?
     var isSearch: Bool = false
     var collection_ids: Int = 0
     var category_ids: Int = 0
@@ -48,18 +47,19 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     // MARK: - User actions
+
     @objc func actionChat() {
-        guard let usedesk = usedesk, let config = usedesk.config else {return}
+        guard let usedesk = usedesk, let config = usedesk.config else { return }
 
         UIView.animate(withDuration: 0.3) {
             self.loadingView.alpha = 1
         }
         usedesk.startWithoutGUICompanyID(with: config) { [weak self] success, error in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
 
             if success {
                 DispatchQueue.main.async(execute: {
-                    let dialogflowVC : DialogflowView = DialogflowView()
+                    let dialogflowVC = DialogflowView()
                     dialogflowVC.usedesk = wSelf.usedesk
                     dialogflowVC.isFromBase = true
                     wSelf.navigationController?.pushViewController(dialogflowVC, animated: true)
@@ -68,7 +68,7 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
                     }
                 })
             } else {
-                if (error == "noOperators") {
+                if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
                     if wSelf.url != nil {
                         offlineVC.url = wSelf.url!
@@ -84,6 +84,7 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     // MARK: - TableView
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
@@ -130,7 +131,7 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
         })
         
         usedesk?.getArticle(articleID: id, connectionStatus: { [weak self] success, article, error in
-            guard let wSelf = self else {return}
+            guard let wSelf = self else { return }
             if success {
                 let articleVC = UDArticleView(nibName: "UDArticle", bundle: nil)
                 articleVC.usedesk = wSelf.usedesk
@@ -139,20 +140,21 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
                 wSelf.navigationController?.pushViewController(articleVC, animated: true)
             }
         })
-        
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         searchBar.resignFirstResponder()
     }
+
     // MARK: - SearchBar
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
             UIView.animate(withDuration: 0.3) {
                 self.loadingView.alpha = 1
             }
-            usedesk?.getSearchArticles(collection_ids: [collection_ids], category_ids: [category_ids], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) {  [weak self] (success, searchArticle, error) in
-                guard let wSelf = self else {return}
+            usedesk?.getSearchArticles(collection_ids: [collection_ids], category_ids: [category_ids], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) { [weak self] success, searchArticle, error in
+                guard let wSelf = self else { return }
                 UIView.animate(withDuration: 0.3) {
                     wSelf.loadingView.alpha = 0
                 }

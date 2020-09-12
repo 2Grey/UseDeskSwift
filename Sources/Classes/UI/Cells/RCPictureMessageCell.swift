@@ -12,7 +12,7 @@ class RCPictureMessageCell: RCMessageCell {
 
     private var indexPath: IndexPath?
     private weak var messagesView: RCMessagesView?
-   // private var viewText: UITextView?
+    // private var viewText: UITextView?
 
     override func bindData(_ indexPath_: IndexPath?, messagesView messagesView_: RCMessagesView?) {
 
@@ -20,9 +20,9 @@ class RCPictureMessageCell: RCMessageCell {
         messagesView = messagesView_
         let rcmessage: RCMessage? = messagesView!.rcmessage(indexPath)
         if rcmessage?.status == RCStatus.openimage {
-            //viewImage!.image = nil
+            // viewImage!.image = nil
             spinner?.startAnimating()
-            //imageManual!.isHidden = false
+            // imageManual!.isHidden = false
         } else {
             super.bindData(indexPath, messagesView: messagesView)
             viewBubble.backgroundColor = rcmessage?.incoming != false ? RCMessages.pictureBubbleColorIncoming() : RCMessages.pictureBubbleColorOutgoing()
@@ -70,7 +70,7 @@ class RCPictureMessageCell: RCMessageCell {
                 let session = URLSession.shared
                 if let url = URL(string: rcmessage!.file?.content ?? "") {
                     session.dataTask(with: url, completionHandler: { [weak self] data, response, error in
-                        guard let wSelf = self else {return}
+                        guard let wSelf = self else { return }
                         if error == nil {
                             let udMineType = UDMimeType()
                             let mimeType = udMineType.typeString(for: data)
@@ -84,7 +84,7 @@ class RCPictureMessageCell: RCMessageCell {
                                 })
                             } else {
                                 DispatchQueue.main.async(execute: {
-                                    rcmessage?.picture_image = UIImage.named( "icon_file.png")
+                                    rcmessage?.picture_image = UIImage.named("icon_file.png")
                                     weakSelf?.imageView!.image = rcmessage!.picture_image
                                     wSelf.spinner?.stopAnimating()
                                     rcmessage?.status = RCStatus.succeed
@@ -109,7 +109,6 @@ class RCPictureMessageCell: RCMessageCell {
                 imageManual?.isHidden = false
             }
         }
-        
     }
 
     override func layoutSubviews() {
@@ -148,17 +147,18 @@ class RCPictureMessageCell: RCMessageCell {
 //    }
 
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         let sizeText: CGSize = RCPictureMessageCell.textSize(indexPath, messagesView: messagesView)
 
-        return size.height + sizeText.height + 20 
+        return size.height + sizeText.height + 20
     }
 
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if rcmessage != nil {
-            let width = fminf(Float(RCMessages.pictureBubbleWidth()), Float((rcmessage!.picture_width)))
+            let width = fminf(Float(RCMessages.pictureBubbleWidth()), Float(rcmessage!.picture_width))
             return CGSize(width: CGFloat(width), height: CGFloat(Float(rcmessage!.picture_height) * width / Float(rcmessage!.picture_width)))
         } else {
             return CGSize(width: 0, height: 0)
@@ -181,10 +181,10 @@ class RCPictureMessageCell: RCMessageCell {
         let maxwidth: CGFloat = size.width - RCMessages.textInsetLeft() - RCMessages.textInsetRight()
         let rect: CGRect? = rcmessage?.text.boundingRect(with: CGSize(width: maxwidth, height: CGFloat(MAXFLOAT)), options: .usesLineFragmentOrigin, attributes: [
             NSAttributedString.Key.font: RCMessages.textFont() as Any
-            ], context: nil)
+        ], context: nil)
 
-        let width: Float = Float((rect?.size.width ?? 0.0) + RCMessages.textInsetLeft() + RCMessages.textInsetRight())
-        let height: Float = Float((rect?.size.height ?? 0.0) + RCMessages.textInsetTop() + RCMessages.textInsetBottom())
+        let width = Float((rect?.size.width ?? 0.0) + RCMessages.textInsetLeft() + RCMessages.textInsetRight())
+        let height = Float((rect?.size.height ?? 0.0) + RCMessages.textInsetTop() + RCMessages.textInsetBottom())
         return CGSize(width: CGFloat(fmaxf(width, Float(RCMessages.pictureBubbleWidth()))), height: CGFloat(fmaxf(height, Float(RCMessages.textBubbleHeightMin()))))
     }
 }

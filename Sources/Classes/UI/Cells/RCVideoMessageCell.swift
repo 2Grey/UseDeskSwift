@@ -82,6 +82,7 @@ class RCVideoMessageCell: RCMessageCell {
     }
 
     // MARK: - Size methods
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
         return size.height
@@ -90,19 +91,18 @@ class RCVideoMessageCell: RCMessageCell {
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if rcmessage != nil {
-            let width = fminf(Float(RCMessages.videoBubbleWidth()), Float((rcmessage!.picture_width)))
+            let width = fminf(Float(RCMessages.videoBubbleWidth()), Float(rcmessage!.picture_width))
             return CGSize(width: CGFloat(width), height: CGFloat(Float(rcmessage!.picture_height) * width / Float(rcmessage!.picture_width)))
         } else {
             return CGSize(width: 0, height: 0)
         }
-        
     }
 
     override func layoutSubviews() {
         let size: CGSize = RCVideoMessageCell.size(indexPath, messagesView: messagesView)
-        
+
         super.layoutSubviews(size)
-        
+
         viewImage?.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         if imagePreview?.image != nil {
             let widthPlay = imagePreview!.image!.size.width

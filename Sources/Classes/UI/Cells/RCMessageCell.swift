@@ -88,6 +88,7 @@ class RCMessageCell: UITableViewCell {
     }
     
     // MARK: - Gesture recognizer methods
+
     func bubbleGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.actionTapBubble))
         viewBubble.addGestureRecognizer(tapGesture)
@@ -104,6 +105,7 @@ class RCMessageCell: UITableViewCell {
     }
     
     // MARK: - User actions
+
     @objc func actionTapBubble() {
         messagesView?.view.endEditing(true)
         messagesView?.actionTapBubble(indexPath)

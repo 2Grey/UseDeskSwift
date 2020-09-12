@@ -8,9 +8,9 @@ class UDMimeType: NSObject {
     func typeString(for data: Data?) -> String {
         let c = [UInt8](data!)
 
-        guard c.count > 0 else {return "image"}
+        guard c.count > 0 else { return "image" }
         switch c[0] {
-            case 58/*0xff*/:
+            case 58 /* 0xff */:
                 return "image"
             case 0x89:
                 return "image"
@@ -27,7 +27,7 @@ class UDMimeType: NSObject {
             case 0x46:
                 return "text/plain"
             default:
-                return "image"//"application/octet-stream"
+                return "image" // "application/octet-stream"
         }
     }
 }

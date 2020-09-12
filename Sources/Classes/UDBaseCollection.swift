@@ -9,14 +9,14 @@ import UIKit
     var id: Int = 0
     var articlesTitles: [ArticleTitle] = []
     var open: Bool = true
-    
+
     init?(json: [String: Any]) {
         guard
             let id = json["id"] as? Int,
             let title = json["title"] as? String,
             let open = json["public"] as? Int,
-            let articlesTitlesArray = json["articles"] as? Array<[String: Any]>
-            else { return nil }
+            let articlesTitlesArray = json["articles"] as? [[String: Any]]
+        else { return nil }
 
         self.id = id
         self.title = title
@@ -39,13 +39,13 @@ import UIKit
     var title: String = ""
     var id: Int = 0
     var views: Int = 0
-    
+
     init?(json: [String: Any]) {
         guard
             let id = json["id"] as? Int,
             let title = json["title"] as? String,
             let views = json["views"] as? Int
-            else { return nil }
+        else { return nil }
 
         self.id = id
         self.title = title
@@ -59,14 +59,14 @@ import UIKit
     var image: String = ""
     var сategories: [BaseCategory] = []
     var open: Bool = true
-    
+
     init?(json: [String: Any]) {
         guard
             let id = json["id"] as? Int,
             let title = json["title"] as? String,
             let open = json["public"] as? Int,
-            let categoriesArray = json["categories"] as? Array<[String: Any]>
-            else { return nil }
+            let categoriesArray = json["categories"] as? [[String: Any]]
+        else { return nil }
 
         self.id = id
         self.title = title
@@ -84,12 +84,12 @@ import UIKit
             }
         }
     }
-    
+
     static func getArray(from jsonArray: Any) -> [BaseCollection]? {
-        
-        guard let jsonArray = jsonArray as? Array<[String: Any]> else { return nil }
+
+        guard let jsonArray = jsonArray as? [[String: Any]] else { return nil }
         var collections: [BaseCollection] = []
-        
+
         for jsonObject in jsonArray {
             if let collection = BaseCollection(json: jsonObject) {
                 collections.append(collection)

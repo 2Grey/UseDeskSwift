@@ -12,13 +12,13 @@ class RCAudioMessageCell: RCMessageCell {
 
     private var indexPath: IndexPath?
     private weak var messagesView: RCMessagesView?
-    
+
     override func bindData(_ indexPath_: IndexPath?, messagesView messagesView_: RCMessagesView?) {
         indexPath = indexPath_
         messagesView = messagesView_
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         super.bindData(indexPath, messagesView: messagesView)
-        
+
         viewBubble.backgroundColor = rcmessage?.incoming != false ? RCMessages.audioBubbleColorIncoming() : RCMessages.audioBubbleColorOutgoing()
         if imageStatus == nil {
             imageStatus = UIImageView()
@@ -50,7 +50,7 @@ class RCAudioMessageCell: RCMessageCell {
         } else {
             labelDuration.text = String(format: "%ld:%02ld", Int(rcmessage?.audio_duration ?? 0) / 60, Int(rcmessage?.audio_duration ?? 0) % 60)
         }
-        
+
         if rcmessage?.status == RCStatus.loading {
             imageStatus?.isHidden = true
             labelDuration.isHidden = true
@@ -70,19 +70,19 @@ class RCAudioMessageCell: RCMessageCell {
             imageManual.isHidden = false
         }
     }
-    
+
     override func layoutSubviews() {
         let size: CGSize = RCAudioMessageCell.size(indexPath, messagesView: messagesView)
-        
+
         super.layoutSubviews(size)
-        
+
         let widthStatus = imageStatus.image?.size.width
         let heightStatus = imageStatus.image?.size.height
         let yStatus: CGFloat = (size.height - heightStatus!) / 2
         imageStatus.frame = CGRect(x: 10, y: yStatus, width: widthStatus!, height: heightStatus!)
-        
+
         labelDuration.frame = CGRect(x: size.width - 100, y: 0, width: 90, height: size.height)
-        
+
         let widthSpinner = spinner.frame.size.width
         let heightSpinner = spinner.frame.size.height
         let xSpinner: CGFloat = (size.width - widthSpinner) / 2
@@ -94,12 +94,12 @@ class RCAudioMessageCell: RCMessageCell {
         let yManual: CGFloat = (size.height - heightManual!) / 2
         imageManual.frame = CGRect(x: xManual, y: yManual, width: widthManual!, height: heightManual!)
     }
-    
+
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
         let size: CGSize = self.size(indexPath, messagesView: messagesView)
-        return size.height 
+        return size.height
     }
-    
+
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
         return CGSize(width: RCMessages.audioBubbleWidht(), height: RCMessages.audioBubbleHeight())
     }
