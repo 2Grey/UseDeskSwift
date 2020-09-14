@@ -136,7 +136,7 @@ public class RCMessage: NSObject {
         region.span.latitudeDelta = CLLocationDegrees(0.005)
         region.span.longitudeDelta = CLLocationDegrees(0.005)
 
-        let options = MKMapSnapshotOptions()
+        let options = MKMapSnapshotter.Options()
         options.region = region
         options.size = CGSize(width: RCMessages.locationBubbleWidth(), height: RCMessages.locationBubbleHeight())
         options.scale = UIScreen.main.scale

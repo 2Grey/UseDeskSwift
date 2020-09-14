@@ -67,7 +67,7 @@ class RCEmojiMessageCell: RCMessageCell {
         let maxwidth: CGFloat = (0.6 * SCREEN_WIDTH) - RCMessages.emojiInsetLeft() - RCMessages.emojiInsetRight()
         let rect: CGRect? = rcmessage.text.boundingRect(with: CGSize(width: maxwidth, height: CGFloat(MAXFLOAT)),
                                                         options: .usesLineFragmentOrigin,
-                                                        attributes: [NSAttributedStringKey.font: RCMessages.emojiFont() as Any],
+                                                        attributes: [NSAttributedString.Key.font: RCMessages.emojiFont() as Any],
                                                         context: nil)
 
         let width: CGFloat = (rect?.size.width ?? 0.0) + RCMessages.emojiInsetLeft() + RCMessages.emojiInsetRight()

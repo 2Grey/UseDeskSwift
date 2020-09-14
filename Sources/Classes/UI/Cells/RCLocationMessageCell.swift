@@ -28,7 +28,7 @@ class RCLocationMessageCell: RCMessageCell {
             viewBubble.addSubview(viewImage!)
         }
         if spinner == nil {
-            spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
+            spinner = UIActivityIndicatorView(style: .white)
             viewBubble.addSubview(spinner!)
         }
         

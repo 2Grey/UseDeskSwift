@@ -66,7 +66,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         attachCollectionView.dataSource = self
         attachCollectionView.register(RCAttachCollectionViewCell.self, forCellWithReuseIdentifier: "RCAttachCollectionViewCell")
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification(notification:)), name: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(self.audioRecorderGesture(_:)))
         gesture.minimumPressDuration = 0
@@ -271,22 +271,22 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
         // Buttons
 
-        buttonInputAttach.setImage(RCMessages.shared.attachButtonImage, for: UIControlState.normal)
-        buttonInputAttach.setTitle(RCMessages.shared.attachButtonTitle, for: UIControlState.normal)
-        buttonInputAttach.setTitleColor(RCMessages.shared.attachButtonTextColor, for: UIControlState.normal)
+        buttonInputAttach.setImage(RCMessages.shared.attachButtonImage, for: UIControl.State.normal)
+        buttonInputAttach.setTitle(RCMessages.shared.attachButtonTitle, for: UIControl.State.normal)
+        buttonInputAttach.setTitleColor(RCMessages.shared.attachButtonTextColor, for: UIControl.State.normal)
         if let attachButtonTextColor = RCMessages.shared.attachButtonTextColor {
-            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.75), for: UIControlState.highlighted)
-            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.5), for: UIControlState.disabled)
+            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.75), for: UIControl.State.highlighted)
+            buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.5), for: UIControl.State.disabled)
         }
         buttonInputAttach.titleLabel?.font = RCMessages.shared.attachButtonFont
 
         self.updateSendButtonState()
-        buttonInputSend.setImage(RCMessages.shared.sendButtonImage, for: UIControlState.normal)
-        buttonInputSend.setTitle(RCMessages.shared.sendButtonTitle, for: UIControlState.normal)
-        buttonInputSend.setTitleColor(RCMessages.shared.sendButtonTextColor, for: UIControlState.normal)
+        buttonInputSend.setImage(RCMessages.shared.sendButtonImage, for: UIControl.State.normal)
+        buttonInputSend.setTitle(RCMessages.shared.sendButtonTitle, for: UIControl.State.normal)
+        buttonInputSend.setTitleColor(RCMessages.shared.sendButtonTextColor, for: UIControl.State.normal)
         if let sendButtonTextColor = RCMessages.shared.sendButtonTextColor {
-            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.75), for: UIControlState.highlighted)
-            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.5), for: UIControlState.disabled)
+            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.75), for: UIControl.State.highlighted)
+            buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.5), for: UIControl.State.disabled)
         }
         buttonInputSend.titleLabel?.font = RCMessages.shared.sendButtonFont
     }
@@ -571,9 +571,9 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
         do {
             let audioSession = AVAudioSession.sharedInstance()
             if #available(iOS 10.0, *) {
-                try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+                try audioSession.setCategory(AVAudioSession.Category.playAndRecord)
             } else {
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSessionCategoryPlayAndRecord)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playAndRecord)
             }
         } catch {}
 
@@ -688,11 +688,11 @@ extension RCMessagesView {
     @objc func keyboardNotification(notification: NSNotification) {
         guard let userInfo = notification.userInfo else { return }
 
-        let endFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+        let endFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
         let endFrameY = endFrame?.origin.y ?? 0
 
-        let duration: TimeInterval = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-        let animationCurveRawNSN = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber
+        let duration: TimeInterval = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+        let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
         let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
         let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
 

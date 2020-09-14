@@ -92,9 +92,9 @@ class AudioView: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegat
         do {
             let audioSession = AVAudioSession.sharedInstance()
             if #available(iOS 10.0, *) {
-                try audioSession.setCategory(AVAudioSessionCategoryPlayback)
+                try audioSession.setCategory(AVAudioSession.Category.playback)
             } else {
-                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSessionCategoryPlayback)
+                AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
             }
         } catch {}
 
@@ -119,7 +119,7 @@ class AudioView: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegat
         updateButtonDetails()
 
         timerStart()
-        AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSessionCategoryPlayback)
+        AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
         audioPlayer = try? AVAudioPlayer(contentsOf: audioRecorder!.url)
         audioPlayer!.delegate = self
         audioPlayer!.prepareToPlay()

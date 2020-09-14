@@ -52,7 +52,7 @@ class RCPictureMessageCell: RCMessageCell {
             }
 
             if spinner == nil {
-                spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
+                spinner = UIActivityIndicatorView(style: .white)
                 viewBubble.addSubview(spinner!)
             }
             weak var weakSelf: RCPictureMessageCell? = self

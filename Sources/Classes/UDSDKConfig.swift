@@ -23,6 +23,8 @@ public class UDSDKConfig {
     public var nameChat: String?
     public var pickerMediaType = QBImagePickerMediaType.any
 
+    public var customBackButtonControl: UIControl?
+
     public init(url: String, port: String, apiToken: String, companyId: String, email: String, isUseBase: Bool) {
         self.url = url
         self.port = port

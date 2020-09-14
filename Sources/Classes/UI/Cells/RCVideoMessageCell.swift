@@ -34,7 +34,7 @@ class RCVideoMessageCell: RCMessageCell {
         }
 
         if spinner == nil {
-            spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
+            spinner = UIActivityIndicatorView(style: .white)
             viewBubble.addSubview(spinner!)
         }
 

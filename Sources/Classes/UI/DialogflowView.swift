@@ -17,8 +17,15 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(self.actionDone))
+
         navigationItem.title = usedesk?.config?.nameChat
+
+        if let customBackButtonControl = self.usedesk?.config?.customBackButtonControl {
+            customBackButtonControl.addTarget(self, action: #selector(self.actionDone), for: UIControl.Event.touchUpInside)
+            navigationItem.leftBarButtonItem = UIBarButtonItem(customView: customBackButtonControl)
+        } else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(self.actionDone))
+        }
 
         let hudErrorConnection = MBProgressHUD(view: view)
         hudErrorConnection.removeFromSuperViewOnHide = true
@@ -303,7 +310,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         if sendAssets.count < Constants.maxCountAssets {
             let alertController = UIAlertController(title: "Прикрепить файл", message: nil, preferredStyle: UIAlertController.Style.alert)
             let cancelAction = UIAlertAction(title: "Отмена", style: .destructive)
-            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
+            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerController.SourceType.camera) {
                 let takePhotoAction = UIAlertAction(title: "Камера", style: .default) { (_) -> Void in
                     self.takePhoto()
                 }
@@ -339,8 +346,8 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
                 }
             } else {
                 DispatchQueue.main.async { [weak self] in
-                    let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertControllerStyle.alert)
-                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default))
+                    let alertController = UIAlertController(title: "Ошибка", message: "Доступ к фотогалерее заблокирован", preferredStyle: UIAlertController.Style.alert)
+                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default))
                     self?.present(alertController, animated: true)
                 }
             }
@@ -388,7 +395,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
             }
 
             imageVC = UDImageView(nibName: "UDImageView", bundle: nil)
-            self.addChildViewController(self.imageVC)
+            self.addChild(self.imageVC)
             self.view.addSubview(self.imageVC.view)
             imageVC.view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
             imageVC.delegate = self
@@ -457,7 +464,7 @@ extension DialogflowView: QBImagePickerControllerDelegate {
 extension DialogflowView: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
-        if let chosenImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+        if let chosenImage = info[UIImagePickerController.InfoKey.editedImage.rawValue] as? UIImage {
             sendAssets.append(chosenImage)
 
             self.updateSendButtonState()

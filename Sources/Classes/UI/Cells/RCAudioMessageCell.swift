@@ -31,7 +31,7 @@ class RCAudioMessageCell: RCMessageCell {
             viewBubble.addSubview(labelDuration)
         }
         if spinner == nil {
-            spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
+            spinner = UIActivityIndicatorView(style: .white)
             viewBubble.addSubview(spinner)
         }
         if imageManual == nil {
