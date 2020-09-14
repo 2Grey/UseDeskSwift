@@ -8,6 +8,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
     @IBOutlet var tableView: UITableView!
     @IBOutlet var viewInput: UIView!
+    @IBOutlet var bottomFillerView: UIView!
     @IBOutlet var buttonInputAttach: UIButton!
     @IBOutlet var buttonInputSend: UIButton!
     @IBOutlet var attachCollectionView: UICollectionView!
@@ -20,6 +21,12 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet var textInputBC: NSLayoutConstraint!
     @IBOutlet var bottomViewBC: NSLayoutConstraint!
     @IBOutlet var infoViewHeightConstraint: NSLayoutConstraint!
+
+    @IBOutlet var attachButtonWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var attachButtonHeightConstraint: NSLayoutConstraint!
+
+    @IBOutlet var sendButtonWidthConstraint: NSLayoutConstraint!
+    @IBOutlet var sendButtonHeightConstraint: NSLayoutConstraint!
 
     weak var usedesk: UseDeskSDK?
 
@@ -215,6 +222,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func inputPanelInit() {
         viewInput.backgroundColor = RCMessages.inputViewBackColor()
+        bottomFillerView.backgroundColor = RCMessages.inputViewBackColor()
         textInput.backgroundColor = RCMessages.inputTextBackColor()
         textInput.isScrollEnabled = false
 
@@ -234,7 +242,7 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
     func inputPanelUpdate() {
         let widthText = textInput.frame.size.width
         var heightText: CGFloat
-        let sizeText = textInput.sizeThatFits(CGSize(width: widthText, height: CGFloat(MAXFLOAT)))
+        let sizeText = textInput.sizeThatFits(CGSize(width: widthText, height: CGFloat.greatestFiniteMagnitude))
 
         heightText = CGFloat(fmaxf(Float(RCMessages.inputTextHeightMin()), Float(sizeText.height)))
         heightText = CGFloat(fminf(Float(RCMessages.inputTextHeightMax()), Float(heightText)))
@@ -269,26 +277,55 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
         self.view.layoutIfNeeded()
 
-        // Buttons
+        let theme = RCMessages.shared
 
-        buttonInputAttach.setImage(RCMessages.shared.attachButtonImage, for: UIControl.State.normal)
-        buttonInputAttach.setTitle(RCMessages.shared.attachButtonTitle, for: UIControl.State.normal)
-        buttonInputAttach.setTitleColor(RCMessages.shared.attachButtonTextColor, for: UIControl.State.normal)
-        if let attachButtonTextColor = RCMessages.shared.attachButtonTextColor {
+        // * Attach Button
+
+        switch theme.attachButtonContent {
+        case .image(let image):
+            buttonInputAttach.setImage(image, for: UIControl.State.normal)
+        case .text(let title):
+            buttonInputAttach.setTitle(title, for: UIControl.State.normal)
+        }
+
+        if let attachButtonTextColor = theme.attachButtonTextColor {
+            buttonInputAttach.setTitleColor(theme.attachButtonTextColor, for: UIControl.State.normal)
             buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.75), for: UIControl.State.highlighted)
             buttonInputAttach.setTitleColor(attachButtonTextColor.withAlphaComponent(0.5), for: UIControl.State.disabled)
         }
-        buttonInputAttach.titleLabel?.font = RCMessages.shared.attachButtonFont
+        buttonInputAttach.titleLabel?.font = theme.attachButtonFont
+        buttonInputAttach.contentMode = theme.attachButtonContentModel
+
+        let attachButtonSize = theme.attachButtonSize
+        if attachButtonSize.equalTo(CGSize.zero) == false {
+            self.attachButtonWidthConstraint.constant = attachButtonSize.width
+            self.attachButtonHeightConstraint.constant = attachButtonSize.height
+        }
+
+        // * Send Button
 
         self.updateSendButtonState()
-        buttonInputSend.setImage(RCMessages.shared.sendButtonImage, for: UIControl.State.normal)
-        buttonInputSend.setTitle(RCMessages.shared.sendButtonTitle, for: UIControl.State.normal)
-        buttonInputSend.setTitleColor(RCMessages.shared.sendButtonTextColor, for: UIControl.State.normal)
-        if let sendButtonTextColor = RCMessages.shared.sendButtonTextColor {
+
+        switch theme.sendButtonContent {
+        case .image(let image):
+            buttonInputSend.setImage(image, for: UIControl.State.normal)
+        case .text(let title):
+            buttonInputSend.setTitle(title, for: UIControl.State.normal)
+        }
+
+        if let sendButtonTextColor = theme.sendButtonTextColor {
+            buttonInputSend.setTitleColor(theme.sendButtonTextColor, for: UIControl.State.normal)
             buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.75), for: UIControl.State.highlighted)
             buttonInputSend.setTitleColor(sendButtonTextColor.withAlphaComponent(0.5), for: UIControl.State.disabled)
         }
         buttonInputSend.titleLabel?.font = RCMessages.shared.sendButtonFont
+        buttonInputSend.contentMode = theme.sendButtonContentModel
+
+        let sendButtonSize = theme.sendButtonSize
+        if sendButtonSize.equalTo(CGSize.zero) == false {
+            self.sendButtonWidthConstraint.constant = sendButtonSize.width
+            self.sendButtonHeightConstraint.constant = sendButtonSize.height
+        }
     }
 
     // MARK: * Send button

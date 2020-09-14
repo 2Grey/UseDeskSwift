@@ -20,7 +20,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
 
         navigationItem.title = usedesk?.config?.nameChat
 
-        if let customBackButtonControl = self.usedesk?.config?.customBackButtonControl {
+        if let customBackButtonControl = RCMessages.shared.customBackButtonControl {
             customBackButtonControl.addTarget(self, action: #selector(self.actionDone), for: UIControl.Event.touchUpInside)
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: customBackButtonControl)
         } else {
@@ -360,7 +360,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         imagePickerController.allowsMultipleSelection = true
         imagePickerController.maximumNumberOfSelection = UInt(Constants.maxCountAssets - sendAssets.count)
         imagePickerController.showsNumberOfSelectedAssets = true
-        imagePickerController.mediaType = usedesk?.config?.pickerMediaType ?? QBImagePickerMediaType.any
+        imagePickerController.mediaType = RCMessages.shared.pickerMediaType
         self.present(imagePickerController, animated: true)
     }
 

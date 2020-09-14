@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import QBImagePickerController
 
 public class UDSDKConfig {
 
@@ -15,15 +14,13 @@ public class UDSDKConfig {
     public let apiToken: String
     public let companyId: String
     public let email: String
-    public let isUseBase: Bool
 
     public var accountId: String?
+    public let isUseBase: Bool
+
     public var phone: String?
     public var name: String?
     public var nameChat: String?
-    public var pickerMediaType = QBImagePickerMediaType.any
-
-    public var customBackButtonControl: UIControl?
 
     public init(url: String, port: String, apiToken: String, companyId: String, email: String, isUseBase: Bool) {
         self.url = url

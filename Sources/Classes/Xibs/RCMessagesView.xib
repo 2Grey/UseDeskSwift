@@ -9,13 +9,18 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RCMessagesView">
             <connections>
+                <outlet property="attachButtonHeightConstraint" destination="chL-sU-yV3" id="IV7-4K-0yz"/>
+                <outlet property="attachButtonWidthConstraint" destination="TdM-ns-r9m" id="HmK-Le-CxC"/>
                 <outlet property="attachCollectionView" destination="dSh-VU-anE" id="KJB-QQ-u8Z"/>
+                <outlet property="bottomFillerView" destination="GeM-US-AHo" id="3Mx-8h-S0J"/>
                 <outlet property="bottomViewBC" destination="M5j-Eh-ief" id="zAo-eb-QNm"/>
                 <outlet property="buttonInputAttach" destination="Wx7-PH-b4G" id="rdS-HP-55b"/>
                 <outlet property="buttonInputSend" destination="aaP-dQ-ykO" id="SVD-OS-0XZ"/>
                 <outlet property="infoLabel" destination="qLq-cl-gBn" id="Ie2-eW-y5H"/>
                 <outlet property="infoView" destination="AQ8-LO-pDd" id="jqU-Ux-m81"/>
                 <outlet property="infoViewHeightConstraint" destination="teW-wE-TLF" id="AHD-bU-ltF"/>
+                <outlet property="sendButtonHeightConstraint" destination="uBy-xk-aG7" id="eAm-1M-ZkW"/>
+                <outlet property="sendButtonWidthConstraint" destination="vSb-i4-9bC" id="V1Q-9n-tWH"/>
                 <outlet property="tableView" destination="i5M-Pr-FkT" id="lyD-HE-CdL"/>
                 <outlet property="textInput" destination="WF4-Ti-KqT" id="fwE-JZ-jPs"/>
                 <outlet property="textInputBC" destination="0QF-3K-Leo" id="kGo-RE-VxI"/>
@@ -56,20 +61,25 @@
                         <outlet property="delegate" destination="-1" id="9aC-8N-iBw"/>
                     </connections>
                 </tableView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xuU-RB-86v">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xuU-RB-86v" userLabel="InputView">
                     <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aaP-dQ-ykO">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aaP-dQ-ykO" userLabel="SendButton">
                             <rect key="frame" x="270" y="-11" width="44" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="uBy-xk-aG7"/>
+                                <constraint firstAttribute="width" constant="44" id="vSb-i4-9bC"/>
+                            </constraints>
                             <state key="normal" image="rcmessage_send.png"/>
                             <connections>
                                 <action selector="actionInputSend:" destination="-1" eventType="touchUpInside" id="AKj-eb-WYm"/>
                             </connections>
                         </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-PH-b4G">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-PH-b4G" userLabel="AttachButton">
                             <rect key="frame" x="0.0" y="-11" width="44" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="44" id="TdM-ns-r9m"/>
+                                <constraint firstAttribute="height" constant="44" id="chL-sU-yV3"/>
                             </constraints>
                             <state key="normal" image="rcmessage_attach.png"/>
                             <connections>

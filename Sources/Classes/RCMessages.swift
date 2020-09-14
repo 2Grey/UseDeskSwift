@@ -6,6 +6,7 @@ import AVFoundation
 import CoreLocation
 import MapKit
 import UIKit
+import QBImagePickerController
 
 let SCREEN_WIDTH = UIScreen.main.bounds.size.width
 let SCREEN_HEIGHT = UIScreen.main.bounds.size.height
@@ -36,10 +37,19 @@ let SCREEN_HEIGHT = UIScreen.main.bounds.size.height
     case playing
 }
 
+public enum UDButtonContent {
+    case text(String?)
+    case image(UIImage?)
+}
+
 public class RCMessages: NSObject {
 
     public var navBarBackgroundColor: UIColor? = UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
     public var navBarTextColor: UIColor? = UIColor.white
+
+    public var pickerMediaType = QBImagePickerMediaType.any
+
+    public var customBackButtonControl: UIControl?
 
     // MARK: * Section
 
@@ -154,7 +164,8 @@ public class RCMessages: NSObject {
     public var videoImagePlay: UIImage? = UIImage.named("rcmessages_videoplay")
     public var videoImageManual: UIImage? = UIImage.named("rcmessages_videoplay")
 
-    // Audio cell
+    // MARK: * Audio cell
+
     public var audioBubbleWidht: CGFloat = 145.0
     public var audioBubbleHeight: CGFloat = 40.0
 
@@ -202,15 +213,17 @@ public class RCMessages: NSObject {
 
     // MARK: - Chat send area
 
-    public var attachButtonImage: UIImage? = UIImage.named("rcmessage_attach")
-    public var attachButtonTitle: String?
+    public var attachButtonContent = UDButtonContent.image(UIImage(named: "rcmessage_attach"))
     public var attachButtonTextColor: UIColor? = UIColor.black
     public var attachButtonFont: UIFont? = UIFont.systemFont(ofSize: 14)
+    public var attachButtonSize = CGSize.zero
+    public var attachButtonContentModel = UIView.ContentMode.scaleToFill
 
-    public var sendButtonImage: UIImage? = UIImage.named("rcmessage_send")
-    public var sendButtonTitle: String?
+    public var sendButtonContent = UDButtonContent.image(UIImage(named: "rcmessage_send"))
     public var sendButtonTextColor: UIColor? = UIColor.black
     public var sendButtonFont: UIFont? = UIFont.systemFont(ofSize: 14)
+    public var sendButtonSize = CGSize.zero
+    public var sendButtonContentModel = UIView.ContentMode.scaleToFill
 
     // MARK: - Error messages
 
@@ -221,7 +234,7 @@ public class RCMessages: NSObject {
     // MARK: - Init
 
     static let shared = RCMessages()
-    
+
     override init() {
         super.init()
     }
@@ -229,422 +242,422 @@ public class RCMessages: NSObject {
     // MARK: - Static
 
     // Section
-    
+
     class func sectionHeaderMargin() -> CGFloat {
         return self.shared.sectionHeaderMargin
     }
-    
+
     class var sectionHeaderHeight: CGFloat {
         return shared.sectionHeaderHeight
     }
-    
+
     class func sectionHeaderLeft() -> CGFloat {
         return self.shared.sectionHeaderLeft
     }
-    
+
     class func sectionHeaderRight() -> CGFloat {
         return self.shared.sectionHeaderRight
     }
-    
+
     class func sectionHeaderColor() -> UIColor? {
         return self.shared.sectionHeaderColor
     }
-    
+
     class func sectionHeaderFont() -> UIFont? {
         return self.shared.sectionHeaderFont
     }
-    
+
     class var sectionFooterHeight: CGFloat {
         return self.shared.sectionFooterHeight
     }
-    
+
     class func sectionFooterLeft() -> CGFloat {
         return self.shared.sectionFooterLeft
     }
-    
+
     class func sectionFooterRight() -> CGFloat {
         return self.shared.sectionFooterRight
     }
-    
+
     class func sectionFooterColor() -> UIColor? {
         return self.shared.sectionFooterColor
     }
-    
+
     class func sectionFooterFont() -> UIFont? {
         return self.shared.sectionFooterFont
     }
-    
+
     class func sectionFooterMargin() -> CGFloat {
         return self.shared.sectionFooterMargin
     }
 
     // Bubble
-    
+
     class func bubbleHeaderHeight() -> CGFloat {
         return self.shared.bubbleHeaderHeight
     }
-    
+
     class func bubbleHeaderLeft() -> CGFloat {
         return self.shared.bubbleHeaderLeft
     }
-    
+
     class func bubbleHeaderRight() -> CGFloat {
         return self.shared.bubbleHeaderRight
     }
-    
+
     class func bubbleHeaderColor() -> UIColor? {
         return self.shared.bubbleHeaderColor
     }
-    
+
     class func bubbleHeaderFont() -> UIFont? {
         return self.shared.bubbleHeaderFont
     }
-    
+
     class func bubbleMarginLeft() -> CGFloat {
         return self.shared.bubbleMarginLeft
     }
-    
+
     class func bubbleMarginRight() -> CGFloat {
         return self.shared.bubbleMarginRight
     }
-    
+
     class func bubbleRadius() -> CGFloat {
         return self.shared.bubbleRadius
     }
-    
+
     class func bubbleFooterHeight() -> CGFloat {
         return self.shared.bubbleFooterHeight
     }
-    
+
     class func bubbleFooterLeft() -> CGFloat {
         return self.shared.bubbleFooterLeft
     }
-    
+
     class func bubbleFooterRight() -> CGFloat {
         return self.shared.bubbleFooterRight
     }
-    
+
     class func bubbleFooterColor() -> UIColor? {
         return self.shared.bubbleFooterColor
     }
-    
+
     class func bubbleFooterFont() -> UIFont? {
         return self.shared.bubbleFooterFont
     }
 
     // Avatar
-    
+
     class func avatarDiameter() -> CGFloat {
         return self.shared.avatarDiameter
     }
-    
+
     class func avatarMarginLeft() -> CGFloat {
         return self.shared.avatarMarginLeft
     }
-    
+
     class func avatarMarginRight() -> CGFloat {
         return self.shared.avatarMarginRight
     }
-    
+
     class func avatarBackColor() -> UIColor? {
         return self.shared.avatarBackColor
     }
-    
+
     class func avatarTextColor() -> UIColor? {
         return self.shared.avatarTextColor
     }
-    
+
     class func avatarFont() -> UIFont? {
         return self.shared.avatarFont
     }
-    
+
     // Status cell
     class func statusBubbleRadius() -> CGFloat {
         return self.shared.statusBubbleRadius
     }
-    
+
     class func statusBubbleColor() -> UIColor? {
         return self.shared.statusBubbleColor
     }
-    
+
     class func statusTextColor() -> UIColor? {
         return self.shared.statusTextColor
     }
-    
+
     class func statusFont() -> UIFont? {
         return self.shared.statusFont
     }
-    
+
     class func statusInsetLeft() -> CGFloat {
         return self.shared.statusInsetLeft
     }
-    
+
     class func statusInsetRight() -> CGFloat {
         return self.shared.statusInsetRight
     }
-    
+
     class func statusInsetTop() -> CGFloat {
         return self.shared.statusInsetTop
     }
-    
+
     class func statusInsetBottom() -> CGFloat {
         return self.shared.statusInsetBottom
     }
-    
+
     class func statusInset() -> UIEdgeInsets {
         return self.shared.statusInset
     }
-    
+
     // Text cell
-    
+
     class func textBubbleWidthMin() -> CGFloat {
         return self.shared.textBubbleWidthMin
     }
-    
+
     class func textBubbleHeightMin() -> CGFloat {
         return self.shared.textBubbleHeightMin
     }
-    
+
     class func textBubbleColorOutgoing() -> UIColor? {
         return self.shared.textBubbleColorOutgoing
     }
-    
+
     class func textBubbleColorIncoming() -> UIColor? {
         return self.shared.textBubbleColorIncoming
     }
-    
+
     class func textTextColorOutgoing() -> UIColor? {
         return self.shared.textTextColorOutgoing
     }
-    
+
     class func textTextColorIncoming() -> UIColor? {
         return self.shared.textTextColorIncoming
     }
-    
+
     class func textFont() -> UIFont? {
         return self.shared.textFont
     }
-    
+
     class func textInsetLeft() -> CGFloat {
         return self.shared.textInsetLeft
     }
-    
+
     class func textInsetRight() -> CGFloat {
         return self.shared.textInsetRight
     }
-    
+
     class func textInsetTop() -> CGFloat {
         return self.shared.textInsetTop
     }
-    
+
     class func textInsetBottom() -> CGFloat {
         return self.shared.textInsetBottom
     }
-    
+
     class func textInset() -> UIEdgeInsets {
         return self.shared.textInset
     }
-    
+
     // Emoji cell
     class func emojiBubbleWidthMin() -> CGFloat {
         return self.shared.emojiBubbleWidthMin
     }
-    
+
     class func emojiBubbleHeightMin() -> CGFloat {
         return self.shared.emojiBubbleHeightMin
     }
-    
+
     class func emojiBubbleColorOutgoing() -> UIColor? {
         return self.shared.emojiBubbleColorOutgoing
     }
-    
+
     class func emojiBubbleColorIncoming() -> UIColor? {
         return self.shared.emojiBubbleColorIncoming
     }
-    
+
     class func emojiFont() -> UIFont? {
         return self.shared.emojiFont
     }
-    
+
     class func emojiInsetLeft() -> CGFloat {
         return self.shared.emojiInsetLeft
     }
-    
+
     class func emojiInsetRight() -> CGFloat {
         return self.shared.emojiInsetRight
     }
-    
+
     class func emojiInsetTop() -> CGFloat {
         return self.shared.emojiInsetTop
     }
-    
+
     class func emojiInsetBottom() -> CGFloat {
         return self.shared.emojiInsetBottom
     }
-    
+
     class func emojiInset() -> UIEdgeInsets {
         return self.shared.emojiInset
     }
 
     // Picture cell
-    
+
     class func pictureBubbleWidth() -> CGFloat {
         return self.shared.pictureBubbleWidth
     }
-    
+
     class func pictureBubbleColorOutgoing() -> UIColor? {
         return self.shared.pictureBubbleColorOutgoing
     }
-    
+
     class func pictureBubbleColorIncoming() -> UIColor? {
         return self.shared.pictureBubbleColorIncoming
     }
-    
+
     class func pictureImageManual() -> UIImage? {
         return self.shared.pictureImageManual
     }
-    
+
     // Video cell
     class func videoBubbleWidth() -> CGFloat {
         return self.shared.videoBubbleWidth
     }
-    
+
     class func videoBubbleHeight() -> CGFloat {
         return self.shared.videoBubbleHeight
     }
-    
+
     class func videoBubbleColorOutgoing() -> UIColor? {
         return self.shared.videoBubbleColorOutgoing
     }
-    
+
     class func videoBubbleColorIncoming() -> UIColor? {
         return self.shared.videoBubbleColorIncoming
     }
-    
+
     class func videoImagePlay() -> UIImage? {
         return self.shared.videoImagePlay
     }
-    
+
     class func videoImageManual() -> UIImage? {
         return self.shared.videoImageManual
     }
-    
+
     // Audio cell
     class func audioBubbleWidht() -> CGFloat {
         return self.shared.audioBubbleWidht
     }
-    
+
     class func audioBubbleHeight() -> CGFloat {
         return self.shared.audioBubbleHeight
     }
-    
+
     class func audioBubbleColorOutgoing() -> UIColor? {
         return self.shared.audioBubbleColorOutgoing
     }
-    
+
     class func audioBubbleColorIncoming() -> UIColor? {
         return self.shared.audioBubbleColorIncoming
     }
-    
+
     class func audioTextColorOutgoing() -> UIColor? {
         return self.shared.audioTextColorOutgoing
     }
-    
+
     class func audioTextColorIncoming() -> UIColor? {
         return self.shared.audioTextColorIncoming
     }
-    
+
     class func audioImagePlay() -> UIImage? {
         return self.shared.audioImagePlay
     }
-    
+
     class func audioImagePause() -> UIImage? {
         return self.shared.audioImagePause
     }
-    
+
     class func audioImageManual() -> UIImage? {
         return self.shared.audioImageManual
     }
-    
+
     class func audioFont() -> UIFont? {
         return self.shared.audioFont
     }
 
     // Location cell
-    
+
     class func locationBubbleWidth() -> CGFloat {
         return self.shared.locationBubbleWidth
     }
-    
+
     class func locationBubbleHeight() -> CGFloat {
         return self.shared.locationBubbleHeight
     }
-    
+
     class func locationBubbleColorOutgoing() -> UIColor? {
         return self.shared.locationBubbleColorOutgoing
     }
-    
+
     class func locationBubbleColorIncoming() -> UIColor? {
         return self.shared.locationBubbleColorIncoming
     }
-    
+
     // Input view
     class func inputViewBackColor() -> UIColor? {
         return self.shared.inputViewBackColor
     }
-    
+
     class func inputTextBackColor() -> UIColor? {
         return self.shared.inputTextBackColor
     }
-    
+
     class func inputTextTextColor() -> UIColor? {
         return self.shared.inputTextTextColor
     }
-    
+
     class func inputFont() -> UIFont? {
         return self.shared.inputFont
     }
-    
+
     class func inputViewHeightMin() -> CGFloat {
         return self.shared.inputViewHeightMin
     }
-    
+
     class func inputTextHeightMin() -> CGFloat {
         return self.shared.inputTextHeightMin
     }
-    
+
     class func inputTextHeightMax() -> CGFloat {
         return self.shared.inputTextHeightMax
     }
-    
+
     class func inputBorderWidth() -> CGFloat {
         return self.shared.inputBorderWidth
     }
-    
+
     class func inputBorderColor() -> CGColor? {
         return self.shared.inputBorderColor
     }
-    
+
     class func inputRadius() -> CGFloat {
         return self.shared.inputRadius
     }
-    
+
     class func inputInsetLeft() -> CGFloat {
         return self.shared.inputInsetLeft
     }
-    
+
     class func inputInsetRight() -> CGFloat {
         return self.shared.inputInsetRight
     }
-    
+
     class func inputInsetTop() -> CGFloat {
         return self.shared.inputInsetTop
     }
-    
+
     class func inputInsetBottom() -> CGFloat {
         return self.shared.inputInsetBottom
     }
-    
+
     class func inputInset() -> UIEdgeInsets {
         return self.shared.inputInset
     }
