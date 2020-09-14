@@ -76,6 +76,10 @@ class UDStartViewController: UIViewController, UITextFieldDelegate {
         config.name = nameTextField.text
         config.nameChat = nameChat
 
+        usedesk.configureUI { configurator in
+            configurator.inputTextHeightMin = 50.0
+        }
+
         usedesk.start(with: config, on: self) { _, _ in
         }
     }

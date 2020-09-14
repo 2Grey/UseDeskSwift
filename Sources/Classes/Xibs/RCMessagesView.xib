@@ -65,7 +65,7 @@
                     <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aaP-dQ-ykO" userLabel="SendButton">
-                            <rect key="frame" x="270" y="-11" width="44" height="44"/>
+                            <rect key="frame" x="268" y="-7" width="44" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="44" id="uBy-xk-aG7"/>
                                 <constraint firstAttribute="width" constant="44" id="vSb-i4-9bC"/>
@@ -76,7 +76,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-PH-b4G" userLabel="AttachButton">
-                            <rect key="frame" x="0.0" y="-11" width="44" height="44"/>
+                            <rect key="frame" x="8" y="-7" width="44" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="44" id="TdM-ns-r9m"/>
                                 <constraint firstAttribute="height" constant="44" id="chL-sU-yV3"/>
@@ -87,7 +87,7 @@
                             </connections>
                         </button>
                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WF4-Ti-KqT">
-                            <rect key="frame" x="44" y="7" width="220" height="30"/>
+                            <rect key="frame" x="60" y="7" width="200" height="30"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="VTd-c8-c4g"/>
@@ -98,7 +98,7 @@
                                 <outlet property="delegate" destination="-1" id="ysY-ng-J5m"/>
                             </connections>
                         </textView>
-                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="dSh-VU-anE">
+                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="scaleToFill" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="dSh-VU-anE">
                             <rect key="frame" x="0.0" y="44" width="320" height="68"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
@@ -114,17 +114,16 @@
                     </subviews>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
-                        <constraint firstItem="WF4-Ti-KqT" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" constant="44" id="02r-Nl-wYU"/>
+                        <constraint firstItem="WF4-Ti-KqT" firstAttribute="leading" secondItem="Wx7-PH-b4G" secondAttribute="trailing" constant="8" id="02r-Nl-wYU"/>
                         <constraint firstAttribute="bottom" secondItem="WF4-Ti-KqT" secondAttribute="bottom" constant="7" id="0QF-3K-Leo"/>
                         <constraint firstAttribute="trailing" secondItem="dSh-VU-anE" secondAttribute="trailing" id="0SX-bI-pqC"/>
                         <constraint firstItem="WF4-Ti-KqT" firstAttribute="top" secondItem="xuU-RB-86v" secondAttribute="top" constant="7" id="AxG-Vq-6Zg"/>
-                        <constraint firstItem="aaP-dQ-ykO" firstAttribute="leading" secondItem="WF4-Ti-KqT" secondAttribute="trailing" constant="6" id="M7j-Cg-Mre"/>
-                        <constraint firstItem="dSh-VU-anE" firstAttribute="top" secondItem="Wx7-PH-b4G" secondAttribute="bottom" constant="11" id="Mae-GE-1De"/>
+                        <constraint firstItem="aaP-dQ-ykO" firstAttribute="leading" secondItem="WF4-Ti-KqT" secondAttribute="trailing" constant="8" id="M7j-Cg-Mre"/>
                         <constraint firstItem="dSh-VU-anE" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" id="OIs-f3-WIT"/>
-                        <constraint firstItem="Wx7-PH-b4G" firstAttribute="bottom" secondItem="WF4-Ti-KqT" secondAttribute="bottom" constant="-4" id="Q1y-yC-voh"/>
-                        <constraint firstAttribute="trailing" secondItem="aaP-dQ-ykO" secondAttribute="trailing" constant="6" id="Wny-R1-Wnx"/>
-                        <constraint firstItem="Wx7-PH-b4G" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" id="cJY-eL-XRL"/>
+                        <constraint firstAttribute="trailing" secondItem="aaP-dQ-ykO" secondAttribute="trailing" constant="8" id="Wny-R1-Wnx"/>
+                        <constraint firstItem="Wx7-PH-b4G" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" constant="8" id="cJY-eL-XRL"/>
                         <constraint firstItem="aaP-dQ-ykO" firstAttribute="centerY" secondItem="Wx7-PH-b4G" secondAttribute="centerY" id="sBc-P5-djC"/>
+                        <constraint firstItem="Wx7-PH-b4G" firstAttribute="bottom" secondItem="WF4-Ti-KqT" secondAttribute="bottom" id="tFp-Qa-OLg"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GeM-US-AHo" userLabel="BottomFillerView">
