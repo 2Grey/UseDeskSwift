@@ -22,58 +22,64 @@ class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionVi
         viewBubble.backgroundColor = rcmessage?.incoming != false ? RCMessages.textBubbleColorIncoming() : RCMessages.textBubbleColorOutgoing()
 
         if textView == nil {
-            textView = UITextView()
-            textView!.font = RCMessages.textFont()
-            textView!.isEditable = false
-            textView!.isSelectable = false
-            textView!.isScrollEnabled = false
-            textView!.isUserInteractionEnabled = false
-            textView!.backgroundColor = UIColor.clear
-            textView!.textContainer.lineFragmentPadding = 0
-            textView!.textContainerInset = RCMessages.textInset()
-            viewBubble?.addSubview(textView!)
+            let textView = UITextView()
+            textView.font = RCMessages.textFont()
+            textView.isEditable = false
+            textView.isSelectable = false
+            textView.isScrollEnabled = false
+            textView.isUserInteractionEnabled = false
+            textView.backgroundColor = UIColor.clear
+            textView.textContainer.lineFragmentPadding = 0
+            textView.textContainerInset = RCMessages.textInset()
+
+            viewBubble?.addSubview(textView)
+
+            self.textView = textView
         }
 
         textView?.textColor = rcmessage?.incoming != false ? RCMessages.textTextColorIncoming() : RCMessages.textTextColorOutgoing()
 
         textView?.text = rcmessage?.text
 
+        guard let rcmessage = self.rcmessage, rcmessage.rcButtons.isEmpty == false else { return }
+
         var size = CGSize(width: 100, height: 0)
-        if rcmessage != nil {
-            if rcmessage!.rcButtons.count > 0 {
-                for _ in rcmessage!.rcButtons {
-                    size = CGSize(width: size.width, height: size.height + 30)
-                }
-                let layout = UICollectionViewFlowLayout()
-                layout.itemSize = CGSize(width: size.width, height: 30)
-                collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-                collectionView!.dataSource = self
-                collectionView!.delegate = self
-                collectionView!.register(RCMessageButtonCell.self, forCellWithReuseIdentifier: "RCMessageButtonCell")
-                collectionView!.backgroundColor = UIColor.clear
-                viewBubble!.addSubview(collectionView!)
-                collectionView!.reloadData()
-            }
+        for _ in rcmessage.rcButtons {
+            size = CGSize(width: size.width, height: size.height + 30)
         }
+
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: size.width, height: 30)
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(RCMessageButtonCell.self, forCellWithReuseIdentifier: "RCMessageButtonCell")
+        collectionView.backgroundColor = UIColor.clear
+        self.viewBubble?.addSubview(collectionView)
+
+        self.collectionView = collectionView
+        self.collectionView?.reloadData()
     }
 
     override func layoutSubviews() {
         let textSize: CGSize = RCTextMessageCell.size(indexPath, messagesView: messagesView)
         var size = textSize
-        if rcmessage != nil {
-            if rcmessage!.rcButtons.count > 0 {
-                for _ in rcmessage!.rcButtons {
-                    size = CGSize(width: size.width, height: size.height + 40)
-                }
-                size = CGSize(width: size.width, height: size.height + 10)
-                super.layoutSubviews(size)
-                collectionView?.frame = CGRect(x: 0, y: textSize.height, width: size.width, height: size.height - textSize.height - 10)
-                let layout = UICollectionViewFlowLayout()
-                layout.itemSize = CGSize(width: size.width, height: 30)
-                collectionView?.collectionViewLayout = layout
-            } else {
-                super.layoutSubviews(size)
+
+        if let rcmessage = self.rcmessage {
+            for _ in rcmessage.rcButtons {
+                size = CGSize(width: size.width, height: size.height + 40.0)
             }
+            size = CGSize(width: size.width, height: size.height + 10)
+
+            super.layoutSubviews(size)
+
+            collectionView?.frame = CGRect(x: 0, y: textSize.height, width: size.width, height: size.height - textSize.height - 10)
+
+            let layout = UICollectionViewFlowLayout()
+            layout.itemSize = CGSize(width: size.width, height: 30)
+            collectionView?.collectionViewLayout = layout
+        } else {
+            super.layoutSubviews(size)
         }
         textView?.frame = CGRect(x: 0, y: 0, width: textSize.width, height: textSize.height)
     }
@@ -120,8 +126,8 @@ class RCTextMessageCell: RCMessageCell, UICollectionViewDelegate, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if rcmessage?.rcButtons[indexPath.row].url != "" {
-            let urlDataDict: [String: String] = ["url": rcmessage!.rcButtons[indexPath.row].url]
+        if let url = rcmessage?.rcButtons[indexPath.row].url, url.isEmpty == false {
+            let urlDataDict: [String: String] = ["url": url]
             NotificationCenter.default.post(name: Notification.Name("messageButtonURLOpen"), object: nil, userInfo: urlDataDict)
         } else {
             let textDataDict: [String: String] = ["text": rcmessage?.rcButtons[indexPath.row].title ?? ""]

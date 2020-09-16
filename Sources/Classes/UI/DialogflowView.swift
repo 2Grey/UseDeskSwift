@@ -461,10 +461,12 @@ extension DialogflowView: QBImagePickerControllerDelegate {
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate
+
 extension DialogflowView: UIImagePickerControllerDelegate {
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
-        if let chosenImage = info[UIImagePickerController.InfoKey.editedImage.rawValue] as? UIImage {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let chosenImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             sendAssets.append(chosenImage)
 
             self.updateSendButtonState()
@@ -474,6 +476,8 @@ extension DialogflowView: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true)
     }
 }
+
+// MARK: - UDImageViewDelegate
 
 extension DialogflowView: UDImageViewDelegate {
     func close() {

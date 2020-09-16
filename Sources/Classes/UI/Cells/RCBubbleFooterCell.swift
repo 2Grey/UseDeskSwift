@@ -14,25 +14,28 @@ class RCBubbleFooterCell: UITableViewCell {
     }
 
     func bindData(_ indexPath: IndexPath?, messagesView: RCMessagesView?) {
-        backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.clear
 
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if labelBubbleFooter == nil {
-            labelBubbleFooter = UILabel()
-            labelBubbleFooter!.font = RCMessages.bubbleFooterFont()
-            labelBubbleFooter!.textColor = RCMessages.bubbleFooterColor()
-            contentView.addSubview(labelBubbleFooter!)
+            let labelBubbleFooter = UILabel()
+            labelBubbleFooter.font = RCMessages.bubbleFooterFont()
+            labelBubbleFooter.textColor = RCMessages.bubbleFooterColor()
+            self.contentView.addSubview(labelBubbleFooter)
+
+            self.labelBubbleFooter = labelBubbleFooter
         }
-        labelBubbleFooter!.textAlignment = rcmessage?.incoming != false ? .left : .right
-        labelBubbleFooter!.text = messagesView?.textBubbleFooter(indexPath)
+
+        self.labelBubbleFooter?.textAlignment = rcmessage?.incoming != false ? .left : .right
+        self.labelBubbleFooter?.text = messagesView?.textBubbleFooter(indexPath)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
         let width: CGFloat = SCREEN_WIDTH - RCMessages.bubbleFooterLeft() - RCMessages.bubbleFooterRight()
-        let height: CGFloat = (labelBubbleFooter!.text != nil) ? RCMessages.bubbleFooterHeight() : 0
+        let height: CGFloat = (labelBubbleFooter?.text != nil) ? RCMessages.bubbleFooterHeight() : 0
 
-        labelBubbleFooter!.frame = CGRect(x: RCMessages.bubbleFooterLeft(), y: 0, width: width, height: height)
+        self.labelBubbleFooter?.frame = CGRect(x: RCMessages.bubbleFooterLeft(), y: 0, width: width, height: height)
     }
 }

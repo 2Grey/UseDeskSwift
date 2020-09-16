@@ -277,9 +277,9 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UseDesk_Example/Pods-UseDesk_Example-resources.sh",
 				"${PODS_ROOT}/../../Sources/Assets/Images/attach/rcmessage_attach@2x.png",
-				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/Float.png",
-				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/Float@2x.png",
-				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/Float@3x.png",
+				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/attachClose.png",
+				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/attachClose@2x.png",
+				"${PODS_ROOT}/../../Sources/Assets/Images/attachClose/attachClose@3x.png",
 				"${PODS_ROOT}/../../Sources/Assets/Images/audio/rcmessage_audio@2x.png",
 				"${PODS_ROOT}/../../Sources/Assets/Images/audioPause/rcmessages_audiopause@2x.png",
 				"${PODS_ROOT}/../../Sources/Assets/Images/audioPlay/rcmessages_audioplay@2x.png",
@@ -310,9 +310,9 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/rcmessage_attach@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Float.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Float@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Float@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/attachClose.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/attachClose@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/attachClose@3x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/rcmessage_audio@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/rcmessages_audiopause@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/rcmessages_audioplay@2x.png",

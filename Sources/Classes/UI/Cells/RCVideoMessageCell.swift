@@ -89,13 +89,12 @@ class RCVideoMessageCell: RCMessageCell {
     }
 
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
-        let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
-        if rcmessage != nil {
-            let width = fminf(Float(RCMessages.videoBubbleWidth()), Float(rcmessage!.picture_width))
-            return CGSize(width: CGFloat(width), height: CGFloat(Float(rcmessage!.picture_height) * width / Float(rcmessage!.picture_width)))
-        } else {
-            return CGSize(width: 0, height: 0)
+        guard let rcmessage = messagesView?.rcmessage(indexPath) else {
+            return CGSize.zero
         }
+
+        let width = fminf(Float(RCMessages.videoBubbleWidth()), Float(rcmessage.picture_width))
+        return CGSize(width: CGFloat(width), height: CGFloat(Float(rcmessage.picture_height) * width / Float(rcmessage.picture_width)))
     }
 
     override func layoutSubviews() {
@@ -104,28 +103,32 @@ class RCVideoMessageCell: RCMessageCell {
         super.layoutSubviews(size)
 
         viewImage?.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        if imagePreview?.image != nil {
-            let widthPlay = imagePreview!.image!.size.width
-            let heightPlay = imagePreview!.image!.size.height
+
+        if let image = imagePreview?.image {
+            let widthPlay = image.size.width
+            let heightPlay = image.size.height
             let xPlay: CGFloat = (size.width - widthPlay) / 2
             let yPlay: CGFloat = (size.height - heightPlay) / 2
-            imagePreview!.frame = CGRect(x: xPlay, y: yPlay, width: widthPlay, height: heightPlay)
+
+            imagePreview?.frame = CGRect(x: xPlay, y: yPlay, width: widthPlay, height: heightPlay)
         }
 
-        if spinner != nil {
-            let widthSpinner = spinner!.frame.size.width
-            let heightSpinner = spinner!.frame.size.height
+        if let spinner = self.spinner {
+            let widthSpinner = spinner.frame.size.width
+            let heightSpinner = spinner.frame.size.height
             let xSpinner: CGFloat = (size.width - widthSpinner) / 2
             let ySpinner: CGFloat = (size.height - heightSpinner) / 2
-            spinner!.frame = CGRect(x: xSpinner, y: ySpinner, width: widthSpinner, height: heightSpinner)
+
+            spinner.frame = CGRect(x: xSpinner, y: ySpinner, width: widthSpinner, height: heightSpinner)
         }
 
-        if imageManual?.image != nil {
-            let widthManual = imageManual!.image!.size.width
-            let heightManual = imageManual!.image!.size.height
+        if let image = imageManual?.image {
+            let widthManual = image.size.width
+            let heightManual = image.size.height
             let xManual: CGFloat = (size.width - widthManual) / 2
             let yManual: CGFloat = (size.height - heightManual) / 2
-            imageManual!.frame = CGRect(x: xManual, y: yManual, width: widthManual, height: heightManual)
+
+            imageManual?.frame = CGRect(x: xManual, y: yManual, width: widthManual, height: heightManual)
         }
 
         if imagePlay?.image != nil {
@@ -133,9 +136,9 @@ class RCVideoMessageCell: RCMessageCell {
             let heightManual = widthManual
             let xManual: CGFloat = (size.width - widthManual) / 2
             let yManual: CGFloat = (size.height - heightManual) / 2
-            imagePlay!.frame = CGRect(x: xManual, y: yManual, width: widthManual, height: heightManual)
-            imagePlay!.alpha = isDownloadVideo ? 1 : 0
-            print("IMAGE PLAY ALPHA= ", imagePlay!.alpha)
+
+            imagePlay?.frame = CGRect(x: xManual, y: yManual, width: widthManual, height: heightManual)
+            imagePlay?.alpha = isDownloadVideo ? 1 : 0
         }
     }
 }

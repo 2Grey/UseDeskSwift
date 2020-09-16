@@ -17,7 +17,7 @@ class AudioView: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegat
     private var audioPlayer: AVAudioPlayer?
     private var audioRecorder: AVAudioRecorder?
 
-    weak var delegate: AudioDelegate!
+    weak var delegate: AudioDelegate?
 
     @IBOutlet private var labelTimer: UILabel!
     @IBOutlet private var buttonRecord: UIButton!
@@ -30,65 +30,66 @@ class AudioView: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegat
 
         super.viewDidLoad()
 
-        title = "Audio"
+        self.title = "Audio"
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.actionCancel))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.actionCancel))
 
-        isRecording = false
-        isRecorded = isRecording
-        isPlaying = isRecorded
+        self.isRecording = false
+        self.isRecorded = self.isRecording
+        self.isPlaying = self.isRecorded
 
-        updateButtonDetails()
+        self.updateButtonDetails()
     }
 
+    // MARK: - Actions
+
     func actionStop() {
-        if isPlaying {
-            audioPlayerStop()
+        if self.isPlaying {
+            self.audioPlayerStop()
         }
-        if isRecording {
-            audioRecorderStop()
+        if self.isRecording {
+            self.audioRecorderStop()
         }
     }
 
     @objc func actionCancel() {
+        self.actionStop()
 
-        actionStop()
-
-        dismiss(animated: true)
+        self.dismiss(animated: true)
     }
 
     @IBAction func actionRecord(_ sender: Any) {
-        audioRecorderStart()
+        self.audioRecorderStart()
     }
 
     @IBAction func actionStop(_ sender: Any) {
-        actionStop()
+        self.actionStop()
     }
 
     @IBAction func actionDelete(_ sender: Any) {
-        isRecorded = false
-        updateButtonDetails()
+        self.isRecorded = false
+        self.updateButtonDetails()
 
-        timerReset()
+        self.timerReset()
     }
 
     @IBAction func actionPlay(_ sender: Any) {
-        audioPlayerStart()
+        self.audioPlayerStart()
     }
 
     @IBAction func actionSend(_ sender: Any) {
-        dismiss(animated: true)
-        if delegate != nil {
-            delegate.didRecordAudio(audioRecorder!.url.path)
-        }
+        self.dismiss(animated: true)
+
+        self.delegate?.didRecordAudio(audioRecorder?.url.path)
     }
 
     // MARK: - Audio recorder methods
 
     func audioRecorderStart() {
-        isRecording = true
-        updateButtonDetails()
-        timerStart()
+        self.isRecording = true
+        self.updateButtonDetails()
+        self.timerStart()
+
         do {
             let audioSession = AVAudioSession.sharedInstance()
             if #available(iOS 10.0, *) {
@@ -98,80 +99,89 @@ class AudioView: UIViewController, AVAudioPlayerDelegate, AVAudioRecorderDelegat
             }
         } catch {}
 
-        audioRecorder!.prepareToRecord()
-        audioRecorder!.record()
+        self.audioRecorder?.prepareToRecord()
+        self.audioRecorder?.record()
     }
 
     func audioRecorderStop() {
-        isRecording = false
-        isRecorded = true
-        updateButtonDetails()
+        self.isRecording = false
+        self.isRecorded = true
+        self.updateButtonDetails()
 
-        timerStop()
+        self.timerStop()
 
-        audioRecorder!.stop()
+        self.audioRecorder?.stop()
     }
 
     // MARK: - Audio player methods
 
     func audioPlayerStart() {
-        isPlaying = true
-        updateButtonDetails()
+        self.isPlaying = true
+        self.updateButtonDetails()
 
-        timerStart()
+        self.timerStart()
+
         AVAudioSession.sharedInstance().perform(NSSelectorFromString("setCategory:error:"), with: AVAudioSession.Category.playback)
-        audioPlayer = try? AVAudioPlayer(contentsOf: audioRecorder!.url)
-        audioPlayer!.delegate = self
-        audioPlayer!.prepareToPlay()
-        audioPlayer!.play()
+        guard let url = self.audioRecorder?.url else { return }
+
+        self.audioPlayer = try? AVAudioPlayer(contentsOf: url)
+        self.audioPlayer?.delegate = self
+        self.audioPlayer?.prepareToPlay()
+        self.audioPlayer?.play()
     }
 
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        isPlaying = false
-        updateButtonDetails()
+        self.isPlaying = false
+        self.updateButtonDetails()
 
-        timerStop()
+        self.timerStop()
     }
 
     func audioPlayerStop() {
-        isPlaying = false
-        updateButtonDetails()
-        timerStop()
-        audioPlayer!.stop()
+        self.isPlaying = false
+        self.updateButtonDetails()
+        self.timerStop()
+        self.audioPlayer?.stop()
     }
 
     // MARK: - Timer methods
 
     func timerStart() {
-        dateTimer = Date()
-        timer = Timer.scheduledTimer(timeInterval: 0.07, target: self, selector: #selector(self.timerUpdate), userInfo: nil, repeats: true)
-        // RunLoop.main.add(timer!, forMode: RunLoopMode.commonModes)
+        self.dateTimer = Date()
+        self.timer = Timer.scheduledTimer(timeInterval: 0.07, target: self, selector: #selector(self.timerUpdate), userInfo: nil, repeats: true)
     }
 
     @objc func timerUpdate() {
-        let interval: TimeInterval = Date().timeIntervalSince(dateTimer!)
+        guard let dateTimer = self.dateTimer else {
+            self.timerReset()
+            return
+        }
+
+        let interval: TimeInterval = Date().timeIntervalSince(dateTimer)
         let millisec = Int(interval * 100) % 100
         let seconds = Int(interval) % 60
         let minutes = Int(interval) / 60
-        labelTimer.text = String(format: "%02d:%02d:%02d", minutes, seconds, millisec)
+
+        self.labelTimer.text = String(format: "%02d:%02d:%02d", minutes, seconds, millisec)
     }
 
     func timerStop() {
-        timer?.invalidate()
-        timer = nil
+        self.timer?.invalidate()
+        self.timer = nil
+        self.dateTimer = nil
     }
 
     func timerReset() {
-        labelTimer.text = "00:00:00"
+        self.labelTimer.text = "00:00:00"
     }
 
     // MARK: - Helper methods
 
     func updateButtonDetails() {
-        buttonRecord.isHidden = isRecorded
-        buttonStop.isHidden = (isPlaying == false) && (isRecording == false)
-        buttonDelete.isHidden = (isPlaying == true) || (isRecorded == false)
-        buttonPlay.isHidden = (isPlaying == true) || (isRecorded == false)
-        buttonSend.isHidden = (isPlaying == true) || (isRecorded == false)
+        self.buttonRecord.isHidden = self.isRecorded
+        self.buttonStop.isHidden = (self.isPlaying == false) && (self.isRecording == false)
+        self.buttonDelete.isHidden = (self.isPlaying == true) || (self.isRecorded == false)
+        self.buttonPlay.isHidden = (self.isPlaying == true) || (self.isRecorded == false)
+        self.buttonSend.isHidden = (self.isPlaying == true) || (self.isRecorded == false)
     }
 }

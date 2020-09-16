@@ -461,8 +461,8 @@ public class UseDeskSDK: NSObject {
             let stringsFromButtons = parseMessageFromButtons(text: m.text)
             for stringFromButton in stringsFromButtons {
                 let rsButton = buttonFromString(stringButton: stringFromButton)
-                if rsButton != nil {
-                    m.rcButtons.append(rsButton!)
+                if let rsButton = rsButton {
+                    m.rcButtons.append(rsButton)
                 }
                 m.text = m.text.replacingOccurrences(of: stringFromButton, with: "")
             }

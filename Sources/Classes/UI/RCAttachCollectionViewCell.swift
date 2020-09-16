@@ -43,16 +43,17 @@ class RCAttachCollectionViewCell: UICollectionViewCell {
             backView.backgroundColor = .black
             videoView.addSubview(backView)
             
-            if videoDuration != nil {
+            if let videoDuration = videoDuration {
                 let durationLabel = UILabel(frame: CGRect(x: 14, y: 0, width: (Constants.heightAssetsCollection - kIndentImage * 2) - 14 - 2, height: 12))
                 durationLabel.font = durationLabel.font.withSize(9)
                 durationLabel.textColor = .white
                 durationLabel.textAlignment = .right
+
                 let formatter = DateComponentsFormatter()
                 formatter.allowedUnits = [.second, .minute, .hour]
                 formatter.zeroFormattingBehavior = .pad
-                if var formattedString = formatter.string(from: TimeInterval(videoDuration!)) {
-                    if videoDuration! < 3600 {
+                if var formattedString = formatter.string(from: TimeInterval(videoDuration)) {
+                    if videoDuration < 3600 {
                         formattedString.removeSubrange(formattedString.startIndex ..< String.Index(encodedOffset: 3))
                     }
                     durationLabel.text = formattedString
@@ -72,7 +73,7 @@ class RCAttachCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {}
     
-    @objc func deleteAction(sender: UIButton!) {
+    @objc func deleteAction(sender: UIButton) {
         delegate?.deleteFile(index: index)
     }
 }

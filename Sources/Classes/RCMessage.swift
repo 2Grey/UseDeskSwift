@@ -100,7 +100,7 @@ public class RCMessage: NSObject {
         self.incoming = incoming
         outgoing = !incoming
 
-        video_path = path != nil ? path! : ""
+        video_path = path ?? ""
         video_duration = duration
     }
 
@@ -112,7 +112,7 @@ public class RCMessage: NSObject {
         self.incoming = incoming
         outgoing = !incoming
 
-        audio_path = path != nil ? path! : ""
+        audio_path = path ?? ""
         audio_duration = duration
         audio_status = RCAudioStatus.stopped
     }
@@ -144,16 +144,16 @@ public class RCMessage: NSObject {
         let snapshotter = MKMapSnapshotter(options: options)
         snapshotter.start(with: DispatchQueue.global(qos: .default), completionHandler: { [weak self] snapshot, _ in
             guard let wSelf = self else { return }
-            if snapshot != nil {
-                UIGraphicsBeginImageContextWithOptions((snapshot?.image.size)!, true, (snapshot?.image.scale)!)
+            if let snapshot = snapshot {
+                UIGraphicsBeginImageContextWithOptions(snapshot.image.size, true, snapshot.image.scale)
                 do {
-                    snapshot?.image.draw(at: CGPoint.zero)
+                    snapshot.image.draw(at: CGPoint.zero)
 
-                    let pin: MKAnnotationView? = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
-                    var point: CGPoint? = snapshot?.point(for: CLLocationCoordinate2DMake(wSelf.latitude, wSelf.longitude))
-                    point?.x += (pin?.centerOffset.x ?? 0.0) - ((pin?.bounds.size.width ?? 0.0) / 2)
-                    point?.y += (pin?.centerOffset.y ?? 0.0) - ((pin?.bounds.size.height ?? 0.0) / 2)
-                    pin?.image?.draw(at: point ?? CGPoint.zero)
+                    let pin = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
+                    var point = snapshot.point(for: CLLocationCoordinate2DMake(wSelf.latitude, wSelf.longitude))
+                    point.x += pin.centerOffset.x - (pin.bounds.size.width / 2)
+                    point.y += pin.centerOffset.y - (pin.bounds.size.height / 2)
+                    pin.image?.draw(at: point)
 
                     wSelf.location_thumbnail = UIGraphicsGetImageFromCurrentImageContext()
                 }

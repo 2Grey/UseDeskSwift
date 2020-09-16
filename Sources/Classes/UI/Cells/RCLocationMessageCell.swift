@@ -22,14 +22,19 @@ class RCLocationMessageCell: RCMessageCell {
         viewBubble.backgroundColor = rcmessage?.incoming != false ? RCMessages.locationBubbleColorIncoming() : RCMessages.locationBubbleColorOutgoing()
         
         if viewImage == nil {
-            viewImage = UIImageView()
-            viewImage!.layer.masksToBounds = true
-            viewImage!.layer.cornerRadius = RCMessages.bubbleRadius()
-            viewBubble.addSubview(viewImage!)
+            let viewImage = UIImageView()
+            viewImage.layer.masksToBounds = true
+            viewImage.layer.cornerRadius = RCMessages.bubbleRadius()
+            self.viewBubble.addSubview(viewImage)
+
+            self.viewImage = viewImage
         }
+
         if spinner == nil {
-            spinner = UIActivityIndicatorView(style: .white)
-            viewBubble.addSubview(spinner!)
+            let spinner = UIActivityIndicatorView(style: .white)
+            self.viewBubble.addSubview(spinner)
+
+            self.spinner = spinner
         }
         
         if rcmessage?.status == RCStatus.loading {
@@ -48,13 +53,14 @@ class RCLocationMessageCell: RCMessageCell {
         
         super.layoutSubviews(size)
         
-        viewImage?.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        self.viewImage?.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         
-        let widthSpinner = spinner!.frame.size.width
-        let heightSpinner = spinner!.frame.size.height
+        let widthSpinner = spinner?.frame.size.width ?? 0
+        let heightSpinner = spinner?.frame.size.height ?? 0
         let xSpinner: CGFloat = (size.width - widthSpinner) / 2
         let ySpinner: CGFloat = (size.height - heightSpinner) / 2
-        spinner?.frame = CGRect(x: xSpinner, y: ySpinner, width: widthSpinner, height: heightSpinner)
+
+        self.spinner?.frame = CGRect(x: xSpinner, y: ySpinner, width: widthSpinner, height: heightSpinner)
     }
     
     // MARK: - Size methods
@@ -65,8 +71,7 @@ class RCLocationMessageCell: RCMessageCell {
     }
     
     class func size(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGSize {
-        let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
-        if rcmessage != nil {
+        if messagesView?.rcmessage(indexPath) != nil {
             return CGSize(width: RCMessages.locationBubbleWidth(), height: RCMessages.locationBubbleHeight())
         } else {
             return CGSize(width: 0, height: 0)

@@ -21,11 +21,7 @@ import UIKit
         self.id = id
         self.title = title
 
-        if open == 1 {
-            self.open = true
-        } else {
-            self.open = false
-        }
+        self.open = open == 1
 
         for atricleTitleObject in articlesTitlesArray {
             if let articleTitle = ArticleTitle(json: atricleTitleObject) {
@@ -70,14 +66,12 @@ import UIKit
 
         self.id = id
         self.title = title
-        if (json["image"] as? String) != nil {
-            self.image = json["image"] as! String
+
+        if let imageString = json["image"] as? String {
+            self.image = imageString
         }
-        if open == 1 {
-            self.open = true
-        } else {
-            self.open = false
-        }
+        self.open = open == 1
+
         for categoryObject in categoriesArray {
             if let category = BaseCategory(json: categoryObject) {
                 self.сategories.append(category)
@@ -86,8 +80,8 @@ import UIKit
     }
 
     static func getArray(from jsonArray: Any) -> [BaseCollection]? {
-
         guard let jsonArray = jsonArray as? [[String: Any]] else { return nil }
+
         var collections: [BaseCollection] = []
 
         for jsonObject in jsonArray {

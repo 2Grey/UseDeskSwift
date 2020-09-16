@@ -23,26 +23,28 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self
-        tableView.delegate = self
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
-        navigationView = UIView(frame: navigationController?.navigationBar.bounds ?? .zero)
-        navigationItem.titleView = navigationView
-        searchBar = UISearchBar()
-        searchBar.placeholder = searchBarPlaceholderText
-        searchBar.tintColor = searchBarTintColor
-        searchBar.delegate = self
-        navigationView.addSubview(searchBar)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
+        self.navigationView = UIView(frame: navigationController?.navigationBar.bounds ?? .zero)
+        self.navigationItem.titleView = self.navigationView
+
+        self.searchBar = UISearchBar()
+        self.searchBar.placeholder = searchBarPlaceholderText
+        self.searchBar.tintColor = searchBarTintColor
+        self.searchBar.delegate = self
+        self.navigationView.addSubview(self.searchBar)
         
         tableView.register(UINib(nibName: "UDArticleViewCell", bundle: nil), forCellReuseIdentifier: "UDArticleViewCell")
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if !isViewDidLayout {
-            searchBar.frame = navigationItem.titleView!.frame
-            isViewDidLayout = true
+
+        if !self.isViewDidLayout {
+            self.searchBar.frame = navigationItem.titleView?.frame ?? CGRect.zero
+            self.isViewDidLayout = true
         }
     }
     
@@ -70,8 +72,8 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
             } else {
                 if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
-                    if wSelf.url != nil {
-                        offlineVC.url = wSelf.url!
+                    if let url = wSelf.url {
+                        offlineVC.url = url
                     }
                     offlineVC.usedesk = wSelf.usedesk
                     wSelf.navigationController?.pushViewController(offlineVC, animated: true)
@@ -91,22 +93,22 @@ class UDArticlesView: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isSearch {
-            if searchArticles != nil {
-                return (searchArticles?.articles.count)!
+            if let searchArticles = self.searchArticles {
+                return searchArticles.articles.count
             } else {
                 return 0
             }
         } else {
-            return arrayArticles.count
+            return self.arrayArticles.count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UDArticleViewCell", for: indexPath) as! UDArticleViewCell
         if isSearch {
-            if searchArticles != nil {
-                cell.textView.text = searchArticles?.articles[indexPath.row].title
-                cell.viewsLabel.text = "\(searchArticles?.articles[indexPath.row].views ?? 0) просмотров"
+            if let searchArticles = self.searchArticles {
+                cell.textView.text = searchArticles.articles[indexPath.row].title
+                cell.viewsLabel.text = "\(searchArticles.articles[indexPath.row].views) просмотров"
             } else {
                 cell.textView.text = ""
             }

@@ -12,8 +12,9 @@
                 <outlet property="attachButtonHeightConstraint" destination="chL-sU-yV3" id="IV7-4K-0yz"/>
                 <outlet property="attachButtonWidthConstraint" destination="TdM-ns-r9m" id="HmK-Le-CxC"/>
                 <outlet property="attachCollectionView" destination="dSh-VU-anE" id="KJB-QQ-u8Z"/>
+                <outlet property="attachCollectionViewHeightConstraint" destination="xbo-6w-plq" id="MiI-vq-dHF"/>
                 <outlet property="bottomFillerView" destination="GeM-US-AHo" id="3Mx-8h-S0J"/>
-                <outlet property="bottomViewBC" destination="M5j-Eh-ief" id="zAo-eb-QNm"/>
+                <outlet property="bottomFillerViewHeightConstraint" destination="68r-6U-q5K" id="Lbw-0m-d4F"/>
                 <outlet property="buttonInputAttach" destination="Wx7-PH-b4G" id="rdS-HP-55b"/>
                 <outlet property="buttonInputSend" destination="aaP-dQ-ykO" id="SVD-OS-0XZ"/>
                 <outlet property="infoLabel" destination="qLq-cl-gBn" id="Ie2-eW-y5H"/>
@@ -23,8 +24,7 @@
                 <outlet property="sendButtonWidthConstraint" destination="vSb-i4-9bC" id="V1Q-9n-tWH"/>
                 <outlet property="tableView" destination="i5M-Pr-FkT" id="lyD-HE-CdL"/>
                 <outlet property="textInput" destination="WF4-Ti-KqT" id="fwE-JZ-jPs"/>
-                <outlet property="textInputBC" destination="0QF-3K-Leo" id="kGo-RE-VxI"/>
-                <outlet property="textInputHC" destination="VTd-c8-c4g" id="knR-oc-TMc"/>
+                <outlet property="textInputHeightConstraint" destination="VTd-c8-c4g" id="en7-sD-zoY"/>
                 <outlet property="view" destination="PpO-Gc-0B7" id="ccK-Tu-foM"/>
                 <outlet property="viewInput" destination="xuU-RB-86v" id="9Gh-xP-iGY"/>
             </connections>
@@ -54,7 +54,7 @@
                     </constraints>
                 </view>
                 <tableView opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" bouncesZoom="NO" style="plain" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="i5M-Pr-FkT" userLabel="Chat Table View">
-                    <rect key="frame" x="0.0" y="35" width="320" height="489"/>
+                    <rect key="frame" x="0.0" y="35" width="320" height="488"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="Tng-2m-Rnh"/>
@@ -62,19 +62,8 @@
                     </connections>
                 </tableView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xuU-RB-86v" userLabel="InputView">
-                    <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                    <rect key="frame" x="0.0" y="523" width="320" height="44"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aaP-dQ-ykO" userLabel="SendButton">
-                            <rect key="frame" x="268" y="-7" width="44" height="44"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="44" id="uBy-xk-aG7"/>
-                                <constraint firstAttribute="width" constant="44" id="vSb-i4-9bC"/>
-                            </constraints>
-                            <state key="normal" image="rcmessage_send.png"/>
-                            <connections>
-                                <action selector="actionInputSend:" destination="-1" eventType="touchUpInside" id="AKj-eb-WYm"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wx7-PH-b4G" userLabel="AttachButton">
                             <rect key="frame" x="8" y="-7" width="44" height="44"/>
                             <constraints>
@@ -84,6 +73,17 @@
                             <state key="normal" image="rcmessage_attach.png"/>
                             <connections>
                                 <action selector="actionInputAttach:" destination="-1" eventType="touchUpInside" id="kU6-3K-VMe"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aaP-dQ-ykO" userLabel="SendButton">
+                            <rect key="frame" x="268" y="-7" width="44" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="44" id="uBy-xk-aG7"/>
+                                <constraint firstAttribute="width" constant="44" id="vSb-i4-9bC"/>
+                            </constraints>
+                            <state key="normal" image="rcmessage_send.png"/>
+                            <connections>
+                                <action selector="actionInputSend:" destination="-1" eventType="touchUpInside" id="AKj-eb-WYm"/>
                             </connections>
                         </button>
                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WF4-Ti-KqT">
@@ -98,11 +98,11 @@
                                 <outlet property="delegate" destination="-1" id="ysY-ng-J5m"/>
                             </connections>
                         </textView>
-                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="scaleToFill" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="dSh-VU-anE">
-                            <rect key="frame" x="0.0" y="44" width="320" height="68"/>
+                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="dSh-VU-anE">
+                            <rect key="frame" x="0.0" y="44" width="320" height="0.0"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="68" id="xbo-6w-plq"/>
+                                <constraint firstAttribute="height" id="xbo-6w-plq"/>
                             </constraints>
                             <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="8NT-LY-k4Q">
                                 <size key="itemSize" width="50" height="50"/>
@@ -115,20 +115,24 @@
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="WF4-Ti-KqT" firstAttribute="leading" secondItem="Wx7-PH-b4G" secondAttribute="trailing" constant="8" id="02r-Nl-wYU"/>
-                        <constraint firstAttribute="bottom" secondItem="WF4-Ti-KqT" secondAttribute="bottom" constant="7" id="0QF-3K-Leo"/>
                         <constraint firstAttribute="trailing" secondItem="dSh-VU-anE" secondAttribute="trailing" id="0SX-bI-pqC"/>
+                        <constraint firstAttribute="bottom" secondItem="dSh-VU-anE" secondAttribute="bottom" id="1oj-Ot-URa"/>
                         <constraint firstItem="WF4-Ti-KqT" firstAttribute="top" secondItem="xuU-RB-86v" secondAttribute="top" constant="7" id="AxG-Vq-6Zg"/>
                         <constraint firstItem="aaP-dQ-ykO" firstAttribute="leading" secondItem="WF4-Ti-KqT" secondAttribute="trailing" constant="8" id="M7j-Cg-Mre"/>
                         <constraint firstItem="dSh-VU-anE" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" id="OIs-f3-WIT"/>
                         <constraint firstAttribute="trailing" secondItem="aaP-dQ-ykO" secondAttribute="trailing" constant="8" id="Wny-R1-Wnx"/>
                         <constraint firstItem="Wx7-PH-b4G" firstAttribute="leading" secondItem="xuU-RB-86v" secondAttribute="leading" constant="8" id="cJY-eL-XRL"/>
+                        <constraint firstItem="dSh-VU-anE" firstAttribute="top" secondItem="WF4-Ti-KqT" secondAttribute="bottom" constant="7" id="ifd-wj-r2U"/>
                         <constraint firstItem="aaP-dQ-ykO" firstAttribute="centerY" secondItem="Wx7-PH-b4G" secondAttribute="centerY" id="sBc-P5-djC"/>
                         <constraint firstItem="Wx7-PH-b4G" firstAttribute="bottom" secondItem="WF4-Ti-KqT" secondAttribute="bottom" id="tFp-Qa-OLg"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GeM-US-AHo" userLabel="BottomFillerView">
-                    <rect key="frame" x="0.0" y="568" width="320" height="0.0"/>
+                    <rect key="frame" x="0.0" y="567" width="320" height="1"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="68r-6U-q5K"/>
+                    </constraints>
                 </view>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -137,7 +141,6 @@
                 <constraint firstItem="xuU-RB-86v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="AWf-YO-X5Y"/>
                 <constraint firstItem="AQ8-LO-pDd" firstAttribute="leading" secondItem="PpO-Gc-0B7" secondAttribute="leading" id="D72-8r-9LR"/>
                 <constraint firstAttribute="trailing" secondItem="xuU-RB-86v" secondAttribute="trailing" id="H1D-Pa-OaA"/>
-                <constraint firstAttribute="bottom" secondItem="xuU-RB-86v" secondAttribute="bottom" id="M5j-Eh-ief"/>
                 <constraint firstItem="xuU-RB-86v" firstAttribute="leading" secondItem="PpO-Gc-0B7" secondAttribute="leading" id="P6d-Se-fzz"/>
                 <constraint firstItem="GeM-US-AHo" firstAttribute="top" secondItem="xuU-RB-86v" secondAttribute="bottom" id="R6W-yh-kGE"/>
                 <constraint firstAttribute="trailing" secondItem="AQ8-LO-pDd" secondAttribute="trailing" id="ZZc-zf-GBq"/>
@@ -163,7 +166,7 @@
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="rcmessage_attach.png" width="35.200000762939453" height="35.200000762939453"/>
-        <image name="rcmessage_send.png" width="35.200000762939453" height="35.200000762939453"/>
+        <image name="rcmessage_attach.png" width="22" height="22"/>
+        <image name="rcmessage_send.png" width="22" height="22"/>
     </resources>
 </document>

@@ -92,8 +92,8 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             } else {
                 if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
-                    if wSelf.url != nil {
-                        offlineVC.url = wSelf.url!
+                    if let url = wSelf.url {
+                        offlineVC.url = url
                     }
                     offlineVC.usedesk = wSelf.usedesk
                     wSelf.navigationController?.pushViewController(offlineVC, animated: true)
@@ -125,8 +125,8 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isSearch {
-            if searchArticles != nil {
-                return (searchArticles?.articles.count)!
+            if let searchArticles = self.searchArticles {
+                return searchArticles.articles.count
             } else {
                 return 0
             }
@@ -135,23 +135,12 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         }
     }
     
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let header = Bundle(for: UDBaseView.self).loadNibNamed("UDHeaderBaseViewCell", owner: self, options: nil)?.first as! UDHeaderBaseViewCell
-//        header.viewImage.sd_setImage(with: URL(string: arrayCollections[section].image), completed: nil)
-//        header.textView.text = arrayCollections[section].title
-//        return header
-//    }
-    
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return  arrayCollections[section].title
-//    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if isSearch {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UDArticleViewCell", for: indexPath) as! UDArticleViewCell
-            if searchArticles != nil {
-                cell.textView.text = searchArticles?.articles[indexPath.row].title
-                cell.viewsLabel.text = "\(searchArticles!.articles[indexPath.row].views) просмотров"
+            if let searchArticles = self.searchArticles {
+                cell.textView.text = searchArticles.articles[indexPath.row].title
+                cell.viewsLabel.text = "\(searchArticles.articles[indexPath.row].views) просмотров"
             } else {
                 cell.textView.text = ""
             }
@@ -173,13 +162,13 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard usedesk != nil else { return }
+        guard let usedesk = self.usedesk else { return }
         
         if isSearch {
-            usedesk!.addViewsArticle(articleID: searchArticles?.articles[indexPath.row].id ?? 0, count: searchArticles?.articles[indexPath.row].id != nil ? 1 : 0, connectionStatus: { success, error in
+            usedesk.addViewsArticle(articleID: searchArticles?.articles[indexPath.row].id ?? 0, count: searchArticles?.articles[indexPath.row].id != nil ? 1 : 0, connectionStatus: { success, error in
                 
             })
-            usedesk!.getArticle(articleID: searchArticles!.articles[indexPath.row].id, connectionStatus: { [weak self] success, article, error in
+            usedesk.getArticle(articleID: searchArticles!.articles[indexPath.row].id, connectionStatus: { [weak self] success, article, error in
                 guard let wSelf = self else { return }
                 if success {
                     let articleVC = UDArticleView(nibName: "UDArticle", bundle: nil)
@@ -191,7 +180,7 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             })
         } else {
             let articlesVC = UDArticlesView()
-            articlesVC.usedesk = usedesk!
+            articlesVC.usedesk = usedesk
             articlesVC.arrayArticles = arrayCollections[indexPath.section].сategories[indexPath.row - 1].articlesTitles
             articlesVC.collection_ids = arrayCollections[indexPath.section].id
             articlesVC.category_ids = arrayCollections[indexPath.section].сategories[indexPath.row - 1].id
@@ -207,11 +196,12 @@ class UDBaseView: UIViewController, UITableViewDelegate, UITableViewDataSource, 
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
-            guard usedesk != nil else { return }
+            guard let usedesk = self.usedesk else { return }
+
             UIView.animate(withDuration: 0.3) {
                 self.loadingView.alpha = 1
             }
-            usedesk!.getSearchArticles(collection_ids: [], category_ids: [], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) { [weak self] success, searchArticle, error in
+            usedesk.getSearchArticles(collection_ids: [], category_ids: [], article_ids: [], query: searchText, type: .all, sort: .title, order: .asc) { [weak self] success, searchArticle, error in
                 guard let wSelf = self else { return }
                 UIView.animate(withDuration: 0.3) {
                     wSelf.loadingView.alpha = 0

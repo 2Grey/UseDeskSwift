@@ -20,7 +20,7 @@ class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: chatButtonText, style: .done, target: self, action: #selector(self.actionChat))
 
         self.webView.navigationDelegate = self
-        self.webView.loadHTMLString(article!.text, baseURL: nil)
+        self.webView.loadHTMLString(article?.text ?? "", baseURL: nil)
     }
 
     // MARK: - User actions
@@ -49,8 +49,8 @@ class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
             } else {
                 if error == "noOperators" {
                     let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
-                    if wSelf.url != nil {
-                        offlineVC.url = wSelf.url!
+                    if let url = wSelf.url {
+                        offlineVC.url = url
                     }
                     offlineVC.usedesk = wSelf.usedesk
                     wSelf.navigationController?.pushViewController(offlineVC, animated: true)
@@ -67,7 +67,7 @@ class UDArticleView: UIViewController, UIWebViewDelegate, UISearchBarDelegate {
 
 extension UDArticleView: WKNavigationDelegate {
 
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation) {
         UIView.animate(withDuration: 0.3) {
             self.loadingView.alpha = 0
         }

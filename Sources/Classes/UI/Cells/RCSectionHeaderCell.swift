@@ -12,16 +12,19 @@ class RCSectionHeaderCell: UITableViewCell {
     func bindData(_ indexPath: IndexPath?, messagesView: RCMessagesView?) {
         self.indexPath = indexPath
         self.messagesView = messagesView
-        backgroundColor = UIColor.clear
+
+        self.backgroundColor = UIColor.clear
 
         let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
         if rcmessage != nil {
-            if labelSectionHeader == nil {
-                labelSectionHeader = UILabel()
-                labelSectionHeader!.font = RCMessages.sectionHeaderFont()
-                labelSectionHeader!.textColor = RCMessages.sectionHeaderColor()
-                contentView.addSubview(labelSectionHeader!)
-                labelSectionHeader!.textAlignment = .center
+            if self.labelSectionHeader == nil {
+                let labelSectionHeader = UILabel()
+                labelSectionHeader.font = RCMessages.sectionHeaderFont()
+                labelSectionHeader.textColor = RCMessages.sectionHeaderColor()
+                contentView.addSubview(labelSectionHeader)
+                labelSectionHeader.textAlignment = .center
+
+                self.labelSectionHeader = labelSectionHeader
             }
         }
     }
@@ -41,11 +44,10 @@ class RCSectionHeaderCell: UITableViewCell {
     // MARK: - Size methods
 
     class func height(_ indexPath: IndexPath?, messagesView: RCMessagesView?) -> CGFloat {
-        let rcmessage: RCMessage? = messagesView?.rcmessage(indexPath)
-        if rcmessage != nil {
+        if messagesView?.rcmessage(indexPath) != nil {
             return RCMessages.sectionHeaderHeight
         } else {
-            return 0
+            return 0.0
         }
     }
 }

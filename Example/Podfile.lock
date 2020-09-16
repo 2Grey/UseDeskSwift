@@ -8,7 +8,7 @@ PODS:
   - Socket.IO-Client-Swift (14.0.0):
     - Starscream (~> 3.0.6)
   - Starscream (3.0.6)
-  - UseDesk_SDK_Swift (0.3.20):
+  - UseDesk_SDK_Swift (0.4.2):
     - Alamofire (~> 4.0)
     - MBProgressHUD (~> 1.0)
     - QBImagePickerController (~> 3.4)
@@ -38,7 +38,7 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   Socket.IO-Client-Swift: 21e6a8a23a7d367d5ddfab6cbbd3c679cf3c25d6
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
-  UseDesk_SDK_Swift: efc96224c9c0ef390a30029b20d3b78f46c4b5b5
+  UseDesk_SDK_Swift: d6b508c82af79633dca52a38e1e1ad1b288aa199
 
 PODFILE CHECKSUM: b1fe4257748b42c1b677513fcf637596de13849a
 
