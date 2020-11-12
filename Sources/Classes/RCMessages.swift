@@ -48,6 +48,8 @@ public class RCMessages: NSObject {
     public var navBarBackgroundColor: UIColor? = UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
     public var navBarTextColor: UIColor? = UIColor.white
 
+    public var chatBackgroundColor: UIColor = UIColor.white
+
     public var pickerMediaType = QBImagePickerMediaType.any
 
     public var customBackButtonControl: UIControl?
@@ -201,6 +203,9 @@ public class RCMessages: NSObject {
     public var inputTextHeightMax: CGFloat = 110.0
     public var inputBorderWidth: CGFloat = 1.0
     public var inputBorderColor: CGColor? = UIColor.lightGray.cgColor
+
+    public var inputPlaceholderText: String?
+    public var inputPlaceholderColor: UIColor? = UIColor.lightGray
 
     public var inputRadius: CGFloat = 5.0
 

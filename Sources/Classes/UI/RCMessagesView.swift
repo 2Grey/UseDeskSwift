@@ -3,6 +3,7 @@
 
 import AVFoundation
 import Photos
+import UITextView_Placeholder
 
 class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
 
@@ -47,6 +48,9 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.view.backgroundColor = RCMessages.shared.chatBackgroundColor
+        self.tableView.backgroundColor = RCMessages.shared.chatBackgroundColor
 
         tableView.register(RCSectionHeaderCell.self, forCellReuseIdentifier: "RCSectionHeaderCell")
         tableView.register(RCBubbleHeaderCell.self, forCellReuseIdentifier: "RCBubbleHeaderCell")
@@ -221,6 +225,9 @@ class RCMessagesView: UIViewController, UITableViewDataSource, UITableViewDelega
 
         textInput.layer.cornerRadius = RCMessages.inputRadius()
         textInput.clipsToBounds = true
+
+        textInput.placeholder = RCMessages.shared.inputPlaceholderText
+        textInput.placeholderColor = RCMessages.shared.inputPlaceholderColor
     }
 
     func inputPanelUpdate() {

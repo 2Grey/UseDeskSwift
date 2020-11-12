@@ -141,7 +141,11 @@ public class UseDeskSDK: NSObject {
 
         socket?.on("error", callback: { [weak self] data, ack in
             guard let wSelf = self else { return }
-            wSelf.errorBlock?(data)
+            
+            let socketStatus = wSelf.socket?.status ?? SocketIOStatus.notConnected
+            if socketStatus == SocketIOStatus.connected || socketStatus == SocketIOStatus.connecting {
+                wSelf.errorBlock?(data)
+            }
         })
 
         socket?.on("disconnect", callback: { [weak self, weak config] data, ack in
