@@ -4,7 +4,7 @@
 import Foundation
 import UIKit
 import QBImagePickerController
-import MBProgressHUD
+import SVProgressHUD
 import AVKit
 
 class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
@@ -12,7 +12,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
     var rcmessages: [RCMessage] = []
     var isFromBase = false
 
-    private var hudErrorConnection: MBProgressHUD?
     private var imageVC: UDImageView!
 
     override func viewDidLoad() {
@@ -26,13 +25,6 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         } else {
             navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(self.actionDone))
         }
-
-        let hudErrorConnection = MBProgressHUD(view: view)
-        hudErrorConnection.removeFromSuperViewOnHide = true
-        hudErrorConnection.mode = MBProgressHUDMode.indeterminate
-        view.addSubview(hudErrorConnection)
-
-        self.hudErrorConnection = hudErrorConnection
 
         // Notification
         NotificationCenter.default.addObserver(self, selector: #selector(self.openUrlFromMessageButton(_:)), name: Notification.Name("messageButtonURLOpen"), object: nil)
@@ -48,7 +40,7 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         usedesk.connectBlock = { [weak self] success, error in
             guard let wSelf = self else { return }
             wSelf.hideInfo(animated: true)
-            wSelf.hudErrorConnection?.hide(animated: true)
+            SVProgressHUD.dismiss()
             wSelf.reloadhistory()
         }
 
@@ -76,11 +68,12 @@ class DialogflowView: RCMessagesView, UINavigationControllerDelegate {
         usedesk.errorBlock = { [weak self] errors in
             guard let wSelf = self else { return }
 
+            var hudErrorMessage: String?
             if (errors?.count ?? 0) > 0 {
                 let errorMessage = RCMessages.shared.defaultSocketErrorMessage ?? errors?.first as? String
-                wSelf.hudErrorConnection?.label.text = errorMessage
+                hudErrorMessage = errorMessage
             }
-            wSelf.hudErrorConnection?.show(animated: true)
+            SVProgressHUD.showError(withStatus: hudErrorMessage)
         }
 
         usedesk.feedbackMessageBlock = { [weak self] message in

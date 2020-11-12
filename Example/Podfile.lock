@@ -1,6 +1,5 @@
 PODS:
   - Alamofire (4.9.1)
-  - MBProgressHUD (1.2.0)
   - QBImagePickerController (3.4.0)
   - SDWebImage (4.4.8):
     - SDWebImage/Core (= 4.4.8)
@@ -8,12 +7,13 @@ PODS:
   - Socket.IO-Client-Swift (14.0.0):
     - Starscream (~> 3.0.6)
   - Starscream (3.0.6)
-  - UseDesk_SDK_Swift (0.4.2):
+  - SVProgressHUD (2.2.5)
+  - UseDesk_SDK_Swift (0.4.4):
     - Alamofire (~> 4.0)
-    - MBProgressHUD (~> 1.0)
     - QBImagePickerController (~> 3.4)
     - SDWebImage (~> 4.0)
     - Socket.IO-Client-Swift (~> 14.0)
+    - SVProgressHUD (~> 2.2.5)
 
 DEPENDENCIES:
   - UseDesk_SDK_Swift (from `../`)
@@ -21,11 +21,11 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
-    - MBProgressHUD
     - QBImagePickerController
     - SDWebImage
     - Socket.IO-Client-Swift
     - Starscream
+    - SVProgressHUD
 
 EXTERNAL SOURCES:
   UseDesk_SDK_Swift:
@@ -33,13 +33,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   Socket.IO-Client-Swift: 21e6a8a23a7d367d5ddfab6cbbd3c679cf3c25d6
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
-  UseDesk_SDK_Swift: d6b508c82af79633dca52a38e1e1ad1b288aa199
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  UseDesk_SDK_Swift: 6e31f7da91eb7744a2b849f093c7a887d1a55aad
 
 PODFILE CHECKSUM: b1fe4257748b42c1b677513fcf637596de13849a
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

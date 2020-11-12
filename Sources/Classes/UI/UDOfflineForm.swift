@@ -2,7 +2,7 @@
 //  UDOfflineForm.swift
 
 import Foundation
-import MBProgressHUD
+import SVProgressHUD
 import Alamofire
 
 class UDOfflineForm: UIViewController, UITextFieldDelegate {
@@ -34,21 +34,19 @@ class UDOfflineForm: UIViewController, UITextFieldDelegate {
     @IBAction func sendMessage(_ sender: Any) {
         guard let usedesk = usedesk else { return }
 
-        let hud = MBProgressHUD.showAdded(to: view, animated: true)
-        hud.mode = MBProgressHUDMode.indeterminate
-        hud.label.text = "Отправка сообщения..."
+        SVProgressHUD.showInfo(withStatus: "Отправка сообщения...")
 
         usedesk.sendOfflineForm(withMessage: messageTextField.text) { [weak self] result, error in
             guard let wSelf = self else { return }
 
             if result {
                 DispatchQueue.main.async(execute: {
-                    hud.hide(animated: true)
+                    SVProgressHUD.dismiss()
                     wSelf.dismiss(animated: true)
                 })
             } else {
                 wSelf.showAlert("Error", text: error)
-                hud.hide(animated: true)
+                SVProgressHUD.dismiss()
             }
         }
     }

@@ -296,16 +296,16 @@
 				"${PODS_ROOT}/../../Sources/Assets/Images/videoPlay/ic-round-play-arrow.png",
 				"${PODS_ROOT}/../../Sources/Assets/Images/videoPlay/ic-round-play-arrow@2x.png",
 				"${PODS_ROOT}/../../Sources/Assets/Images/videoPlay/ic-round-play-arrow@3x.png",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/AudioView.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/RCMessagesView.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDArticle.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDArticlesView.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDArticleViewCell.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDBaseView.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDBaseViewCell.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDHeaderBaseViewCell.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDImageView.xib",
-				"${PODS_ROOT}/../../Sources/Classes/Xibs/UDOfflineForm.xib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/AudioView.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/RCMessagesView.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDArticle.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDArticlesView.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDArticleViewCell.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDBaseView.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDBaseViewCell.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDHeaderBaseViewCell.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDImageView.nib",
+				"${BUILT_PRODUCTS_DIR}/UseDesk_SDK_Swift/UseDesk_SDK_Swift.framework/UDOfflineForm.nib",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -353,18 +353,18 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-UseDesk_Example/Pods-UseDesk_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/QBImagePickerController/QBImagePickerController.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MBProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QBImagePickerController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 			);

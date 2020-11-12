@@ -3,7 +3,7 @@
 
 import Foundation
 import SocketIO
-import MBProgressHUD
+import SVProgressHUD
 import Alamofire
 import UserNotifications
 
@@ -48,9 +48,7 @@ public class UseDeskSDK: NSObject {
     @objc public func start(with config: UDSDKConfig, on viewController: UIViewController, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
-        let hud = MBProgressHUD.showAdded(to: viewController.view, animated: true)
-        hud.mode = MBProgressHUDMode.indeterminate
-        hud.label.text = "Загрузка"
+        SVProgressHUD.show(withStatus: "Загрузка")
 
         if let nameChat = config.nameChat, nameChat.isEmpty == false {
             self.config?.nameChat = nameChat
@@ -71,7 +69,7 @@ public class UseDeskSDK: NSObject {
             }
 
             viewController.present(navController, animated: true)
-            hud.hide(animated: true)
+            SVProgressHUD.dismiss()
         } else {
             if config.isUseBase, config.accountId == nil {
                 startBlock(false, "You did not specify account_id")
@@ -92,7 +90,7 @@ public class UseDeskSDK: NSObject {
                         }
 
                         viewController.present(navController, animated: true)
-                        hud.hide(animated: true)
+                        SVProgressHUD.dismiss()
                     } else {
                         if error == "noOperators" {
                             let offlineVC = UDOfflineForm(nibName: "UDOfflineForm", bundle: nil)
@@ -105,7 +103,7 @@ public class UseDeskSDK: NSObject {
                             }
 
                             viewController.present(navController, animated: true)
-                            hud.hide(animated: true)
+                            SVProgressHUD.dismiss()
                         }
                     }
                 }
@@ -642,7 +640,7 @@ public class UseDeskSDK: NSObject {
 
     public func cancel(on viewController: UIViewController) {
         self.releaseChat()
-        MBProgressHUD.hide(for: viewController.view, animated: true)
+        SVProgressHUD.dismiss()
     }
 
     // MARK: - Helpers

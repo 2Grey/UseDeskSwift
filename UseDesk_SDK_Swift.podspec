@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
 
 	s.frameworks = 'UIKit', 'MapKit' ,'AVFoundation'
 
-	s.dependency 'MBProgressHUD', '~> 1.2.0'
+	s.dependency 'SVProgressHUD', '~> 2.2.5'
 	s.dependency 'Socket.IO-Client-Swift', '~> 14.0'
 	s.dependency 'Alamofire', '~> 4.0'
 	s.dependency 'QBImagePickerController', '~> 3.4'
