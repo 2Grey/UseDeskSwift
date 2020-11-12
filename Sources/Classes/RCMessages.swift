@@ -42,6 +42,7 @@ public enum UDButtonContent {
     case image(UIImage?)
 }
 
+@objcMembers
 public class RCMessages: NSObject {
 
     public var navBarBackgroundColor: UIColor? = UIColor(red: 208.0 / 255.0, green: 88.0 / 255.0, blue: 93.0 / 255.0, alpha: 1.0)
@@ -237,6 +238,24 @@ public class RCMessages: NSObject {
 
     override init() {
         super.init()
+    }
+
+    // MARK: - Objc
+
+    @objc public func setSendButtonImage(_ image: UIImage?) {
+        self.sendButtonContent = UDButtonContent.image(image)
+    }
+
+    @objc public func setSendButtonText(_ text: String?) {
+        self.sendButtonContent = UDButtonContent.text(text)
+    }
+
+    @objc public func setAttachButtonImage(_ image: UIImage?) {
+        self.attachButtonContent = UDButtonContent.image(image)
+    }
+
+    @objc public func setAttachButtonText(_ text: String?) {
+        self.attachButtonContent = UDButtonContent.text(text)
     }
 
     // MARK: - Static

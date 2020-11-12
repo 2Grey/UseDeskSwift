@@ -7,7 +7,8 @@
 
 import Foundation
 
-public class UDSDKConfig {
+@objcMembers
+public class UDSDKConfig: NSObject {
 
     public let url: String
     public let port: String
@@ -29,6 +30,8 @@ public class UDSDKConfig {
         self.companyId = companyId
         self.email = email
         self.isUseBase = isUseBase
+
+        super.init()
     }
 
     public var urlWithPort: String {

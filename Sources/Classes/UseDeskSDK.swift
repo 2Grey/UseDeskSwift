@@ -19,6 +19,7 @@ public typealias UDSFeedbackMessageBlock = (RCMessage?) -> Void
 public typealias UDSFeedbackAnswerMessageBlock = (Bool) -> Void
 public typealias UDCloseBlock = () -> Void
 
+@objcMembers
 public class UseDeskSDK: NSObject {
     @objc public var newMessageBlock: UDSNewMessageBlock?
     @objc public var connectBlock: UDSConnectBlock?
@@ -38,13 +39,13 @@ public class UseDeskSDK: NSObject {
 
     // MARK: - UI/UX
 
-    public func configureUI(configurator: (_ messages: RCMessages) -> Void) {
+    @objc public func configureUI(configurator: (_ messages: RCMessages) -> Void) {
         configurator(RCMessages.shared)
     }
 
     // MARK: - Start
 
-    public func start(with config: UDSDKConfig, on viewController: UIViewController, startBlock: @escaping UDSStartBlock) {
+    @objc public func start(with config: UDSDKConfig, on viewController: UIViewController, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
         let hud = MBProgressHUD.showAdded(to: viewController.view, animated: true)
@@ -112,7 +113,7 @@ public class UseDeskSDK: NSObject {
         }
     }
 
-    public func startWithoutGUICompanyID(with config: UDSDKConfig, startBlock: @escaping UDSStartBlock) {
+    @objc public func startWithoutGUICompanyID(with config: UDSDKConfig, startBlock: @escaping UDSStartBlock) {
         self.config = config
 
         if let nameChat = config.nameChat, nameChat.isEmpty == false {
@@ -189,7 +190,7 @@ public class UseDeskSDK: NSObject {
         })
     }
 
-    public func releaseChat() {
+    @objc public func releaseChat() {
         socket = manager?.defaultSocket
         socket?.disconnect()
     }

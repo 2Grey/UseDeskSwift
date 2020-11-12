@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 	s.name             = 'UseDesk_SDK_Swift'
-	s.version          = '0.4.3'
+	s.version          = '0.4.4'
 	s.summary          = 'A short description of UseDesk.'
 
 	s.description      = <<-DESC
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
 
 	s.frameworks = 'UIKit', 'MapKit' ,'AVFoundation'
 
-	s.dependency 'MBProgressHUD', '~> 1.0'
+	s.dependency 'MBProgressHUD', '~> 1.2.0'
 	s.dependency 'Socket.IO-Client-Swift', '~> 14.0'
 	s.dependency 'Alamofire', '~> 4.0'
 	s.dependency 'QBImagePickerController', '~> 3.4'
